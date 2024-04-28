@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="popup.css">
+    <title>Double Subtitles</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="https://www.disneyplus.com" target="_blank" class="headerIcon">
+                <img src="./icon16.png" alt="icon">
+            </a>
+            <div class="headerText">
+                <div>
+                    <span class="text1"></span>
+                </div>
+                <div class="text2"></div>
+            </div>
+        </div>
+        <div class="form">
+            <div class="smallContainer">
+                <div class="label" id="onOffLabel"></div>
+                <label class="switch">
+                    <input type="checkbox" name="onOff" id="onOff" checked>
+                    <span class="slider">
+                        <span class="sliderSwitchText"></span>
+                    </span>
+                </label>
+            </div>
+            <div class="smallContainer">
+                <div class="label" id="langLabel"></div>
+                <div class="customSelect">
+                    <select name="secondLanguage" id="secondLanguage">
+                        <option value="en">English</option>
+                        <option value="de">Deutsch</option>
+                        <option value="es">Español</option>
+                        <option value="pl">Polish</option>
+                        <option value="zh">Chinese</option>
+                        <option value="da">Dansk</option>
+                        <option value="fr">Français</option>
+                        <option value="it">Italiano</option>
+                        <option value="hu">Magyar</option>
+                        <option value="nl">Nederlands</option>
+                        <option value="no">Norsk (bokmål)</option>
+                        <option value="pt">Português</option>
+                        <option value="ro">Română</option>
+                        <option value="sk">Slovenčina</option>
+                        <option value="fi">Suomi</option>
+                        <option value="sv">Svenska</option>
+                        <option value="tr">Türkçe</option>
+                        <option value="cs">Čeština</option>
+                        <option value="el">Ελληνικά</option>
+                        <option value="ja">日本語</option>
+                        <option value="ko">한국어</option>
+                        <option value="he">Hebrew</option>
+                        <option value="hi">Hindi</option>
+                        <option value="uk">Ukrainian</option>
+                        <option value="ru">Russian</option>
+                    </select>
+                    <div class="innerLanguage">English</div>
+                    <div class="selectArrow">
+                        <img id="arrowDown" src="arrowDown.png"></img>
+                        <img id="arrowUp" class="hidden" src="arrowUp.png"></img>
+                    </div>
+                    <div class="fakeSelect hidden">
+                        <div value="en">English</div>
+                        <div value="de">Deutsch</div>
+                        <div value="es">Español</div>
+                        <div value="pl">Polish</div>
+                        <div value="zh">Chinese</div>
+                        <div value="da">Dansk</div>
+                        <div value="fr">Français</div>
+                        <div value="it">Italiano</div>
+                        <div value="hu">Magyar</div>
+                        <div value="nl">Nederlands</div>
+                        <div value="no">Norsk (bokmål)</div>
+                        <div value="pt">Português</div>
+                        <div value="ro">Română</div>
+                        <div value="sk">Slovenčina</div>
+                        <div value="fi">Suomi</div>
+                        <div value="sv">Svenska</div>
+                        <div value="tr">Türkçe</div>
+                        <div value="cs">Čeština</div>
+                        <div value="el">Ελληνικά</div>
+                        <div value="ja">日本語</div>
+                        <div value="ko">한국어</div>
+                        <div value="he">Hebrew</div>
+                        <div value="hi">Hindi</div>
+                        <div value="uk">Ukrainian</div>
+                        <div value="ru">Russian</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="footer">
+        </div>
+    </div>
+    <script src="popup.js"></script>
+    <script src="options.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,17 @@
+{
+   "description": {
+      "message": "Extension allows for displaying additional subtitles above the standard ones."
+   },
+   "langLabel": {
+      "message": "Select second language"
+   },
+   "name": {
+      "message": "Double Subtitles"
+   },
+   "onOffLabel": {
+      "message": "Turn extension on"
+   },
+   "popupTex1": {
+      "message": "\u003Cstrong style='font-weight: 500;'>Double Subtitles\u003C/strong>"
+   }
+}

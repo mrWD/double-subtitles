@@ -1,0 +1,87 @@
+.copyLanguageElem:hover label {
+  background-color: #6666;
+  opacity: 1 !important;
+}
+
+.copyLanguageElemSelected {
+  opacity: 1 !important;
+}
+
+.secondSubtitles {
+  color: #9cfde4 !important;
+  display: block;
+}
+
+.atvwebplayersdk-captions-text {
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.atvwebplayersdk-captions-text:hover {
+  background-color: red !important;
+}
+
+.captionsParent {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.translatedList {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid black;
+  background-color: #fff;
+  z-index: 10000;
+  padding: 10px;
+  max-height: 200px;
+}
+
+.translatedElem:hover {
+  background: gray;
+}
+
+#dv-web-player {
+  display: flex;
+}
+
+.sidebar {
+  position: relative;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #46415e;
+  color: white;
+  width: 20%;
+  height: 100%;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.sidebar hr {
+  margin-top: 14px;
+}
+
+.historyElem {
+  font-size: 20px;
+}
+
+.historyElem:nth-of-type(2n-1) {
+  font-weight: bold;;
+}
+
+.historyElem:nth-of-type(2n) {
+  opacity: 0.8;
+}
+
+.historyElem:hover {
+  background-color: #6666;
+}
+
+/* .wrapperFix {
+  left: 0 !important;
+  width: 100% !important;
+  text-align: center !important;
+} */

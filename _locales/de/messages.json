@@ -1,0 +1,17 @@
+{
+   "description": {
+      "message": "Die Erweiterung ermöglicht die Anzeige zusätzlicher Untertitel über den Standard."
+   },
+   "langLabel": {
+      "message": "Zweite Sprache auswählen"
+   },
+   "name": {
+      "message": "Double Subtitles"
+   },
+   "onOffLabel": {
+      "message": "Erweiterung ein/aus"
+   },
+   "popupTex1": {
+      "message": "\u003Cstrong style='font-weight: 500;'>Double Subtitles\u003C/strong>"
+   }
+}
