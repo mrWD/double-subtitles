@@ -9,6 +9,7 @@ console.log('URL: ', window.location.hostname);
 async function initContent() {
   options = await loadOptionsOrSetDefaults();
   startMonitoringForElements(0);
+  console.log('initContent', options);
   secondLanguage = options.secondLanguage;
 }
 
