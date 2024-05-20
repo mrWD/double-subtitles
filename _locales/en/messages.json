@@ -11,6 +11,12 @@
    "onOffLabel": {
       "message": "Turn extension on"
    },
+   "showHideSidebarLabel": {
+      "message": "Show sidebar"
+   },
+   "showHideDoubleSubtitlesLabel": {
+      "message": "Show double subtitles"
+   },
    "popupTex1": {
       "message": "\u003Cstrong style='font-weight: 500;'>Double Subtitles\u003C/strong>"
    }
