@@ -48,8 +48,6 @@ function preparePageForSidebar() {
     return document.querySelector('#dv-web-player');
   }
 
-  console.log(window.STREAMING_PLATFORM);
-
   if (window.STREAMING_PLATFORM === 'disney') {
     return document.querySelector('.video_view--theater');
   }
