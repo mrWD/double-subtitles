@@ -8,6 +8,7 @@
 }
 
 .secondSubtitles {
+  text-shadow: 2px 2px 2px #000;
   color: #9cfde4 !important;
   display: block;
 }
@@ -79,9 +80,3 @@
 .historyElem:hover {
   background-color: #6666;
 }
-
-/* .wrapperFix {
-  left: 0 !important;
-  width: 100% !important;
-  text-align: center !important;
-} */

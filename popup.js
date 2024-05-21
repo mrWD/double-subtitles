@@ -1,11 +1,6 @@
 const onOff = document.querySelector('#onOff');
 const languageSelect = document.querySelector('#secondLanguage');
 const languageOptions = document.querySelectorAll('#secondLanguage option');
-const fakeSelect = document.querySelector('.fakeSelect');
-const customSelect = document.querySelector('.customSelect');
-const arrowDown = document.querySelector('#arrowDown');
-const arrowUp = document.querySelector('#arrowUp');
-const innerLanguage = document.querySelector('.innerLanguage');
 let options;
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -18,30 +13,6 @@ onOff.addEventListener('change', () => {
   setOptions();
 });
 
-customSelect.addEventListener('click', () => {
-  fakeSelect.classList.toggle('hidden');
-  arrowDown.classList.toggle('hidden');
-  arrowUp.classList.toggle('hidden');
-  // hide same language
-  const langArr = Array.from(fakeSelect.children);
-  langArr.forEach((elem) => {
-    elem.classList.remove('hidden');
-    if (innerLanguage.textContent == elem.textContent) {
-      elem.classList.add('hidden');
-    }
-  });
-});
-
-fakeSelect.addEventListener('click', (e) => {
-  languageOptions.forEach((option) => {
-    if (option.value == e.target.attributes.value.textContent) {
-      languageSelect.value = option.value;
-      innerLanguage.textContent = decodeLang(languageSelect.value);
-      setOptions();
-    }
-  });
-});
-
 function setOptions() {
   options.extensionOn = onOff.checked;
   options.secondLanguage = languageSelect.value;
@@ -51,7 +22,6 @@ function setOptions() {
 function setCheckbox(options) {
   onOff.checked = options.extensionOn;
   languageSelect.value = options.secondLanguage;
-  innerLanguage.textContent = decodeLang(options.secondLanguage);
 }
 
 function saveOptions(options) {
@@ -84,25 +54,6 @@ function decodeLang(lang) {
 
   return mapCodeToLang[lang];
 }
-
-document.addEventListener('keydown', (e) => {
-  if (!fakeSelect.classList.contains('hidden')) {
-    if (e.key == 'ArrowUp') {
-      fakeSelect.scrollBy(0, -23);
-    } else if (e.key == 'ArrowDown') {
-      fakeSelect.scrollBy(0, 23);
-    }
-  }
-});
-
-fakeSelect.addEventListener('wheel', (e) => {
-  if (e.deltaY < 0) {
-    fakeSelect.scrollBy(0, -23);
-  } else if (e.deltaY > 0) {
-    fakeSelect.scrollBy(0, 23);
-  }
-  e.preventDefault();
-});
 
 function populateHtmlWithText() {
   const popupText1 = document.querySelector('.text1');

@@ -134,8 +134,16 @@ a {
   color: inherit;
 }
 
+.secondLanguage {
+  background-color: #46415E;
+  border: none;
+  color: white;
+}
+
 .customSelect {
   position: relative;
+  display: flex;
+  justify-content: center;
   width: 129px;
   height: 31px;
   border: 1px solid rgba(255, 255, 255, 0.10);
@@ -149,64 +157,6 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-#secondLanguage {
-  display: none;
-}
-
-.fakeSelect {
-  position: absolute;
-  right: 0;
-  top: 40px;
-  width: 129px;
-  height: 70px;
-  background-color: #46415E;
-  outline: 1px solid rgba(255, 255, 255, 0.10);
-  opacity: 1;
-  border-radius: 4px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  z-index: 2;
-}
-
-.fakeSelect div {
-  width: 113px;
-  height: 23px;
-  border-radius: 2px;
-  display: flex;
-  align-items: center;
-  padding-left: 6px;
-}
-
-.fakeSelect div:hover {
-  background-color: #5A5476;
-}
-
-.fakeSelect::-webkit-scrollbar {
-  width: 7px;
-  background-clip: padding-box;
-}
-
-.fakeSelect::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.60);
-  height: 50px;
-  border-right: 5px transparent solid;
-  border-top: 5px transparent solid;
-  border-bottom: 5px transparent solid;
-  background-clip: padding-box;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.innerLanguage {
-  margin-left: 8px;
-}
-
-.selectArrow {
-  margin-right: 8px;
 }
 
 #langLabel {
