@@ -24,6 +24,8 @@ function fillSubtitles({ data, originText }) {
   const newSubtitles = originalSubtitleLines.cloneNode(true);
 
   newSubtitles.classList.add('secondSubtitles');
+  newSubtitles.style.textShadow = '0 0 10px #000';
+  newSubtitles.style.backgroundColor = 'rgba(0, 0, 0, 0.75)';
   newSubtitles.innerHTML = `${data}<hr>`;
 
   originalSubtitleLines.parentElement.classList.add('captionsParent');
