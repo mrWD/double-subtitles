@@ -9,6 +9,7 @@ function encodeLang(lang) {
       Català: 'ca',
       Dansk: 'da',
       Deutsch: 'de',
+      DeutschUT: 'de',
       EnglishCC: 'en',
       English: 'en',
       Español: 'es',

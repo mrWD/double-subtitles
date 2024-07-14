@@ -46,6 +46,7 @@
         "src/translationModal.js",
         "src/subtitlesManager.js",
         "src/sidebar.js",
+        "src/subtitles.js",
         "content.js"
       ],
       "matches": [

@@ -6,6 +6,8 @@ function fillSubtitles({ data, originText }) {
   const originalSubtitleLines = getSubtitlesFromDom();
   const previousTranslatedElem = getTranslatedSubtitlesFromDom();
 
+  addLineToSubtitles({ text: originText, translation: data });
+
   addLineToHistory(originText + '<br>');
   addLineToHistory(data + '<hr>');
 
@@ -21,20 +23,9 @@ function fillSubtitles({ data, originText }) {
     translateList(e.target);
   });
 
-  const newSubtitles = originalSubtitleLines.cloneNode(true);
-
-  newSubtitles.classList.add('secondSubtitles');
-  newSubtitles.style.textShadow = '0 0 10px #000';
-  newSubtitles.style.backgroundColor = 'rgba(0, 0, 0, 0.75)';
-  newSubtitles.innerHTML = `${data}<hr>`;
-
-  originalSubtitleLines.parentElement.classList.add('captionsParent');
   originalSubtitleLines.classList.add('translated');
 
-  originalSubtitleLines.parentElement.insertBefore(
-    newSubtitles,
-    originalSubtitleLines,
-  );
+  originalSubtitleLines.parentElement.classList.add('translated');
 }
 
 function getSubtitlesFromDom() {
