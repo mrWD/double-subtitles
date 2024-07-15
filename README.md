@@ -24,7 +24,6 @@ Double Subtitles is a browser extension that enhances your video-watching experi
 4. Enjoy watching with dual subtitles!
 
 ## Supported Streaming Services
-* YouTube
 * Netflix
 * Amazon Prime Video
 * Disney+
