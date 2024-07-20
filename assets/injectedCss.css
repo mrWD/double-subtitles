@@ -117,3 +117,10 @@
 .translated {
   opacity: 0 !important;
 }
+
+.saveButton {
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%);
+}

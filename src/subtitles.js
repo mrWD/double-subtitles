@@ -10,6 +10,7 @@ function addLineToSubtitles({ text, translation }) {
 
   subtitleWrapper.appendChild(mainText);
   subtitleWrapper.appendChild(translatedText);
+  subtitleWrapper.appendChild(createSaveButton({ text, translation }));
 }
 
 function createSubtitlesWrapper() {
@@ -34,4 +35,43 @@ function createSubtitleElement() {
   subtitle.classList.add('subtitle');
 
   return subtitle;
+}
+
+function createSaveButton({ text, translation }) {
+  const saveButton = document.createElement('button');
+  function saveToAnkiCards () {
+    saveToAnki({ text, translation });
+  }
+
+  saveButton.classList.add('saveButton');
+  saveButton.textContent = 'A';
+
+  saveButton.addEventListener('click', saveToAnkiCards);
+
+  return saveButton;
+}
+
+function saveToAnki({ text, translation }) {
+  fetch('http://127.0.0.1:5000/anki-card', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    },
+    body: JSON.stringify({
+      deckName: 'Movies',
+      note: {
+        front: text,
+        back: translation,
+        tags: ['movies'],
+      },
+    }),
+  })
+  .then(res => res.json())
+  .then(data => {
+    // do something with data
+  })
+  .catch(rejected => {
+      console.log(rejected);
+  });
 }
