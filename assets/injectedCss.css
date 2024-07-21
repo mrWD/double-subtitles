@@ -56,7 +56,7 @@
   color: white;
   width: 20%;
   height: 100%;
-  padding: 10px;
+  padding-block: 16px;
   overflow-y: auto;
 }
 
@@ -65,14 +65,23 @@
 }
 
 .historyElem {
+  padding: 16px;
+  border-bottom: 1px solid #eeeeee;
   font-size: 20px;
 }
 
-.historyElem:nth-of-type(2n-1) {
-  font-weight: bold;;
+.historyElem span {
+  display: block;
+  font-size: 20px;
+  line-height: 1.5;
 }
 
-.historyElem:nth-of-type(2n) {
+.historyElem span:first-child {
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.historyElem span:last-child {
   opacity: 0.8;
 }
 
@@ -119,21 +128,17 @@
 }
 
 .saveButton {
-  display: flex;
-  align-items: center;
   width: 100%;
-  padding: 8px 16px;
+  padding: 16px;
   border: 1px solid #333333;
   border-top: none;
   background-color: #ffffff;
-  white-space: nowrap;
   font-size: 20px;
+  text-align: center;
+  white-space: nowrap;
   color: #222222;
-}
-
-.saveButton:first-child {
-  border-top: 1px solid #333333;
-  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .saveButton:last-child {
@@ -142,13 +147,69 @@
 
 .saveButton:hover {
   background-color: #eeeeee;
-  cursor: pointer;
 }
 
-.saveButton svg {
-  margin-right: 5px;
+.serviceCheckbox {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #333333;
+  border-top: none;
+  background-color: #ffffff;
+  white-space: nowrap;
+  font-size: 20px;
+  color: #222222;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.serviceCheckbox:first-child {
+  border-top: 1px solid #333333;
+  border-radius: 8px 8px 0 0;
+}
+
+.serviceCheckbox:last-child {
+  border-radius: 0 0 8px 8px;
+}
+
+.serviceCheckbox:hover {
+  background-color: #eeeeee;
+}
+
+.serviceCheckbox svg {
+  margin-right: 8px;
   width: 30px;
   height: 30px;
+}
+
+.saveCheckbox {
+  position: static !important;
+  bottom: 0 !important;
+  width: 16px !important;
+  height: 16px !important;
+  margin-right: 8px !important;
+}
+
+.serviceInput {
+  height: auto !important;
+  margin: 0 !important;
+  padding: 16px !important;
+  border: 1px solid #333333 !important;
+  border-top: none !important;
+  border-radius: 0 !important;
+  background-color: #ffffff !important;
+  font-size: 20px;
+  color: #222222;
+}
+
+.serviceInput:first-child {
+  border-top: 1px solid #333333 !important;
+  border-radius: 8px 8px 0 0 !important;
+}
+
+.serviceInput:last-child {
+  border-radius: 0 0 8px 8px !important;
 }
 
 .menuButton {
@@ -166,14 +227,16 @@
 }
 
 .menu {
-  position: absolute;
-  bottom: 100%;
+  position: fixed;
+  top: 50%;
   left: 50%;
-  z-index: 9999999999;
-  transform: translate(-50%, -10px);
+  z-index: 9999;
+  transform: translate(-50%, -50%);
   display: none;
   flex-direction: column;
   align-items: stretch;
+  max-width: 100%;
+  width: 500px;
   border-radius: 8px;
   box-shadow: -5px 3px 12px 3px #777;
 }

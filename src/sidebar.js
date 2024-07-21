@@ -27,20 +27,29 @@ function createSidebarWithHistory() {
   return { history, historyList };
 }
 
-function addLineToHistory(text) {
+function addLineToHistory({ text, translation }) {
   const { historyList } = createSidebarWithHistory();
 
   const historyElem = document.createElement('div');
 
+  historyElem.classList.add('historyElem');
+  historyElem.dataset.text = text;
+  historyElem.dataset.translation = translation;
+
+  historyElem.innerHTML = `
+    <span>${text}</span>
+    <span>${translation}</span>
+  `;
+
   historyElem.addEventListener('click', (e) => {
-    translateList(e.target);
+    translateList(e);
+    openMenu({ text, translation });
   });
 
-  historyElem.classList.add('historyElem');
-  historyElem.innerHTML = text;
   historyList.appendChild(historyElem);
 
-  document.querySelector('.sidebar').scrollTop = document.querySelector('.sidebar').scrollHeight;
+  document.querySelector('.sidebar').scrollTop = document.querySelector('.sidebar')
+    .scrollHeight;
 }
 
 function preparePageForSidebar() {

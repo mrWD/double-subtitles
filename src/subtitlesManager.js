@@ -7,9 +7,7 @@ function fillSubtitles({ data, originText }) {
   const previousTranslatedElem = getTranslatedSubtitlesFromDom();
 
   addLineToSubtitles({ text: originText, translation: data });
-
-  addLineToHistory(originText + '<br>');
-  addLineToHistory(data + '<hr>');
+  addLineToHistory({ text: originText, translation: data });
 
   if (!originalSubtitleLines) {
     return;
@@ -19,9 +17,7 @@ function fillSubtitles({ data, originText }) {
     previousTranslatedElem.remove();
   }
 
-  originalSubtitleLines.addEventListener('click', (e) => {
-    translateList(e.target);
-  });
+  originalSubtitleLines.addEventListener('click', translateList);
 
   originalSubtitleLines.classList.add('translated');
 
@@ -30,7 +26,8 @@ function fillSubtitles({ data, originText }) {
 
 function getSubtitlesFromDom() {
   if (window.STREAMING_PLATFORM === 'disney') {
-    return document.querySelector('disney-web-player')?.shadowRoot?.querySelector(MAIN_SUBTITLES_CLASS);
+    return document.querySelector('disney-web-player')?.shadowRoot
+      ?.querySelector(MAIN_SUBTITLES_CLASS);
   }
 
   // Amazon and Netflix
@@ -39,7 +36,8 @@ function getSubtitlesFromDom() {
 
 function getTranslatedSubtitlesFromDom() {
   if (window.STREAMING_PLATFORM === 'disney') {
-    return document.querySelector('disney-web-player')?.shadowRoot?.querySelector(SECOND_SUBTITLES_CLASS);
+    return document.querySelector('disney-web-player')?.shadowRoot
+      ?.querySelector(SECOND_SUBTITLES_CLASS);
   }
 
   // Amazon and Netflix
