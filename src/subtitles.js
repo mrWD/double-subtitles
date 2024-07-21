@@ -76,32 +76,34 @@ function createMenu({ text, translation }) {
   return menu;
 }
 
-function createAnkiButton({ text, translation }) {
+function createSaveButton(content, cb) {
+
   const saveButton = document.createElement('button');
-  function saveToAnkiCards () {
-    saveToAnki({ text, translation });
-  }
 
   saveButton.classList.add('saveButton');
-  saveButton.innerHTML = ANKI_SVG + '<span>Save to Anki</span>';
+  saveButton.innerHTML = content;
 
-  saveButton.addEventListener('click', saveToAnkiCards);
+  saveButton.addEventListener('click', cb);
 
   return saveButton;
 }
 
+function createAnkiButton({ text, translation }) {
+  return createSaveButton(
+    ANKI_SVG + '<span>Save to Anki</span>',
+    () => {
+      saveToAnki({ text, translation });
+    },
+  );
+}
+
 function createQuizletButton({ text, translation }) {
-  const saveButton = document.createElement('button');
-  function saveToQuizletCards () {
-    saveToQuizlet({ text, translation });
-  }
-
-  saveButton.classList.add('saveButton');
-  saveButton.innerHTML = QUIZLET_SVG + '<span>Save to Quizlet</span>';
-
-  saveButton.addEventListener('click', saveToQuizletCards);
-
-  return saveButton;
+  return createSaveButton(
+    QUIZLET_SVG + '<span>Save to Quizlet</span>',
+    () => {
+      saveToQuizlet({ text, translation });
+    },
+  );
 }
 
 function saveToAnki({ text, translation }) {
@@ -143,6 +145,21 @@ function saveToQuizlet({ text, translation }) {
         back: translation,
         tags: ['movies'],
       },
+    }),
+  });
+}
+
+function saveToGSheet({ text, translation }) {
+  fetch('http://127.0.0.1:5000/gsheet-card', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    },
+    body: JSON.stringify({
+      spreadsheetId: '1SJXSHIWHrwXwn3HHsYIwmFRdTjIkyGLLIJfa1xyHu_w',
+      rangeName: 'Sheet1',
+      values: [text, translation],
     }),
   });
 }
