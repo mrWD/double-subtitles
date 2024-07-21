@@ -183,6 +183,14 @@
   height: 30px;
 }
 
+.serviceForm {
+  display: none;
+}
+
+.serviceCheckbox:has(input:checked) + .serviceForm {
+  display: block;
+}
+
 .saveCheckbox {
   position: static !important;
   bottom: 0 !important;
@@ -243,4 +251,17 @@
 
 .menu.visible {
   display: flex;
+}
+
+.serviceForm input {
+  width: 100%;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 16px !important;
+  border: 1px solid #333333 !important;
+  border-top: none !important;
+  border-radius: 0 !important;
+  background-color: #ffffff !important;
+  font-size: 20px;
+  color: #222222;
 }
