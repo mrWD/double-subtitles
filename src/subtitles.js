@@ -76,14 +76,13 @@ function createMenu({ text, translation }) {
   return menu;
 }
 
-function createSaveButton(content, cb) {
-
+function createSaveButton(content, clickHandler) {
   const saveButton = document.createElement('button');
 
   saveButton.classList.add('saveButton');
   saveButton.innerHTML = content;
 
-  saveButton.addEventListener('click', cb);
+  saveButton.addEventListener('click', clickHandler);
 
   return saveButton;
 }
