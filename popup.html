@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./assets/popup.css?t=qwe">
+  <link rel="stylesheet" href="./assets/popup.css">
   <title>Double Subtitles</title>
 </head>
 
@@ -15,37 +15,50 @@
       <a href="https://www.disneyplus.com" target="_blank" class="headerIcon">
         <img src="./assets/icon16.png" alt="icon">
       </a>
+
       <div class="headerText">
         <div>
           <span class="text1"></span>
         </div>
+
         <div class="text2"></div>
       </div>
     </div>
+
     <div class="form">
       <div class="smallContainer">
         <div class="label" id="onOffLabel"></div>
+
         <label class="switch">
           <input type="checkbox" name="onOff" id="onOff" checked>
+
           <span class="slider"></span>
         </label>
       </div>
+
       <div class="smallContainer">
         <div class="label" id="showHideSidebarLabel"></div>
+
         <label class="switch">
           <input type="checkbox" name="showHideSidebar" id="showHideSidebar" checked>
+
           <span class="slider"></span>
         </label>
       </div>
+
       <div class="smallContainer">
         <div class="label" id="showHideDoubleSubtitlesLabel"></div>
+
         <label class="switch">
           <input type="checkbox" name="showHideDoubleSubtitles" id="showHideDoubleSubtitles" checked>
+
           <span class="slider"></span>
         </label>
       </div>
+
       <div class="smallContainer">
         <div class="label" id="langLabel"></div>
+
         <div class="customSelect">
           <select class="secondLanguage" name="secondLanguage" id="secondLanguage">
             <option value="en">English</option>
@@ -77,9 +90,21 @@
         </div>
       </div>
     </div>
+
+    <button id="showSavedCards" class="btn">
+      Show translations
+    </button>
+
+    <dialog id="savedCards">
+      <button id="closeSavedCards" class="btn">Close</button>
+
+      <ul></ul>
+    </dialog>
   </div>
+
   <script src="./popup.js"></script>
   <script src="./src/settings.js"></script>
+  <script src="./src/savedCards.js"></script>
 </body>
 
 </html>

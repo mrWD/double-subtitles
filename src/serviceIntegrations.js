@@ -6,6 +6,19 @@ const temp = {
   rangeName: 'Sheet1',
 }
 
+function saveToSyncStorage({ text, translation }) {
+  chrome.storage.sync.get(['cards'], result => {
+    const cards = result.cards ?? [];
+
+    chrome.storage.sync.set({
+      cards: [
+        ...cards,
+        { text, translation },
+      ],
+    });
+  });
+}
+
 function saveToAnki({ deckName, text, translation }) {
   fetch(`${API}/anki-card`, {
     method: 'POST',
