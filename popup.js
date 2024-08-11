@@ -4,9 +4,19 @@ const languageOptions = document.querySelectorAll('#secondLanguage option');
 let options;
 
 window.addEventListener('DOMContentLoaded', async () => {
+  console.log(languageSelect);
   options = await loadOptionsOrSetDefaults();
   setCheckbox(options);
   populateHtmlWithText();
+});
+
+languageSelect.addEventListener('change', (event) => {
+  chrome.storage.sync.set({
+    options: {
+      ...options,
+      secondLanguage: event.target.value
+    },
+  });
 });
 
 onOff.addEventListener('change', () => {

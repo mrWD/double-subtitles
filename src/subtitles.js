@@ -33,7 +33,16 @@ function createSubtitlesWrapper() {
 
 function createSubtitleElement() {
   const subtitle = document.createElement('p');
+
   subtitle.classList.add('subtitle');
+
+  subtitle.addEventListener('click', (e) => {
+    const text = e.target.innerText;
+    const translation = e.target.nextElementSibling.innerText;
+
+    openMenu({ text, translation });
+  });
+
   return subtitle;
 }
 

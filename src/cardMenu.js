@@ -31,6 +31,7 @@ function createMenu() {
   }
 
   const menu = document.createElement('div');
+  const btnGroup = document.createElement('div');
 
   menu.classList.add('menu');
   menu.setAttribute('id', 'menu');
@@ -47,11 +48,30 @@ function createMenu() {
   menu.appendChild(createServiceCheckbox(GSHEETS_CHECKBOX, GSHEETS_SVG, 'Google Sheet'));
   menu.appendChild(createServiceForm(GSHEETS_INPUT, GSHEETS_RANGE));
 
-  menu.appendChild(createSaveButton());
+  btnGroup.classList.add('btnGroup');
+  btnGroup.appendChild(createCancelButton());
+  btnGroup.appendChild(createSaveButton());
+
+  menu.appendChild(btnGroup);
 
   document.body.appendChild(menu);
 
   return menu;
+}
+
+function createCancelButton() {
+  const cancelButton = document.createElement('button');
+
+  cancelButton.classList.add('cancelButton');
+  cancelButton.textContent = 'Cancel';
+
+  cancelButton.addEventListener('click', () => {
+    const menu = document.querySelector('#menu');
+
+    menu.classList.remove('visible');
+  });
+
+  return cancelButton;
 }
 
 function createSaveButton() {
@@ -132,6 +152,24 @@ function createServiceForm(...fields) {
     input.setAttribute('name', field);
     input.setAttribute('type', 'text');
     input.setAttribute('placeholder', field);
+
+    input.addEventListener('keypress', (e) => {
+      if (e.key !== 'Tab') {
+        e.stopPropagation();
+      }
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') {
+        e.stopPropagation();
+      }
+    });
+
+    input.addEventListener('keyup', (e) => {
+      if (e.key !== 'Tab') {
+        e.stopPropagation();
+      }
+    });
 
     div.appendChild(input);
   });

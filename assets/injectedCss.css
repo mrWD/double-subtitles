@@ -64,16 +64,23 @@
   margin-top: 14px;
 }
 
+.historyTitle {
+  font-size: 24px;
+  text-align: center;
+}
+
 .historyElem {
   padding: 16px;
   border-bottom: 1px solid #eeeeee;
   font-size: 20px;
+  cursor: pointer;
 }
 
 .historyElem span {
   display: block;
   font-size: 20px;
   line-height: 1.5;
+  pointer-events: none;
 }
 
 .historyElem span:first-child {
@@ -127,8 +134,12 @@
   opacity: 0 !important;
 }
 
-.saveButton {
-  width: 100%;
+.btnGroup {
+  display: flex;
+}
+
+.cancelButton {
+  width: 50%;
   padding: 16px;
   border: 1px solid #333333;
   border-top: none;
@@ -141,10 +152,29 @@
   transition: background-color 0.3s;
 }
 
-.saveButton:last-child {
-  border-radius: 0 0 8px 8px;
+.saveButton {
+  width: 50%;
+  padding: 16px;
+  border: 1px solid #333333;
+  border-top: none;
+  background-color: #ffffff;
+  font-size: 20px;
+  text-align: center;
+  white-space: nowrap;
+  color: #222222;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
+.cancelButton:first-child {
+  border-radius: 0 0 0 8px;
+}
+
+.saveButton:last-child {
+  border-radius: 0 0 8px 0;
+}
+
+.cancelButton:hover,
 .saveButton:hover {
   background-color: #eeeeee;
 }
@@ -152,7 +182,8 @@
 .serviceCheckbox {
   display: flex;
   align-items: center;
-  width: 100%;
+  max-width: 100%;
+  width: auto;
   padding: 16px;
   border: 1px solid #333333;
   border-top: none;
@@ -247,6 +278,11 @@
   width: 500px;
   border-radius: 8px;
   box-shadow: -5px 3px 12px 3px #777;
+  box-sizing: border-box;
+}
+
+.menu * {
+  box-sizing: border-box;
 }
 
 .menu.visible {
@@ -254,6 +290,7 @@
 }
 
 .serviceForm input {
+  max-width: 100%;
   width: 100%;
   height: auto !important;
   margin: 0 !important;
@@ -264,4 +301,9 @@
   background-color: #ffffff !important;
   font-size: 20px;
   color: #222222;
+}
+
+.show {
+  position: fixed !important;
+  z-index: 100000;
 }
