@@ -1,3 +1,11 @@
+const urls = [
+  '*://*.primevideo.com/*',
+  '*://*.amazon.com/*',
+  '*://*.disneyplus.com/*',
+  '*://*.netflix.com/*',
+  '*://ankiuser.net/*',
+];
+
 let recentTabId = null;
 
 chrome.runtime.onInstalled.addListener((reason) => {
@@ -5,33 +13,14 @@ chrome.runtime.onInstalled.addListener((reason) => {
 });
 
 function reloadTabs() {
-  chrome.tabs.query({ url: '*://*.primevideo.com/*' }, function (tabs) {
-    if (tabs.length > 0) {
-      tabs.forEach((tab) => {
-        chrome.tabs.reload(tab.id);
-      });
-    }
-  });
-  chrome.tabs.query({ url: '*://*.amazon.com/*' }, function (tabs) {
-    if (tabs.length > 0) {
-      tabs.forEach((tab) => {
-        chrome.tabs.reload(tab.id);
-      });
-    }
-  });
-  chrome.tabs.query({ url: '*://*.disneyplus.com/*' }, function (tabs) {
-    if (tabs.length > 0) {
-      tabs.forEach((tab) => {
-        chrome.tabs.reload(tab.id);
-      });
-    }
-  });
-  chrome.tabs.query({ url: '*://*.netflix.com/*' }, function (tabs) {
-    if (tabs.length > 0) {
-      tabs.forEach((tab) => {
-        chrome.tabs.reload(tab.id);
-      });
-    }
+  urls.forEach((url) => {
+    chrome.tabs.query({ url }, function (tabs) {
+      if (tabs.length > 0) {
+        tabs.forEach((tab) => {
+          chrome.tabs.reload(tab.id);
+        });
+      }
+    });
   });
 }
 

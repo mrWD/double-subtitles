@@ -10,21 +10,36 @@ function loadSavedCards() {
   chrome.storage.sync.get('cards', item => {
     const listWrapper = getEmptyCardList();
 
-    item.cards?.forEach((card, index) => {
-      listWrapper.appendChild(createCardElement(card, index, item.cards));
-    });
+    toggleEmptyTextVisibility(!item.cards?.length);
+
+    if (item.cards?.length) {
+      item.cards?.forEach((card, index) => {
+        listWrapper.appendChild(createCardElement(card, index, item.cards));
+      });
+    }
   });
+}
+
+function toggleEmptyTextVisibility(show = true) {
+  const savedCardsModal = document.querySelector('#savedCards')
+    ?.querySelector('#emptyCards');
+
+  if (show) {
+    savedCardsModal?.classList.add('visible');
+  } else {
+    savedCardsModal?.classList.remove('visible');
+  }
 }
 
 function getEmptyCardList() {
   const savedCardsModal = document.querySelector('#savedCards');
   let listWrapper = savedCardsModal?.querySelector('ul');
 
-  if (!listWrapper) {
+  if (listWrapper) {
+    listWrapper.innerHTML = '';
+  } else {
     listWrapper = document.createElement('ul');
     savedCardsModal?.appendChild(listWrapper);
-  } else {
-    listWrapper.innerHTML = '';
   }
 
   return listWrapper;
@@ -47,7 +62,9 @@ function createDeleteButton(cards, index) {
 
   deleteButton.innerHTML = BASKET_ICON;
 
-  deleteButton.addEventListener('click', () => {
+  deleteButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+
     chrome.storage.sync.set({
       cards: cards.filter((_, i) => i !== index),
     });

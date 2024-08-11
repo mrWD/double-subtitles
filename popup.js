@@ -1,6 +1,7 @@
 const onOff = document.querySelector('#onOff');
 const languageSelect = document.querySelector('#secondLanguage');
 const languageOptions = document.querySelectorAll('#secondLanguage option');
+const savedCardsModal = document.querySelector('#savedCards');
 const showCardsButton = document.querySelector('#showSavedCards');
 const closeSavedCardsButton = document.querySelector('#closeSavedCards');
 let options;
@@ -26,12 +27,10 @@ onOff.addEventListener('change', () => {
 });
 
 showCardsButton.addEventListener('click', () => {
-  const savedCardsModal = document.querySelector('#savedCards');
   savedCardsModal.showModal();
 });
 
 closeSavedCardsButton.addEventListener('click', () => {
-  const savedCardsModal = document.querySelector('#savedCards');
   savedCardsModal.close();
 });
 

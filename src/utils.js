@@ -1,4 +1,5 @@
 window.STREAMING_PLATFORM = getPlatform();
+window.CARDS_APP = getCardsApp();
 
 function encodeLang(lang) {
   const mapLangToCode = {
@@ -226,7 +227,7 @@ function decodeLang(lang) {
       zh: 'Chinese',
     },
   };
-  return mapCodeToLang[window.STREAMING_PLATFORM][lang];
+  return mapCodeToLang[window.STREAMING_PLATFORM]?.[lang];
 }
 
 function getPlatform() {
@@ -238,5 +239,25 @@ function getPlatform() {
     return 'netflix';
   }
 
-  return 'amazon';
+  if (window.location.hostname.includes('amazon')) {
+    return 'amazon';
+  }
+
+  return null;
+}
+
+function getCardsApp() {
+  if (window.location.hostname.includes('ankiuser')) {
+    return 'anki';
+  }
+
+  if (window.location.hostname.includes('quizlet')) {
+    return 'quizlet';
+  }
+
+  if (window.location.hostname.includes('sheets')) {
+    return 'googleSheets';
+  }
+
+  return null;
 }
