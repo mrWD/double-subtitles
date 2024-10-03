@@ -265,3 +265,30 @@ a {
   color: white;
   cursor: pointer;
 }
+
+.donations {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+}
+
+.donations__link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 16px;
+  font-weight: 400;
+  color: white;
+}
+
+.donations__link img,
+.donations__link svg {
+  width: 30px;
+  color: white;
+}

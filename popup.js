@@ -4,6 +4,7 @@ const languageOptions = document.querySelectorAll('#secondLanguage option');
 const savedCardsModal = document.querySelector('#savedCards');
 const showCardsButton = document.querySelector('#showSavedCards');
 const closeSavedCardsButton = document.querySelector('#closeSavedCards');
+const linkBtns = document.querySelectorAll('.js-link');
 let options;
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -32,6 +33,14 @@ showCardsButton.addEventListener('click', () => {
 
 closeSavedCardsButton.addEventListener('click', () => {
   savedCardsModal.close();
+});
+
+linkBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    chrome.tabs.create({
+      url: btn.dataset.url,
+    });
+  });
 });
 
 function setOptions() {
