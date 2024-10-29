@@ -17,7 +17,7 @@ function createSidebarWithHistory() {
 
   const historyTitle = document.createElement('div');
   historyTitle.classList.add('historyTitle');
-  historyTitle.textContent = '====== HISTORY ======';
+  historyTitle.textContent = 'HISTORY';
   history.appendChild(historyTitle);
 
   const historyList = document.createElement('div');

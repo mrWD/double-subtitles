@@ -65,20 +65,20 @@
 }
 
 .historyTitle {
-  font-size: 24px;
+  font-size: 18px;
   text-align: center;
 }
 
 .historyElem {
   padding: 16px;
   border-bottom: 1px solid #eeeeee;
-  font-size: 20px;
+  font-size: 16px;
   cursor: pointer;
 }
 
 .historyElem span {
   display: block;
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1.5;
   pointer-events: none;
 }
