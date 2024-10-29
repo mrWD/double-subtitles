@@ -26,7 +26,7 @@ function fillSubtitles({ data, originText }) {
 
 function getSubtitlesFromDom() {
   if (window.STREAMING_PLATFORM === 'disney') {
-    return document.querySelector('disney-web-player')?.shadowRoot
+    return document.querySelector('disney-web-player')
       ?.querySelector(MAIN_SUBTITLES_CLASS);
   }
 
@@ -36,7 +36,7 @@ function getSubtitlesFromDom() {
 
 function getTranslatedSubtitlesFromDom() {
   if (window.STREAMING_PLATFORM === 'disney') {
-    return document.querySelector('disney-web-player')?.shadowRoot
+    return document.querySelector('disney-web-player')
       ?.querySelector(SECOND_SUBTITLES_CLASS);
   }
 
