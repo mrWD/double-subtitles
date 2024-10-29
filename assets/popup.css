@@ -173,6 +173,7 @@ a {
   font-size: 20px;
   font-weight: 500;
   color: white;
+  cursor: pointer;
 }
 
 #savedCards {
@@ -270,9 +271,15 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 8px;
   padding-top: 16px;
+}
+
+.donations__text {
+  font-size: 16px;
+  font-weight: 400;
+  color: white;
 }
 
 .donations__link {
@@ -285,6 +292,12 @@ a {
   font-size: 16px;
   font-weight: 400;
   color: white;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.donations__link:hover {
+  transform: scale(1.5);
 }
 
 .donations__link img,
