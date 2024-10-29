@@ -313,10 +313,7 @@
 }
 
 .cardsTip {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translate(-50%, 10px);
+  position: fixed;
   z-index: 100000;
   padding: 10px;
   border: 1px solid gray;
@@ -358,4 +355,5 @@
   font-size: 14px;
   font-weight: 500;
   color: white;
+  cursor: pointer;
 }

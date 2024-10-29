@@ -1,5 +1,5 @@
-window.STREAMING_PLATFORM = getPlatform();
-window.CARDS_APP = getCardsApp();
+window.STREAMING_PLATFORM = getStreamingPlatform();
+window.LEARNING_PLATFORM = getLearningPlatform();
 
 function encodeLang(lang) {
   const mapLangToCode = {
@@ -230,7 +230,7 @@ function decodeLang(lang) {
   return mapCodeToLang[window.STREAMING_PLATFORM]?.[lang];
 }
 
-function getPlatform() {
+function getStreamingPlatform() {
   if (window.location.hostname.includes('disney')) {
     return 'disney';
   }
@@ -246,7 +246,7 @@ function getPlatform() {
   return null;
 }
 
-function getCardsApp() {
+function getLearningPlatform() {
   if (window.location.hostname.includes('ankiuser')) {
     return 'anki';
   }

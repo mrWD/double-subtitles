@@ -28,6 +28,10 @@ Double Subtitles is a browser extension that enhances your video-watching experi
 * Amazon Prime Video
 * Disney+
 
+## Supported Learning Platforms
+* Anki
+* Quizlet
+
 ## Files
 * background.js: Handles background tasks.
 * content.js: Injects scripts into the video pages.

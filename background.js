@@ -4,6 +4,7 @@ const urls = [
   '*://*.disneyplus.com/*',
   '*://*.netflix.com/*',
   '*://ankiuser.net/*',
+  '*://quizlet.com/*',
 ];
 
 let recentTabId = null;

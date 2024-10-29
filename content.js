@@ -5,7 +5,6 @@ let savedSubtitle = null;
 let options;
 
 async function initContent() {
-  console.log(window.CARDS_APP, window.STREAMING_PLATFORM);
   options = await loadOptionsOrSetDefaults();
   startMonitoringForElements(0);
   secondLanguage = options.secondLanguage;

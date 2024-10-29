@@ -1,21 +1,81 @@
-setTimeout(() => {
-  if (window.CARDS_APP === 'anki') {
-    document.querySelectorAll('[contenteditable]').forEach((elem) => {
-      elem.addEventListener('focus', (e) => {
-        showTip(e);
-      });
+let inputsAmount = 0;
+
+handleInputListAmountChange();
+
+function handleInputListAmountChange() {
+  if (window.LEARNING_PLATFORM === 'quizlet') {
+    const inputListWrapper = document.querySelector('.StudiableItems');
+    const observer = new MutationObserver((mutationsList) => {
+      for (const mutation of mutationsList) {
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+          setTimeout(() => {
+            handleLearningPlatformPage();
+          }, 1000);
+        }
+      }
     });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+    return;
   }
-}, 3000);
+
+  if (window.LEARNING_PLATFORM === 'anki') {
+    const observer = new MutationObserver((mutationsList) => {
+      for (const mutation of mutationsList) {
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+          setTimeout(() => {
+            handleLearningPlatformPage();
+          }, 1000);
+        }
+      }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+    return;
+  }
+}
+
+function handleLearningPlatformPage() {
+  if (window.LEARNING_PLATFORM === 'anki'
+    || window.LEARNING_PLATFORM === 'quizlet'
+  ) {
+    const inputList = document.querySelectorAll('[contenteditable]');
+
+    if (!inputList.length || inputsAmount === inputList.length) {
+      return;
+    }
+
+    if (window.LEARNING_PLATFORM === 'anki') {
+      showTip({ target: inputList[0] });
+    }
+
+    inputList.forEach((elem) => {
+      elem.removeEventListener('focus', showTip);
+      elem.addEventListener('focus', showTip);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.cardsTip') && !e.target.closest('[contenteditable]')) {
+        hideTip();
+      }
+    });
+
+    inputsAmount = inputList.length;
+  }
+}
 
 function showTip(e) {
   const input = e.target;
+  const { height, top, left } = input.getBoundingClientRect();
 
-  document.querySelectorAll('.cardsTip').forEach(cardsTip => cardsTip.remove());
+  hideTip();
 
   chrome.storage.sync.get('cards', item => {
     const tip = document.createElement('div');
     const cardList = document.createElement('ul');
+
+    tip.style.top = `${top + height + getTopPositionMultiplier()}px`;
+    tip.style.left = `${left}px`;
 
     tip.classList.add('cardsTip');
     cardList.classList.add('cardList');
@@ -26,7 +86,7 @@ function showTip(e) {
     });
 
     tip.appendChild(cardList);
-    input.parentElement.appendChild(tip);
+    document.body.appendChild(tip);
   });
 }
 
@@ -49,13 +109,11 @@ function createTipRow(text, input) {
   row.appendChild(addAndDeleteBtn);
 
   addBtn.addEventListener('click', () => {
-    input.textContent = text;
-    document.querySelectorAll('.cardsTip').forEach(cardsTip => cardsTip.remove());
+    addValueToInput(input, text);
   });
 
   addAndDeleteBtn.addEventListener('click', () => {
-    input.textContent = text;
-    document.querySelectorAll('.cardsTip').forEach(cardsTip => cardsTip.remove());
+    addValueToInput(input, text);
 
     chrome.storage.sync.get('cards', item => {
       const newCards = item.cards.filter(card => card.text !== text);
@@ -64,4 +122,29 @@ function createTipRow(text, input) {
   });
 
   return row;
+}
+
+function hideTip() {
+  document.querySelectorAll('.cardsTip').forEach(cardsTip => cardsTip.remove());
+}
+
+function addValueToInput(input, value) {
+  if (window.LEARNING_PLATFORM === 'anki') {
+    input.innerHTML = value;
+  }
+
+  if (window.LEARNING_PLATFORM === 'quizlet') {
+    input.innerHTML = value;
+  }
+
+  hideTip();
+}
+
+function getTopPositionMultiplier() {
+  const mapPlatformToTopPositionMultiplier = {
+    anki: 5,
+    quizlet: 70,
+  };
+
+  return mapPlatformToTopPositionMultiplier[window.LEARNING_PLATFORM];
 }
