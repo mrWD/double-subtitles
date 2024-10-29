@@ -86,8 +86,7 @@ function decodeLang(lang) {
 }
 
 function populateHtmlWithText() {
-  const popupText1 = document.querySelector('.text1');
-  const popupText2 = document.querySelector('.text2');
+  const popupText = document.querySelector('.text1');
   const onOffLabel = document.querySelector('#onOffLabel');
   const showHideSidebarLabel = document.querySelector('#showHideSidebarLabel');
   const showHideDoubleSubtitlesLabel = document.querySelector('#showHideDoubleSubtitlesLabel');
@@ -99,7 +98,7 @@ function populateHtmlWithText() {
   const showHideDoubleSubtitlesLabelMsg = chrome.i18n.getMessage('showHideDoubleSubtitlesLabel');
   const langLabelMsg = chrome.i18n.getMessage('langLabel');
 
-  popupText1.innerHTML = popupTex1Msg;
+  popupText.innerHTML = popupTex1Msg;
   onOffLabel.textContent = onOffLabelMsg;
   showHideSidebarLabel.textContent = showHideSidebarLabelMsg;
   showHideDoubleSubtitlesLabel.textContent = showHideDoubleSubtitlesLabelMsg;

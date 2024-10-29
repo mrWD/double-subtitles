@@ -17,7 +17,7 @@
    "showHideDoubleSubtitlesLabel": {
       "message": "Show double subtitles"
    },
-   "popupTex1": {
+   "popupText": {
       "message": "\u003Cstrong style='font-weight: 500;'>Double Subtitles\u003C/strong>"
    }
 }
