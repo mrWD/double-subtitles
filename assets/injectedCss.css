@@ -1,3 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&display=swap');
+
+:root {
+  --primary-color: #161819;
+  --secondary-color: #222527;
+  --border-primary-color: #333333;
+  --text-primary-color: white;
+}
+
 .copyLanguageElem:hover label {
   background-color: #6666;
   opacity: 1 !important;
@@ -52,8 +61,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: #46415e;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--text-primary-color);
   width: 20%;
   height: 100%;
   padding-block: 16px;
@@ -93,7 +102,7 @@
 }
 
 .historyElem:hover {
-  background-color: #6666;
+  background-color: var(--secondary-color);
 }
 
 .visibleSubtitles {
@@ -109,14 +118,15 @@
 
 .visibleSubtitles .subtitle {
   margin-block: 0;
-  padding-block: 5px;
+  padding: 5px;
+  border-radius: 12px;
   font-family: Netflix Sans, Helvetica Nueue, Helvetica, Arial, sans-serif;
   font-size: 40px;
   line-height: 1.5;
   font-weight: 600;
   text-shadow: #000000 0px 0px 7px;
   text-align: center;
-  color: #ffffff;
+  color: var(--text-primary-color);
 }
 
 .visibleSubtitles .subtitle:last-child {
@@ -126,7 +136,7 @@
 }
 
 .visibleSubtitles .subtitle:hover {
-  background-color: #6666;
+  background-color: var(--primary-color);
   cursor: pointer;
 }
 
@@ -143,11 +153,11 @@
   padding: 16px;
   border: 1px solid #333333;
   border-top: none;
-  background-color: #ffffff;
+  background-color: var(--primary-color);
   font-size: 20px;
   text-align: center;
   white-space: nowrap;
-  color: #222222;
+  color: var(--text-primary-color);
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -157,11 +167,11 @@
   padding: 16px;
   border: 1px solid #333333;
   border-top: none;
-  background-color: #ffffff;
+  background-color: var(--primary-color);
   font-size: 20px;
   text-align: center;
   white-space: nowrap;
-  color: #222222;
+  color: var(--text-primary-color);
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -176,7 +186,7 @@
 
 .cancelButton:hover,
 .saveButton:hover {
-  background-color: #eeeeee;
+  background-color: var(--secondary-color);
 }
 
 .serviceCheckbox {
@@ -187,12 +197,16 @@
   padding: 16px;
   border: 1px solid #333333;
   border-top: none;
-  background-color: #ffffff;
+  background-color: var(--primary-color);
   white-space: nowrap;
   font-size: 20px;
-  color: #222222;
+  color: var(--text-primary-color);
   cursor: pointer;
   transition: background-color 0.3s;
+}
+
+.serviceCheckbox > input[type="checkbox"] {
+  display: none;
 }
 
 .serviceCheckbox:first-child {
@@ -205,7 +219,7 @@
 }
 
 .serviceCheckbox:hover {
-  background-color: #eeeeee;
+  background-color: var(--secondary-color);
 }
 
 .serviceCheckbox svg {
@@ -222,12 +236,27 @@
   display: block;
 }
 
-.saveCheckbox {
-  position: static !important;
-  bottom: 0 !important;
-  width: 16px !important;
-  height: 16px !important;
+.serviceCheckbox:before {
+  content: "";
+  width: 30px !important;
+  height: 30px !important;
   margin-right: 8px !important;
+  border-top: 1px solid #333333;
+  border-radius: 6px;
+  background-color: var(--secondary-color);
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z" fill="white"/></svg>');
+  background-size: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-size 0.3s;
+}
+
+.serviceCheckbox:hover:before {
+  background-size: 45%;
+}
+
+.serviceCheckbox:has( > input[type="checkbox"]:checked):before {
+  background-size: 65%;
 }
 
 .serviceInput {
@@ -237,9 +266,10 @@
   border: 1px solid #333333 !important;
   border-top: none !important;
   border-radius: 0 !important;
-  background-color: #ffffff !important;
+  background-color: var(--primary-color) !important;
   font-size: 20px;
-  color: #222222;
+  color: var(--text-primary-color);
+  resize: none;
 }
 
 .serviceInput:first-child {
@@ -256,12 +286,15 @@
   top: 50%;
   left: 100%;
   transform: translate(20px, -50%);
+  padding: 8px 10px;
   border: none;
+  border-radius: 10px;
   background-color: transparent;
-  color: #FFFFFF;
+  color: var(--text-primary-color);
 }
 
 .menuButton:hover {
+  background-color: var(--primary-color);
   cursor: pointer;
 }
 
@@ -269,7 +302,7 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  z-index: 9999;
+  z-index: 9999999999;
   transform: translate(-50%, -50%);
   display: none;
   flex-direction: column;
@@ -277,7 +310,7 @@
   max-width: 100%;
   width: 500px;
   border-radius: 8px;
-  box-shadow: -5px 3px 12px 3px #777;
+  box-shadow: -5px 3px 12px 3px var(--primary-color);
   box-sizing: border-box;
 }
 
@@ -298,9 +331,13 @@
   border: 1px solid #333333 !important;
   border-top: none !important;
   border-radius: 0 !important;
-  background-color: #ffffff !important;
+  background-color: var(--primary-color) !important;
   font-size: 20px;
-  color: #222222;
+  color: var(--text-primary-color);
+}
+
+.serviceForm input {
+  outline: none;
 }
 
 .show {
@@ -351,9 +388,9 @@
   padding: 4px 8px;
   border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: 4px;
-  background: #46415E;
+  background: var(--secondary-color);
   font-size: 14px;
   font-weight: 500;
-  color: white;
+  color: var(--text-primary-color);
   cursor: pointer;
 }

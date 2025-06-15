@@ -43,14 +43,14 @@ function createMenu() {
 
   menu.appendChild(createServiceCheckbox(BROWSER_CHECKBOX, BROWSER_SVG, 'Browser'));
 
-  // menu.appendChild(createServiceCheckbox(ANKIAPP_CHECKBOX, ANKIAPP_SVG, 'Anki'));
-  // menu.appendChild(createServiceForm(ANKIAPP_INPUT));
+  menu.appendChild(createServiceCheckbox(ANKIAPP_CHECKBOX, ANKIAPP_SVG, 'Anki'));
+  menu.appendChild(createServiceForm(ANKIAPP_INPUT));
 
-  // menu.appendChild(createServiceCheckbox(QUIZLET_CHECKBOX, QUIZLET_SVG, 'Quizlet'));
-  // menu.appendChild(createServiceForm(QUIZLET_INPUT));
+  menu.appendChild(createServiceCheckbox(QUIZLET_CHECKBOX, QUIZLET_SVG, 'Quizlet'));
+  menu.appendChild(createServiceForm(QUIZLET_INPUT));
 
-  // menu.appendChild(createServiceCheckbox(GSHEETS_CHECKBOX, GSHEETS_SVG, 'Google Sheet'));
-  // menu.appendChild(createServiceForm(GSHEETS_INPUT, GSHEETS_RANGE));
+  menu.appendChild(createServiceCheckbox(GSHEETS_CHECKBOX, GSHEETS_SVG, 'Google Sheet'));
+  menu.appendChild(createServiceForm(GSHEETS_INPUT, GSHEETS_RANGE));
 
   btnGroup.classList.add('btnGroup');
   btnGroup.appendChild(createCancelButton());
