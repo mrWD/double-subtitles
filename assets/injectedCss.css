@@ -40,15 +40,15 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border: 1px solid black;
-  background-color: #fff;
+  border: 1px solid var(--border-primary-color);
+  background-color: var(--primary-color);
   z-index: 10000;
   padding: 10px;
   max-height: 200px;
 }
 
 .translatedElem:hover {
-  background: gray;
+  background: var(--secondary-color);
 }
 
 #dv-web-player {
@@ -79,9 +79,13 @@
   text-align: center;
 }
 
+.historyList {
+  padding-block: 16px;
+}
+
 .historyElem {
   padding: 16px;
-  border-bottom: 1px solid #eeeeee;
+  border-bottom: 1px solid var(--border-primary-color);
   font-size: 16px;
   cursor: pointer;
 }
@@ -152,7 +156,7 @@
 .cancelButton {
   width: 50%;
   padding: 16px;
-  border: 1px solid #333333;
+  border: 1px solid var(--border-primary-color);
   border-top: none;
   background-color: var(--primary-color);
   font-size: 20px;
@@ -166,7 +170,7 @@
 .saveButton {
   width: 50%;
   padding: 16px;
-  border: 1px solid #333333;
+  border: 1px solid var(--border-primary-color);
   border-top: none;
   background-color: var(--primary-color);
   font-size: 20px;
@@ -196,7 +200,7 @@
   max-width: 100%;
   width: auto;
   padding: 16px;
-  border: 1px solid #333333;
+  border: 1px solid var(--border-primary-color);
   border-top: none;
   background-color: var(--primary-color);
   white-space: nowrap;
@@ -211,7 +215,7 @@
 }
 
 .serviceCheckbox:first-child {
-  border-top: 1px solid #333333;
+  border-top: 1px solid var(--border-primary-color);
   border-radius: 8px 8px 0 0;
 }
 
@@ -242,7 +246,7 @@
   width: 30px !important;
   height: 30px !important;
   margin-right: 8px !important;
-  border-top: 1px solid #333333;
+  border-top: 1px solid var(--border-primary-color);
   border-radius: 6px;
   background-color: var(--secondary-color);
   background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z" fill="white"/></svg>');
@@ -264,7 +268,7 @@
   height: auto !important;
   margin: 0 !important;
   padding: 16px !important;
-  border: 1px solid #333333 !important;
+  border: 1px solid var(--border-primary-color) !important;
   border-top: none !important;
   border-radius: 0 !important;
   background-color: var(--primary-color) !important;
@@ -275,7 +279,7 @@
 }
 
 .serviceInput:first-child {
-  border-top: 1px solid #333333 !important;
+  border-top: 1px solid var(--border-primary-color) !important;
   border-radius: 8px 8px 0 0 !important;
 }
 
@@ -331,7 +335,7 @@
   height: auto !important;
   margin: 0 !important;
   padding: 16px !important;
-  border: 1px solid #333333 !important;
+  border: 1px solid var(--border-primary-color) !important;
   border-top: none !important;
   border-radius: 0 !important;
   background-color: var(--primary-color) !important;
@@ -356,10 +360,10 @@
   position: fixed;
   z-index: 100000;
   padding: 10px;
-  border: 1px solid gray;
+  border: 1px solid var(--border-primary-color);
   border-radius: 12px;
-  box-shadow: 0 0 10px 0 gray;
-  background-color: #fff;
+  box-shadow: 0 0 10px 0 var(--border-primary-color);
+  background-color: var(--primary-color);
 }
 
 .cardList {
@@ -389,7 +393,7 @@
 
 .suggestion-btn {
   padding: 4px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  border: 1px solid var(--border-primary-color);
   border-radius: 4px;
   background: var(--secondary-color);
   font-size: 14px;
