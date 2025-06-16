@@ -26,9 +26,19 @@ function createSubtitlesWrapper() {
 
   subtitleWrapper.classList.add('visibleSubtitles');
 
-  subtitleWrapper.addEventListener('mouseover', (e) => {
-    e.stopPropagation();
+  subtitleWrapper.addEventListener('mouseover', () => {
     translateList(subtitleWrapper.querySelector('.subtitle'));
+
+    const translatedList = createTranslatedList();
+
+    translatedList.classList.remove('is-hidden');
+
+    translatedList.style.right = 'auto';
+
+    translatedList.style.top = `${subtitleWrapper.offsetTop}px`;
+    translatedList.style.left = `${subtitleWrapper.offsetLeft}px`;
+
+    translatedList.style.transform = 'translate(-50%, -100%)';
   });
 
   subtitleWrapper.addEventListener('mouseout', (e) => {

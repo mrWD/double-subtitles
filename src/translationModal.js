@@ -1,11 +1,7 @@
 function showTranslatedList(data) {
   const translatedList = createTranslatedList();
-  const visibleSubtitles = document.querySelector('.visibleSubtitles');
 
   translatedList.classList.remove('is-hidden');
-
-  translatedList.style.top = `${visibleSubtitles.offsetTop}px`;
-  translatedList.style.left = `${visibleSubtitles.offsetLeft}px`;
 
   data.forEach(({ text, translation }) => {
     const translatedElem = document.createElement('div');
@@ -38,6 +34,19 @@ function createTranslatedList() {
   const translatedList = document.createElement('div');
 
   translatedList.classList.add('translatedList');
+
+  translatedList.addEventListener('mouseover', (e) => {
+    e.stopPropagation();
+    translatedList.classList.remove('is-hidden');
+  });
+
+  translatedList.addEventListener('mouseout', (e) => {
+    if (e.toElement.classList.contains('translatedList')) {
+      return;
+    }
+
+    translatedList.classList.add('is-hidden');
+  });
 
   document.body.appendChild(translatedList);
 

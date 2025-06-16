@@ -248,7 +248,32 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-block: 10px;
+}
+
+.savedCards__search {
+  width: 100%;
+  margin-inline: auto;
+  padding-top: 10px;
+  padding-inline: 40px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  background: var(--secondary-color);
+  color: var(--text-primary-color);
+  font-size: 20px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .savedCards__content h2 {

@@ -20,6 +20,32 @@ function createSidebarWithHistory() {
   historyTitle.textContent = 'HISTORY';
   history.appendChild(historyTitle);
 
+  const historySearchInput = document.createElement('input');
+  historySearchInput.type = 'text';
+  historySearchInput.id = 'searchHistory';
+  historySearchInput.placeholder = 'Search translations...';
+  historySearchInput.classList.add('search-input');
+
+  historySearchInput.addEventListener('input', (e) => {
+    const searchValue = e.target.value?.toLowerCase();
+    const historyList = document.querySelector('.historyList');
+    const historyElems = historyList.querySelectorAll('.historyElem');
+
+    historyElems.forEach((elem) => {
+      if (elem.textContent?.toLowerCase().includes(searchValue)) {
+        elem.style.display = 'block';
+      } else {
+        elem.style.display = 'none';
+      }
+    });
+  });
+
+  const historySearch = document.createElement('div');
+  historySearch.classList.add('historySearch');
+  historySearch.appendChild(historySearchInput);
+
+  history.appendChild(historySearch);
+
   const historyList = document.createElement('div');
   historyList.classList.add('historyList');
   history.appendChild(historyList);
@@ -46,6 +72,33 @@ function addLineToHistory({ text, translation }) {
     const { text, translation } = e.target.dataset;
 
     openMenu({ text, translation });
+  });
+
+  historyElem.addEventListener('mouseover', () => {
+    translateList(historyElem.querySelector('span'));
+
+    const translatedList = createTranslatedList();
+
+    translatedList.classList.remove('is-hidden');
+
+    translatedList.style.left = 'auto';
+
+    translatedList.style.top = `${historyElem.offsetTop}px`;
+    translatedList.style.right = `${historyElem.offsetWidth}px`;
+
+    translatedList.style.transform = null;
+  });
+
+  historyElem.addEventListener('mouseout', (e) => {
+    if (
+      e.toElement.classList.contains('translatedList')
+      || e.toElement.classList.contains('historyElem')
+    ) {
+      return;
+    }
+
+    document.querySelector('.translatedList')
+      ?.classList.add('is-hidden');
   });
 
   historyList.appendChild(historyElem);
