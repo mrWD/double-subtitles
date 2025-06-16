@@ -45,8 +45,12 @@ function handleMessage(text) {
   });
 }
 
-function translateList(e) {
-  const textList = e.target.innerText.match(/\b\p{L}+\b/gu);
+function translateList(target) {
+  const textList = target.innerText?.match(/\b\p{L}+\b/gu);
+
+  if (!textList) {
+    return;
+  }
 
   chrome.runtime.sendMessage({
     message: 'toTranslateClicked',

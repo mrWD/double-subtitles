@@ -37,14 +37,32 @@
 
 .translatedList {
   position: absolute;
-  top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  border: 1px solid var(--border-primary-color);
-  background-color: var(--primary-color);
   z-index: 10000;
+  transform: translate(-50%, calc(-100% + 1px));
+
+  max-height: 500px;
   padding: 10px;
-  max-height: 200px;
+
+  border: 1px solid var(--border-primary-color);
+  border-radius: 12px;
+  background-color: var(--primary-color);
+
+  overflow-y: auto;
+  scrollbar-color: var(--secondary-color) var(--primary-color);
+  scrollbar-width: thin;
+}
+
+.translatedList.is-hidden {
+  display: none;
+}
+
+.translatedElem {
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 24px;
+  color: var(--text-primary-color);
+  cursor: pointer;
 }
 
 .translatedElem:hover {
@@ -67,7 +85,10 @@
   width: 20%;
   height: 100%;
   padding-block: 16px;
+
   overflow-y: auto;
+  scrollbar-color: var(--secondary-color) var(--primary-color);
+  scrollbar-width: thin;
 }
 
 .sidebar hr {

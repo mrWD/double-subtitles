@@ -42,7 +42,7 @@ function addLineToHistory({ text, translation }) {
   `;
 
   historyElem.addEventListener('click', (e) => {
-    translateList(e);
+    translateList(e.target);
     const { text, translation } = e.target.dataset;
 
     openMenu({ text, translation });

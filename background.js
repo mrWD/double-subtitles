@@ -38,7 +38,12 @@ chrome.runtime.onMessage.addListener(async (req, sender, sendResponse) => {
     );
     chrome.tabs.sendMessage(recentTabId, {
       message: 'translatedList',
-      payload: { data: translatedList.map((elem, index) => ({ text: req.payload.textList[index], translation: elem })) },
+      payload: {
+        data: translatedList.map((elem, index) => ({
+          text: req.payload.textList[index],
+          translation: elem.messageText,
+        })),
+      },
     });
   }
 });

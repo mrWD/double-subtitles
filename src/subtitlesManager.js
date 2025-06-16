@@ -17,8 +17,6 @@ function fillSubtitles({ data, originText }) {
     previousTranslatedElem.remove();
   }
 
-  originalSubtitleLines.addEventListener('click', translateList);
-
   originalSubtitleLines.classList.add('translated');
 
   originalSubtitleLines.parentElement.classList.add('translated');

@@ -26,6 +26,15 @@ function createSubtitlesWrapper() {
 
   subtitleWrapper.classList.add('visibleSubtitles');
 
+  subtitleWrapper.addEventListener('mouseover', () => {
+    translateList(subtitleWrapper.querySelector('.subtitle'));
+  });
+
+  subtitleWrapper.addEventListener('mouseout', (e) => {
+    document.querySelector('.translatedList')
+      ?.classList.add('is-hidden');
+  });
+
   document.body.appendChild(subtitleWrapper);
 
   return subtitleWrapper;
