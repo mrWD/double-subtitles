@@ -20,6 +20,10 @@ function saveToSyncStorage({ text, translation }) {
 }
 
 function saveToAnki({ deckName, text, translation }) {
+  if (!deckName || !text || !translation) {
+    return;
+  }
+
   fetch(`${API}/anki-card`, {
     method: 'POST',
     headers: {
@@ -41,6 +45,10 @@ function saveToAnki({ deckName, text, translation }) {
 }
 
 function saveToQuizlet({ deckName, text, translation }) {
+  if (!deckName || !text || !translation) {
+    return;
+  }
+
   fetch(`${API}/quizlet-card`, {
     method: 'POST',
     headers: {
@@ -62,6 +70,10 @@ function saveToQuizlet({ deckName, text, translation }) {
 }
 
 function saveToGSheet({ spreadsheetId, rangeName, text, translation }) {
+  if (!spreadsheetId || !rangeName || !text || !translation) {
+    return;
+  }
+
   fetch(`${API}/gsheet-card`, {
     method: 'POST',
     headers: {

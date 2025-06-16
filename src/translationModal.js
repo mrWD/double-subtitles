@@ -41,7 +41,7 @@ function createTranslatedList() {
   });
 
   translatedList.addEventListener('mouseout', (e) => {
-    if (e.toElement.classList.contains('translatedList')) {
+    if (e.toElement?.classList.contains('translatedList')) {
       return;
     }
 

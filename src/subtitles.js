@@ -43,8 +43,8 @@ function createSubtitlesWrapper() {
 
   subtitleWrapper.addEventListener('mouseout', (e) => {
     if (
-      e.toElement.classList.contains('translatedList')
-      || e.toElement.classList.contains('subtitle')
+      e.toElement?.classList.contains('translatedList')
+      || e.toElement?.classList.contains('subtitle')
     ) {
       return;
     }

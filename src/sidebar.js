@@ -91,8 +91,8 @@ function addLineToHistory({ text, translation }) {
 
   historyElem.addEventListener('mouseout', (e) => {
     if (
-      e.toElement.classList.contains('translatedList')
-      || e.toElement.classList.contains('historyElem')
+      e.toElement?.classList.contains('translatedList')
+      || e.toElement?.classList.contains('historyElem')
     ) {
       return;
     }

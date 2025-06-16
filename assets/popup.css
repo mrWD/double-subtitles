@@ -15,6 +15,7 @@ body {
 }
 
 .container {
+  box-sizing: border-box;
   width: 400px;
   padding-bottom: 20px;
   background-color: var(--primary-color);
@@ -44,6 +45,7 @@ body {
 }
 
 .headerText {
+  box-sizing: border-box;
   font-size: 16px;
   padding-left: 7px;
   color: var(--text-primary-color);
@@ -65,6 +67,7 @@ body {
 }
 
 .form {
+  box-sizing: border-box;
   width: 100%;
   font-size: 13px;
   padding: 7px;
@@ -72,6 +75,7 @@ body {
 }
 
 .smallContainer {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -167,6 +171,7 @@ a {
 }
 
 .btn {
+  box-sizing: border-box;
   padding: 8px 20px;
   border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: 4px;
@@ -179,6 +184,9 @@ a {
 
 #savedCards {
   inset: 0;
+  box-sizing: border-box;
+  display: none;
+  flex-direction: column;
   max-width: 100%;
   width: 100%;
   max-height: 100%;
@@ -186,14 +194,19 @@ a {
   padding: 10px;
   border: none;
   background-color: var(--primary-color);
+  overflow: hidden;
   text-align: center;
   color: var(--text-primary-color);
 }
 
+#savedCards[open] {
+  display: flex;
+}
+
 #savedCards ul {
+  box-sizing: border-box;
   margin: 0;
-  padding-top: 10px;
-  padding-left: 0;
+  padding: 0;
   overflow-y: auto;
   list-style-type: none;
   text-align: left;
@@ -201,6 +214,7 @@ a {
 
 #savedCards ul li {
   position: relative;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   padding-block: 10px;
@@ -222,6 +236,7 @@ a {
   position: absolute;
   top: 50%;
   right: 10px;
+  box-sizing: border-box;
   padding: 6px 8px;
   transform: translateY(-50%);
   font-size: 0;
@@ -230,6 +245,7 @@ a {
 }
 
 .closeSavedCards__empty {
+  box-sizing: border-box;
   display: none;
   align-self: center;
   justify-self: center;
@@ -251,13 +267,14 @@ a {
 }
 
 .savedCards__search {
+  box-sizing: border-box;
   width: 100%;
   margin-inline: auto;
-  padding-top: 10px;
-  padding-inline: 40px;
+  padding: 10px 40px;
 }
 
 .search-input {
+  box-sizing: border-box;
   width: 100%;
   padding: 8px 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -288,12 +305,14 @@ a {
   top: 50%;
   right: 5px;
   transform: translateY(-50%);
+  box-sizing: border-box;
   padding: 6px 8px;
   color: var(--text-primary-color);
   cursor: pointer;
 }
 
 .donations {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -309,6 +328,7 @@ a {
 }
 
 .donations__link {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 4px;
