@@ -3,6 +3,8 @@
   "name": "Double Subtitles",
   "version": "1.0.1",
   "description": "Display double subtitles.",
+  "author": "Viktor Lavrov",
+  "homepage_url": "https://github.com/mrwd/double-subtitles",
   "permissions": [
     "activeTab",
     "storage"
