@@ -39,14 +39,6 @@ function createTranslatedList() {
 
   translatedList.classList.add('translatedList');
 
-  translatedList.addEventListener('mouseover', (e) => {
-    translatedList.classList.remove('is-hidden');
-  });
-
-  translatedList.addEventListener('mouseout', (e) => {
-    translatedList.classList.add('is-hidden');
-  });
-
   document.body.appendChild(translatedList);
 
   return translatedList;

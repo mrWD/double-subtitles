@@ -41,6 +41,7 @@
   z-index: 10000;
   transform: translate(-50%, calc(-100% + 1px));
 
+  min-width: 300px;
   max-height: 500px;
   padding: 10px;
 
@@ -405,6 +406,7 @@
 
 .cardRow span {
   margin-right: auto;
+  color: var(--text-primary-color);
   white-space: nowrap;
 }
 

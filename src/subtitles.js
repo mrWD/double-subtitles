@@ -26,11 +26,19 @@ function createSubtitlesWrapper() {
 
   subtitleWrapper.classList.add('visibleSubtitles');
 
-  subtitleWrapper.addEventListener('mouseover', () => {
+  subtitleWrapper.addEventListener('mouseover', (e) => {
+    e.stopPropagation();
     translateList(subtitleWrapper.querySelector('.subtitle'));
   });
 
   subtitleWrapper.addEventListener('mouseout', (e) => {
+    if (
+      e.toElement.classList.contains('translatedList')
+      || e.toElement.classList.contains('subtitle')
+    ) {
+      return;
+    }
+
     document.querySelector('.translatedList')
       ?.classList.add('is-hidden');
   });
