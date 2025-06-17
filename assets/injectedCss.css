@@ -37,7 +37,7 @@
 
 .translatedList {
   position: fixed;
-  z-index: 10000;
+  z-index: 9999999999;
 
   box-sizing: border-box;
   min-width: 300px;
