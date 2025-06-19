@@ -32,6 +32,44 @@ Double Subtitles is a browser extension that enhances your video-watching experi
 * Anki
 * Quizlet
 
+## Planned Improvements
+
+### 1. New Platform Support
+- **Apple TV**
+
+### 2. Multi-Browser Support
+- [ ] **Firefox** - Firefox WebExtensions API
+- [ ] **Opera** - Opera browser compatibility
+- [ ] **Safari** - Safari App Extensions
+
+### 3. Language Learning Enhancements
+- [ ] Show initial forms of verbs and nouns for better language understanding
+- [ ] Display word roots and grammatical information
+
+### 4. Advanced Configuration
+- [ ] Add comprehensive style configuration options
+- [ ] Customizable subtitle appearance and positioning
+- [ ] Theme support and user preferences
+
+### 5. Synchronization Features
+- [ ] Bind subtitles to video timeline for precise synchronization
+- [ ] Automatic subtitle timing adjustment
+- [ ] Support for external subtitle files
+
+### 6. Accessibility
+- [ ] ARIA labels and keyboard navigation
+
+### 7. Other
+- [ ] Screen reader support
+- [ ] Add a way to hide the sidebar
+- [ ] Add a way to hide the double subtitles
+- [ ] Add a way to hide the saved cards
+- [ ] Add a way to hide the translation modal
+- [ ] Add a way to hide the translation history
+- [ ] Add a way to hide the translation settings
+- [ ] Add a way to export all the history
+- [ ] Split the history by movie name
+
 ## Files
 * background.js: Handles background tasks.
 * content.js: Injects scripts into the video pages.
