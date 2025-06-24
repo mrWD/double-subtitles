@@ -45,7 +45,7 @@ function getTranslatedSubtitlesFromDom() {
 function getSubtitleMainClass() {
   const mapPlatformToClass = {
     amazon: 'atvwebplayersdk-captions-text',
-    disney: 'dss-subtitle-renderer-cue',
+    disney: 'hive-subtitle-renderer-line',
     netflix: 'player-timedtext-text-container',
   };
 
