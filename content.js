@@ -1,6 +1,6 @@
 let isMonitorActive = null;
-let originalLanguage = decodeLang('de');
-let secondLanguage = decodeLang('ru');
+let originalLanguage = null;
+let secondLanguage = null;
 let savedSubtitle = null;
 let options;
 
@@ -8,6 +8,7 @@ async function initContent() {
   options = await loadOptionsOrSetDefaults();
   startMonitoringForElements(0);
   secondLanguage = options.secondLanguage;
+  originalLanguage = decodeLang(options.currentForeignLanguage);
 }
 
 initContent();
@@ -16,6 +17,7 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
   if (areaName === 'sync' && changes.options?.newValue) {
     options = changes.options.newValue;
     secondLanguage = options.secondLanguage;
+    originalLanguage = decodeLang(options.currentForeignLanguage);
   }
 });
 

@@ -11,6 +11,7 @@ async function loadOptionsOrSetDefaults() {
         options = {
           extensionOn: true,
           secondLanguage: 'en',
+          currentForeignLanguage: 'en',
         };
 
         chrome.storage.sync.set({

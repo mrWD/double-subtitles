@@ -59,23 +59,15 @@ function monitorSuptitleUpdates() {
     subtitleWrapper &&
     options.extensionOn &&
     secondLanguage &&
+    originalLanguage &&
     savedSubtitle != subtitleWrapper?.innerText
   ) {
     savedSubtitle = subtitleWrapper.innerText;
     handleMessage(savedSubtitle);
   }
 
-  const subtitlePicker = document.querySelectorAll('.f1dqudmj')[0];
-
-  if (subtitlePicker && subtitlePicker.children.length > 0) {
-    const originalLanguageList = Array.from(
-      document.querySelectorAll('.f1dqudmj')[0].children
-    );
-    originalLanguageList.forEach((elem) => {
-      if (elem.children[1].classList.contains('f1bhki25')) {
-        originalLanguage = elem.innerText;
-      }
-    });
+  if (!originalLanguage && options.currentForeignLanguage) {
+    originalLanguage = decodeLang(options.currentForeignLanguage);
   }
 }
 

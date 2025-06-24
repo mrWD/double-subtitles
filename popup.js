@@ -1,5 +1,6 @@
 const onOff = document.querySelector('#onOff');
 const languageSelect = document.querySelector('#secondLanguage');
+const currentForeignLanguageSelect = document.querySelector('#currentForeignLanguage');
 const languageOptions = document.querySelectorAll('#secondLanguage option');
 const savedCardsModal = document.querySelector('#savedCards');
 const showCardsButton = document.querySelector('#showSavedCards');
@@ -19,6 +20,15 @@ languageSelect.addEventListener('change', (event) => {
     options: {
       ...options,
       secondLanguage: event.target.value
+    },
+  });
+});
+
+currentForeignLanguageSelect.addEventListener('change', (event) => {
+  chrome.storage.sync.set({
+    options: {
+      ...options,
+      currentForeignLanguage: event.target.value
     },
   });
 });
@@ -46,12 +56,14 @@ linkBtns.forEach(btn => {
 function setOptions() {
   options.extensionOn = onOff.checked;
   options.secondLanguage = languageSelect.value;
+  options.currentForeignLanguage = currentForeignLanguageSelect.value;
   saveOptions(options);
 }
 
 function setCheckbox(options) {
   onOff.checked = options.extensionOn;
   languageSelect.value = options.secondLanguage;
+  currentForeignLanguageSelect.value = options.currentForeignLanguage;
 }
 
 function saveOptions(options) {
@@ -91,16 +103,19 @@ function populateHtmlWithText() {
   const showHideSidebarLabel = document.querySelector('#showHideSidebarLabel');
   const showHideDoubleSubtitlesLabel = document.querySelector('#showHideDoubleSubtitlesLabel');
   const langLabel = document.querySelector('#langLabel');
+  const currentForeignLangLabel = document.querySelector('#currentForeignLangLabel');
 
   const popupTex1Msg = chrome.i18n.getMessage('popupTex1');
   const onOffLabelMsg = chrome.i18n.getMessage('onOffLabel');
   const showHideSidebarLabelMsg = chrome.i18n.getMessage('showHideSidebarLabel');
   const showHideDoubleSubtitlesLabelMsg = chrome.i18n.getMessage('showHideDoubleSubtitlesLabel');
   const langLabelMsg = chrome.i18n.getMessage('langLabel');
+  const currentForeignLangLabelMsg = chrome.i18n.getMessage('currentForeignLangLabel');
 
   popupText.innerHTML = popupTex1Msg;
   onOffLabel.textContent = onOffLabelMsg;
   showHideSidebarLabel.textContent = showHideSidebarLabelMsg;
   showHideDoubleSubtitlesLabel.textContent = showHideDoubleSubtitlesLabelMsg;
   langLabel.textContent = langLabelMsg;
+  currentForeignLangLabel.textContent = currentForeignLangLabelMsg;
 }

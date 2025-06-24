@@ -5,6 +5,9 @@
    "langLabel": {
       "message": "Select second language"
    },
+   "currentForeignLangLabel": {
+      "message": "Current foreign language"
+   },
    "name": {
       "message": "Double Subtitles"
    },
