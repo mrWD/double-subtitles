@@ -50,6 +50,11 @@ function createSidebarWithHistory() {
   historyList.classList.add('historyList');
   history.appendChild(historyList);
 
+  // Ensure the sidebar has the correct width after creation
+  if (window.options && window.options.sidebarWidth) {
+    sidebar.style.width = window.options.sidebarWidth;
+  }
+
   return { history, historyList };
 }
 
@@ -133,6 +138,11 @@ function createSidebar() {
     sidebar.style.right = 0;
   }
 
+  // Set initial width from options
+  if (window.options && window.options.sidebarWidth) {
+    sidebar.style.width = window.options.sidebarWidth;
+  }
+
   if (window.options && window.options.showSidebar !== undefined) {
     if (!window.options.showSidebar) {
       sidebar.classList.add('hidden');
@@ -142,7 +152,96 @@ function createSidebar() {
     }
   }
 
+  // Add resize handle
+  const resizeHandle = document.createElement('div');
+  resizeHandle.classList.add('sidebar-resize-handle');
+  sidebar.appendChild(resizeHandle);
+
+  // Add resize functionality
+  makeSidebarResizable(sidebar, resizeHandle);
+
   return sidebar;
+}
+
+function makeSidebarResizable(sidebar, resizeHandle) {
+  let isResizing = false;
+  let startX, startWidth;
+
+  function startResize(e) {
+    isResizing = true;
+    startX = e.clientX;
+    startWidth = parseInt(getComputedStyle(sidebar).width, 10);
+
+    resizeHandle.classList.add('resizing');
+    document.body.style.cursor = 'ew-resize';
+    document.body.style.userSelect = 'none';
+  }
+
+  function doResize(e) {
+    if (!isResizing) return;
+
+    const deltaX = e.clientX - startX;
+    const newWidth = startWidth - deltaX; // Subtract because sidebar is on the right
+
+    // Apply min/max constraints
+    const minWidth = 200;
+    const maxWidth = window.innerWidth * 0.5;
+    const constrainedWidth = Math.max(minWidth, Math.min(maxWidth, newWidth));
+
+    sidebar.style.width = `${constrainedWidth}px`;
+
+    // Adjust content width for Netflix
+    if (window.STREAMING_PLATFORM === 'netflix') {
+      const videoContainer = document.querySelector('.watch-video');
+      if (videoContainer) {
+        const contentWidth = 100 - (constrainedWidth / window.innerWidth * 100);
+        videoContainer.style.width = `${contentWidth}%`;
+      }
+    }
+  }
+
+  function stopResize() {
+    if (!isResizing) return;
+
+    isResizing = false;
+    resizeHandle.classList.remove('resizing');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+
+    // Save the new width
+    const newWidth = sidebar.style.width;
+    if (window.options && newWidth) {
+      window.options.sidebarWidth = newWidth;
+      chrome.storage.sync.set({
+        options: window.options,
+      });
+    }
+  }
+
+  function handleWindowResize() {
+    // Ensure sidebar width is within constraints after window resize
+    const currentWidth = parseInt(getComputedStyle(sidebar).width, 10);
+    const maxWidth = window.innerWidth * 0.5;
+
+    if (currentWidth > maxWidth) {
+      sidebar.style.width = `${maxWidth}px`;
+      if (window.options) {
+        window.options.sidebarWidth = sidebar.style.width;
+        chrome.storage.sync.set({
+          options: window.options,
+        });
+      }
+    }
+  }
+
+  // Add event listeners
+  resizeHandle.addEventListener('mousedown', startResize);
+  document.addEventListener('mousemove', doResize);
+  document.addEventListener('mouseup', stopResize);
+  window.addEventListener('resize', handleWindowResize);
+
+  // Prevent text selection during resize
+  resizeHandle.addEventListener('selectstart', (e) => e.preventDefault());
 }
 
 function showSidebar() {
@@ -175,7 +274,18 @@ function adjustContentWidth(sidebarVisible) {
   if (window.STREAMING_PLATFORM === 'netflix') {
     const videoContainer = document.querySelector('.watch-video');
     if (videoContainer) {
-      videoContainer.style.width = sidebarVisible ? '80%' : '100%';
+      if (sidebarVisible) {
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) {
+          const sidebarWidth = parseInt(getComputedStyle(sidebar).width, 10);
+          const contentWidth = 100 - (sidebarWidth / window.innerWidth * 100);
+          videoContainer.style.width = `${contentWidth}%`;
+        } else {
+          videoContainer.style.width = '80%';
+        }
+      } else {
+        videoContainer.style.width = '100%';
+      }
     }
   }
 

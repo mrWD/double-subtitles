@@ -14,6 +14,7 @@ async function loadOptionsOrSetDefaults() {
           currentForeignLanguage: 'en',
           showSidebar: true,
           showDoubleSubtitles: true,
+          sidebarWidth: '20%',
         };
 
         chrome.storage.sync.set({
