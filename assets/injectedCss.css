@@ -73,6 +73,7 @@
 
 #dv-web-player {
   display: flex;
+  transition: none;
 }
 
 .sidebar {
@@ -93,6 +94,12 @@
   overflow-y: auto;
   scrollbar-color: var(--secondary-color) var(--primary-color);
   scrollbar-width: thin;
+
+  transition: none;
+}
+
+.sidebar.hidden {
+  display: none !important;
 }
 
 .sidebar hr {
@@ -465,4 +472,8 @@
   font-weight: 500;
   color: var(--text-primary-color);
   cursor: pointer;
+}
+
+.watch-video {
+  transition: width 0s ease-in-out;
 }

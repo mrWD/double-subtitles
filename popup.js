@@ -1,4 +1,5 @@
 const onOff = document.querySelector('#onOff');
+const showHideSidebar = document.querySelector('#showHideSidebar');
 const languageSelect = document.querySelector('#secondLanguage');
 const currentForeignLanguageSelect = document.querySelector('#currentForeignLanguage');
 const languageOptions = document.querySelectorAll('#secondLanguage option');
@@ -37,6 +38,19 @@ onOff.addEventListener('change', () => {
   setOptions();
 });
 
+showHideSidebar.addEventListener('change', () => {
+  setOptions();
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs[0]) {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        message: 'toggleSidebar',
+        payload: { show: showHideSidebar.checked }
+      });
+    }
+  });
+});
+
 showCardsButton.addEventListener('click', () => {
   savedCardsModal.showModal();
 });
@@ -55,6 +69,7 @@ linkBtns.forEach(btn => {
 
 function setOptions() {
   options.extensionOn = onOff.checked;
+  options.showSidebar = showHideSidebar.checked;
   options.secondLanguage = languageSelect.value;
   options.currentForeignLanguage = currentForeignLanguageSelect.value;
   saveOptions(options);
@@ -62,6 +77,7 @@ function setOptions() {
 
 function setCheckbox(options) {
   onOff.checked = options.extensionOn;
+  showHideSidebar.checked = options.showSidebar;
   languageSelect.value = options.secondLanguage;
   currentForeignLanguageSelect.value = options.currentForeignLanguage;
 }

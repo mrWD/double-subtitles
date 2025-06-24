@@ -12,6 +12,7 @@ async function loadOptionsOrSetDefaults() {
           extensionOn: true,
           secondLanguage: 'en',
           currentForeignLanguage: 'en',
+          showSidebar: true,
         };
 
         chrome.storage.sync.set({

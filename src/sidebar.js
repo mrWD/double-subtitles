@@ -133,5 +133,65 @@ function createSidebar() {
     sidebar.style.right = 0;
   }
 
+  if (window.options && window.options.showSidebar !== undefined) {
+    if (!window.options.showSidebar) {
+      sidebar.classList.add('hidden');
+      sidebar.style.display = 'none';
+    } else {
+      sidebar.style.display = 'flex';
+    }
+  }
+
   return sidebar;
 }
+
+function showSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar) {
+    sidebar.classList.remove('hidden');
+    sidebar.style.display = 'flex';
+    adjustContentWidth(true);
+  }
+}
+
+function hideSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar) {
+    sidebar.classList.add('hidden');
+    sidebar.style.display = 'none';
+    adjustContentWidth(false);
+  }
+}
+
+function toggleSidebar(show) {
+  if (show) {
+    showSidebar();
+  } else {
+    hideSidebar();
+  }
+}
+
+function adjustContentWidth(sidebarVisible) {
+  if (window.STREAMING_PLATFORM === 'netflix') {
+    const videoContainer = document.querySelector('.watch-video');
+    if (videoContainer) {
+      videoContainer.style.width = sidebarVisible ? '80%' : '100%';
+    }
+  }
+
+  if (window.STREAMING_PLATFORM === 'amazon') {
+    // Amazon uses flexbox, so the sidebar visibility is handled by display property
+    // No additional width adjustment needed
+  }
+
+  if (window.STREAMING_PLATFORM === 'disney') {
+    // Disney uses flexbox, so the sidebar visibility is handled by display property
+    // No additional width adjustment needed
+  }
+}
+
+// Export functions for use in other files
+window.showSidebar = showSidebar;
+window.hideSidebar = hideSidebar;
+window.toggleSidebar = toggleSidebar;
+window.createSidebarWithHistory = createSidebarWithHistory;
