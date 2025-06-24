@@ -21,6 +21,10 @@ async function initContent() {
   if (window.toggleDoubleSubtitles) {
     window.toggleDoubleSubtitles(options.showDoubleSubtitles);
   }
+
+  if (window.updateSidebarFontSize) {
+    window.updateSidebarFontSize(options.sidebarFontSize || 16);
+  }
 }
 
 initContent();
@@ -47,6 +51,10 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
   if (window.toggleDoubleSubtitles) {
     window.toggleDoubleSubtitles(options.showDoubleSubtitles);
   }
+
+  if (window.updateSidebarFontSize) {
+    window.updateSidebarFontSize(options.sidebarFontSize || 16);
+  }
 });
 
 chrome.runtime.onMessage.addListener((req) => {
@@ -71,6 +79,12 @@ chrome.runtime.onMessage.addListener((req) => {
   if (req.message === 'toggleDoubleSubtitles') {
     if (window.toggleDoubleSubtitles) {
       window.toggleDoubleSubtitles(req.payload.show);
+    }
+  }
+
+  if (req.message === 'updateSidebarFontSize') {
+    if (window.updateSidebarFontSize) {
+      window.updateSidebarFontSize(req.payload.fontSize);
     }
   }
 });

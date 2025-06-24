@@ -15,6 +15,7 @@ async function loadOptionsOrSetDefaults() {
           showSidebar: true,
           showDoubleSubtitles: true,
           sidebarWidth: '20%',
+          sidebarFontSize: 16,
         };
 
         chrome.storage.sync.set({

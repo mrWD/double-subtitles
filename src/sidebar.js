@@ -18,6 +18,12 @@ function createSidebarWithHistory() {
   const historyTitle = document.createElement('div');
   historyTitle.classList.add('historyTitle');
   historyTitle.textContent = 'HISTORY';
+
+  // Apply current font size to history title
+  if (window.options && window.options.sidebarFontSize) {
+    historyTitle.style.fontSize = `${window.options.sidebarFontSize}px`;
+  }
+
   history.appendChild(historyTitle);
 
   const historySearchInput = document.createElement('input');
@@ -25,6 +31,11 @@ function createSidebarWithHistory() {
   historySearchInput.id = 'searchHistory';
   historySearchInput.placeholder = 'Search translations...';
   historySearchInput.classList.add('search-input');
+
+  // Apply current font size to search input
+  if (window.options && window.options.sidebarFontSize) {
+    historySearchInput.style.fontSize = `${window.options.sidebarFontSize}px`;
+  }
 
   historySearchInput.addEventListener('input', (e) => {
     const searchValue = e.target.value?.toLowerCase();
@@ -55,6 +66,11 @@ function createSidebarWithHistory() {
     sidebar.style.width = window.options.sidebarWidth;
   }
 
+  // Set initial font size
+  if (window.options && window.options.sidebarFontSize) {
+    updateSidebarFontSize(window.options.sidebarFontSize);
+  }
+
   return { history, historyList };
 }
 
@@ -71,6 +87,15 @@ function addLineToHistory({ text, translation }) {
     <span>${text}</span>
     <span>${translation}</span>
   `;
+
+  // Apply current font size to new history element
+  if (window.options && window.options.sidebarFontSize) {
+    historyElem.style.fontSize = `${window.options.sidebarFontSize}px`;
+    const spans = historyElem.querySelectorAll('span');
+    spans.forEach(span => {
+      span.style.fontSize = `${window.options.sidebarFontSize}px`;
+    });
+  }
 
   historyElem.addEventListener('click', (e) => {
     translateList(e.target);
@@ -300,8 +325,25 @@ function adjustContentWidth(sidebarVisible) {
   }
 }
 
+function updateSidebarFontSize(fontSize) {
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar) {
+    // Update font size for all text elements in the sidebar
+    const textElements = sidebar.querySelectorAll('.historyTitle, .search-input, .historyElem, .historyElem span');
+    textElements.forEach(element => {
+      element.style.fontSize = `${fontSize}px`;
+    });
+
+    // Also update the global options for future elements
+    if (window.options) {
+      window.options.sidebarFontSize = fontSize;
+    }
+  }
+}
+
 // Export functions for use in other files
 window.showSidebar = showSidebar;
 window.hideSidebar = hideSidebar;
 window.toggleSidebar = toggleSidebar;
 window.createSidebarWithHistory = createSidebarWithHistory;
+window.updateSidebarFontSize = updateSidebarFontSize;

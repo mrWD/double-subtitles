@@ -17,6 +17,9 @@
    "showHideSidebarLabel": {
       "message": "Show sidebar"
    },
+   "sidebarFontSizeLabel": {
+      "message": "Sidebar font size"
+   },
    "showHideDoubleSubtitlesLabel": {
       "message": "Show double subtitles"
    },

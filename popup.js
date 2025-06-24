@@ -1,6 +1,8 @@
 const onOff = document.querySelector('#onOff');
 const showHideSidebar = document.querySelector('#showHideSidebar');
 const showHideDoubleSubtitles = document.querySelector('#showHideDoubleSubtitles');
+const sidebarFontSize = document.querySelector('#sidebarFontSize');
+const resetFontSize = document.querySelector('#resetFontSize');
 const languageSelect = document.querySelector('#secondLanguage');
 const currentForeignLanguageSelect = document.querySelector('#currentForeignLanguage');
 const languageOptions = document.querySelectorAll('#secondLanguage option');
@@ -65,6 +67,33 @@ showHideDoubleSubtitles.addEventListener('change', () => {
   });
 });
 
+sidebarFontSize.addEventListener('input', () => {
+  setOptions();
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs[0]) {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        message: 'updateSidebarFontSize',
+        payload: { fontSize: parseInt(sidebarFontSize.value) }
+      });
+    }
+  });
+});
+
+resetFontSize.addEventListener('click', () => {
+  sidebarFontSize.value = 16;
+  setOptions();
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs[0]) {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        message: 'updateSidebarFontSize',
+        payload: { fontSize: 16 }
+      });
+    }
+  });
+});
+
 showCardsButton.addEventListener('click', () => {
   savedCardsModal.showModal();
 });
@@ -85,6 +114,7 @@ function setOptions() {
   options.extensionOn = onOff.checked;
   options.showSidebar = showHideSidebar.checked;
   options.showDoubleSubtitles = showHideDoubleSubtitles.checked;
+  options.sidebarFontSize = parseInt(sidebarFontSize.value) || 16;
   options.secondLanguage = languageSelect.value;
   options.currentForeignLanguage = currentForeignLanguageSelect.value;
   saveOptions(options);
@@ -94,6 +124,7 @@ function setCheckbox(options) {
   onOff.checked = options.extensionOn;
   showHideSidebar.checked = options.showSidebar;
   showHideDoubleSubtitles.checked = options.showDoubleSubtitles;
+  sidebarFontSize.value = options.sidebarFontSize || 16;
   languageSelect.value = options.secondLanguage;
   currentForeignLanguageSelect.value = options.currentForeignLanguage;
 }
@@ -133,6 +164,7 @@ function populateHtmlWithText() {
   const popupText = document.querySelector('.text1');
   const onOffLabel = document.querySelector('#onOffLabel');
   const showHideSidebarLabel = document.querySelector('#showHideSidebarLabel');
+  const sidebarFontSizeLabel = document.querySelector('#sidebarFontSizeLabel');
   const showHideDoubleSubtitlesLabel = document.querySelector('#showHideDoubleSubtitlesLabel');
   const langLabel = document.querySelector('#langLabel');
   const currentForeignLangLabel = document.querySelector('#currentForeignLangLabel');
@@ -140,6 +172,7 @@ function populateHtmlWithText() {
   const popupTex1Msg = chrome.i18n.getMessage('popupTex1');
   const onOffLabelMsg = chrome.i18n.getMessage('onOffLabel');
   const showHideSidebarLabelMsg = chrome.i18n.getMessage('showHideSidebarLabel');
+  const sidebarFontSizeLabelMsg = chrome.i18n.getMessage('sidebarFontSizeLabel');
   const showHideDoubleSubtitlesLabelMsg = chrome.i18n.getMessage('showHideDoubleSubtitlesLabel');
   const langLabelMsg = chrome.i18n.getMessage('langLabel');
   const currentForeignLangLabelMsg = chrome.i18n.getMessage('currentForeignLangLabel');
@@ -147,6 +180,7 @@ function populateHtmlWithText() {
   popupText.innerHTML = popupTex1Msg;
   onOffLabel.textContent = onOffLabelMsg;
   showHideSidebarLabel.textContent = showHideSidebarLabelMsg;
+  sidebarFontSizeLabel.textContent = sidebarFontSizeLabelMsg;
   showHideDoubleSubtitlesLabel.textContent = showHideDoubleSubtitlesLabelMsg;
   langLabel.textContent = langLabelMsg;
   currentForeignLangLabel.textContent = currentForeignLangLabelMsg;
