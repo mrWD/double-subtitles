@@ -6,19 +6,20 @@ let options;
 
 async function initContent() {
   options = await loadOptionsOrSetDefaults();
-  // Make options globally available
   window.options = options;
 
   startMonitoringForElements(0);
   secondLanguage = options.secondLanguage;
   originalLanguage = decodeLang(options.currentForeignLanguage);
 
-  // Create sidebar immediately
   createSidebarWithHistory();
 
-  // Initialize sidebar visibility based on options
   if (window.toggleSidebar) {
     window.toggleSidebar(options.showSidebar);
+  }
+
+  if (window.toggleDoubleSubtitles) {
+    window.toggleDoubleSubtitles(options.showDoubleSubtitles);
   }
 }
 
@@ -30,20 +31,21 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
   }
 
   options = changes.options.newValue;
-  // Update global options
   window.options = options;
 
   secondLanguage = options.secondLanguage;
   originalLanguage = decodeLang(options.currentForeignLanguage);
 
-  // Ensure sidebar exists before toggling
   if (!document.querySelector('.sidebar')) {
     createSidebarWithHistory();
   }
 
-  // Update sidebar visibility when options change
   if (window.toggleSidebar) {
     window.toggleSidebar(options.showSidebar);
+  }
+
+  if (window.toggleDoubleSubtitles) {
+    window.toggleDoubleSubtitles(options.showDoubleSubtitles);
   }
 });
 
@@ -56,16 +58,20 @@ chrome.runtime.onMessage.addListener((req) => {
     showTranslatedList(req.payload.data);
   }
 
-  if (req.message !== 'toggleSidebar') {
-    return;
+  if (req.message === 'toggleSidebar') {
+    if (!document.querySelector('.sidebar')) {
+      createSidebarWithHistory();
+    }
+
+    if (window.toggleSidebar) {
+      window.toggleSidebar(req.payload.show);
+    }
   }
 
-  if (!document.querySelector('.sidebar')) {
-    createSidebarWithHistory();
-  }
-
-  if (window.toggleSidebar) {
-    window.toggleSidebar(req.payload.show);
+  if (req.message === 'toggleDoubleSubtitles') {
+    if (window.toggleDoubleSubtitles) {
+      window.toggleDoubleSubtitles(req.payload.show);
+    }
   }
 });
 

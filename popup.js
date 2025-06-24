@@ -1,5 +1,6 @@
 const onOff = document.querySelector('#onOff');
 const showHideSidebar = document.querySelector('#showHideSidebar');
+const showHideDoubleSubtitles = document.querySelector('#showHideDoubleSubtitles');
 const languageSelect = document.querySelector('#secondLanguage');
 const currentForeignLanguageSelect = document.querySelector('#currentForeignLanguage');
 const languageOptions = document.querySelectorAll('#secondLanguage option');
@@ -51,6 +52,19 @@ showHideSidebar.addEventListener('change', () => {
   });
 });
 
+showHideDoubleSubtitles.addEventListener('change', () => {
+  setOptions();
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs[0]) {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        message: 'toggleDoubleSubtitles',
+        payload: { show: showHideDoubleSubtitles.checked }
+      });
+    }
+  });
+});
+
 showCardsButton.addEventListener('click', () => {
   savedCardsModal.showModal();
 });
@@ -70,6 +84,7 @@ linkBtns.forEach(btn => {
 function setOptions() {
   options.extensionOn = onOff.checked;
   options.showSidebar = showHideSidebar.checked;
+  options.showDoubleSubtitles = showHideDoubleSubtitles.checked;
   options.secondLanguage = languageSelect.value;
   options.currentForeignLanguage = currentForeignLanguageSelect.value;
   saveOptions(options);
@@ -78,6 +93,7 @@ function setOptions() {
 function setCheckbox(options) {
   onOff.checked = options.extensionOn;
   showHideSidebar.checked = options.showSidebar;
+  showHideDoubleSubtitles.checked = options.showDoubleSubtitles;
   languageSelect.value = options.secondLanguage;
   currentForeignLanguageSelect.value = options.currentForeignLanguage;
 }

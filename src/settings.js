@@ -13,6 +13,7 @@ async function loadOptionsOrSetDefaults() {
           secondLanguage: 'en',
           currentForeignLanguage: 'en',
           showSidebar: true,
+          showDoubleSubtitles: true,
         };
 
         chrome.storage.sync.set({

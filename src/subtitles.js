@@ -12,6 +12,11 @@ function addLineToSubtitles({ text, translation }) {
 
   subtitleWrapper.appendChild(mainText);
   subtitleWrapper.appendChild(translatedText);
+
+  if (window.options && window.options.showDoubleSubtitles === false) {
+    translatedText.style.display = 'none';
+  }
+
   subtitleWrapper.appendChild(createMenuButton({ text, translation }));
 }
 
@@ -53,6 +58,8 @@ function createSubtitlesWrapper() {
       ?.classList.add('is-hidden');
   });
 
+  subtitleWrapper.style.display = 'flex';
+
   document.body.appendChild(subtitleWrapper);
 
   return subtitleWrapper;
@@ -86,3 +93,42 @@ function createMenuButton({ text, translation }) {
 
   return menuButton;
 }
+
+function updateExistingSubtitlesVisibility(show) {
+  const visibleSubtitles = document.querySelector('.visibleSubtitles');
+  if (visibleSubtitles) {
+    const translatedSubtitles = visibleSubtitles.querySelectorAll('.subtitle:nth-child(2)');
+    translatedSubtitles.forEach(subtitle => {
+      subtitle.style.display = show ? 'block' : 'none';
+    });
+  }
+}
+
+function showDoubleSubtitles() {
+  const visibleSubtitles = document.querySelector('.visibleSubtitles');
+  if (visibleSubtitles) {
+    visibleSubtitles.classList.remove('hidden');
+    visibleSubtitles.style.display = 'flex';
+
+    updateExistingSubtitlesVisibility(true);
+  }
+}
+
+function hideDoubleSubtitles() {
+  const visibleSubtitles = document.querySelector('.visibleSubtitles');
+  if (visibleSubtitles) {
+    updateExistingSubtitlesVisibility(false);
+  }
+}
+
+function toggleDoubleSubtitles(show) {
+  if (show) {
+    showDoubleSubtitles();
+  } else {
+    hideDoubleSubtitles();
+  }
+}
+
+window.showDoubleSubtitles = showDoubleSubtitles;
+window.hideDoubleSubtitles = hideDoubleSubtitles;
+window.toggleDoubleSubtitles = toggleDoubleSubtitles;
