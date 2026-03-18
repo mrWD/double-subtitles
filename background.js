@@ -3,6 +3,7 @@ const urls = [
   '*://*.amazon.com/*',
   '*://*.disneyplus.com/*',
   '*://*.netflix.com/*',
+  '*://*.youtube.com/*',
   '*://ankiuser.net/*',
   '*://quizlet.com/*',
 ];
@@ -27,16 +28,26 @@ function reloadTabs() {
 
 chrome.runtime.onMessage.addListener(async (req, sender, sendResponse) => {
   if (req.message === 'toTranslate') {
-    recentTabId = sender.tab.id;
-    const { messageText, originText } = await translateRow(req.payload);
-    sendTranslatedMessage(messageText, originText);
+    recentTabId = sender.tab?.id ?? recentTabId;
+    const {
+      messageText,
+      originText,
+      requestId,
+    } = await translateRow(req.payload);
+    sendTranslatedMessage(messageText, originText, requestId);
   }
 
   if (req.message === 'toTranslateClicked') {
+    const targetTabId = sender.tab?.id ?? recentTabId;
+
+    if (targetTabId == null) {
+      return;
+    }
+
     const translatedList = await Promise.all(
       req.payload.textList.map((elem) => translateRow({ ...req.payload, text: elem }))
     );
-    chrome.tabs.sendMessage(recentTabId, {
+    chrome.tabs.sendMessage(targetTabId, {
       message: 'translatedList',
       payload: {
         data: translatedList.map((elem, index) => ({
@@ -75,18 +86,26 @@ async function translateRow(obj) {
     const newArr = messageArr.map((elem) => elem[0]);
     const messageText = newArr.join('');
 
-    return { messageText, originText: text };
+    return {
+      messageText,
+      originText: obj.text,
+      requestId: obj.requestId,
+    };
   } catch (error) {
     console.log(error.res?.status ?? error);
-    return { messageText: '', originText: text };
+    return {
+      messageText: '',
+      originText: obj.text,
+      requestId: obj.requestId,
+    };
   }
 }
 
-async function sendTranslatedMessage(data, originText) {
-  if (recentTabId) {
+async function sendTranslatedMessage(data, originText, requestId) {
+  if (recentTabId != null) {
     chrome.tabs.sendMessage(recentTabId, {
       message: 'translated',
-      payload: { data, originText },
+      payload: { data, originText, requestId },
     });
   }
 }

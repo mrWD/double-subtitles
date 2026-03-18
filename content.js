@@ -3,6 +3,8 @@ let originalLanguage = null;
 let secondLanguage = null;
 let savedSubtitle = null;
 let options;
+let latestTranslationRequestId = 0;
+let latestAppliedTranslationRequestId = 0;
 
 async function initContent() {
   options = await loadOptionsOrSetDefaults();
@@ -59,6 +61,18 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 
 chrome.runtime.onMessage.addListener((req) => {
   if (req.message === 'translated') {
+    if (
+      window.STREAMING_PLATFORM === 'youtube'
+      && req.payload.requestId
+      && req.payload.requestId < latestAppliedTranslationRequestId
+    ) {
+      return;
+    }
+
+    latestAppliedTranslationRequestId = Math.max(
+      latestAppliedTranslationRequestId,
+      req.payload.requestId ?? 0
+    );
     fillSubtitles(req.payload);
   }
 
@@ -95,12 +109,15 @@ function handleMessage(text) {
     return;
   }
 
+  latestTranslationRequestId += 1;
+
   chrome.runtime.sendMessage({
     message: 'toTranslate',
     payload: {
       text,
       lang1: encodeLang(originalLanguage),
       lang2: secondLanguage,
+      requestId: latestTranslationRequestId,
     },
   });
 }

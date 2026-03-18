@@ -18,6 +18,7 @@
     "*://*.amazon.co.jp/*",
     "*://*.disneyplus.com/*",
     "*://*.netflix.com/*",
+    "*://*.youtube.com/*",
     "*://ankiuser.net/*",
     "*://quizlet.com/*",
     "https://translate.googleapis.com/*"
@@ -62,6 +63,7 @@
         "*://*.amazon.co.jp/*",
         "*://*.disneyplus.com/*",
         "*://*.netflix.com/*",
+        "*://*.youtube.com/*",
         "*://ankiuser.net/*",
         "*://quizlet.com/*"
       ]

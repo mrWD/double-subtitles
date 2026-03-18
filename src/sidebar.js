@@ -76,30 +76,51 @@ function createSidebarWithHistory() {
 
 function addLineToHistory({ text, translation }) {
   const { historyList } = createSidebarWithHistory();
+  const normalizedText = text?.trim();
+
+  if (!normalizedText) {
+    return;
+  }
+
+  const lastHistoryElem = historyList.lastElementChild;
+
+  if (
+    window.STREAMING_PLATFORM === 'youtube'
+    && lastHistoryElem?.classList.contains('historyElem')
+  ) {
+    const previousText = lastHistoryElem.dataset.text ?? '';
+
+    if (normalizedText === previousText) {
+      return;
+    }
+
+    if (
+      normalizedText.startsWith(previousText)
+      || previousText.startsWith(normalizedText)
+    ) {
+      updateHistoryElement(lastHistoryElem, {
+        text: normalizedText,
+        translation,
+      });
+      scrollSidebarToBottom();
+      return;
+    }
+  }
 
   const historyElem = document.createElement('div');
 
   historyElem.classList.add('historyElem');
-  historyElem.dataset.text = text;
+  historyElem.dataset.text = normalizedText;
   historyElem.dataset.translation = translation;
 
-  historyElem.innerHTML = `
-    <span>${text}</span>
-    <span>${translation}</span>
-  `;
-
-  // Apply current font size to new history element
-  if (window.options && window.options.sidebarFontSize) {
-    historyElem.style.fontSize = `${window.options.sidebarFontSize}px`;
-    const spans = historyElem.querySelectorAll('span');
-    spans.forEach(span => {
-      span.style.fontSize = `${window.options.sidebarFontSize}px`;
-    });
-  }
+  updateHistoryElement(historyElem, {
+    text: normalizedText,
+    translation,
+  });
 
   historyElem.addEventListener('click', (e) => {
     translateList(e.target);
-    const { text, translation } = e.target.dataset;
+    const { text, translation } = historyElem.dataset;
 
     openMenu({ text, translation });
   });
@@ -133,8 +154,32 @@ function addLineToHistory({ text, translation }) {
 
   historyList.appendChild(historyElem);
 
-  document.querySelector('.sidebar').scrollTop = document.querySelector('.sidebar')
-    .scrollHeight;
+  scrollSidebarToBottom();
+}
+
+function updateHistoryElement(historyElem, { text, translation }) {
+  historyElem.dataset.text = text;
+  historyElem.dataset.translation = translation;
+  historyElem.innerHTML = `
+    <span>${text}</span>
+    <span>${translation}</span>
+  `;
+
+  if (window.options && window.options.sidebarFontSize) {
+    historyElem.style.fontSize = `${window.options.sidebarFontSize}px`;
+    const spans = historyElem.querySelectorAll('span');
+    spans.forEach((span) => {
+      span.style.fontSize = `${window.options.sidebarFontSize}px`;
+    });
+  }
+}
+
+function scrollSidebarToBottom() {
+  const sidebar = document.querySelector('.sidebar');
+
+  if (sidebar) {
+    sidebar.scrollTop = sidebar.scrollHeight;
+  }
 }
 
 function preparePageForSidebar() {
@@ -146,11 +191,15 @@ function preparePageForSidebar() {
     return document.querySelector('.video_view--theater');
   }
 
+  if (window.STREAMING_PLATFORM === 'youtube') {
+    return document.querySelector('body');
+  }
+
   const videoContainer = document.querySelector('.watch-video');
 
   videoContainer.style.width = '80%';
 
-  return document.querySelector('body');;
+  return document.querySelector('body');
 }
 
 function createSidebar() {
@@ -161,6 +210,13 @@ function createSidebar() {
     sidebar.style.position = 'absolute';
     sidebar.style.top = 0;
     sidebar.style.right = 0;
+  }
+
+  if (window.STREAMING_PLATFORM === 'youtube') {
+    sidebar.style.position = 'fixed';
+    sidebar.style.top = 0;
+    sidebar.style.right = 0;
+    sidebar.style.height = '100vh';
   }
 
   // Set initial width from options
@@ -222,6 +278,10 @@ function makeSidebarResizable(sidebar, resizeHandle) {
         const contentWidth = 100 - (constrainedWidth / window.innerWidth * 100);
         videoContainer.style.width = `${contentWidth}%`;
       }
+    }
+
+    if (window.STREAMING_PLATFORM === 'youtube') {
+      adjustYoutubeAppWidth(true, constrainedWidth);
     }
   }
 
@@ -321,7 +381,38 @@ function adjustContentWidth(sidebarVisible) {
 
   if (window.STREAMING_PLATFORM === 'disney') {
     // Disney uses flexbox, so the sidebar visibility is handled by display property
-    // No additional width adjustment needed
+  }
+
+  if (window.STREAMING_PLATFORM === 'youtube') {
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarWidth = sidebarVisible && sidebar
+      ? parseInt(getComputedStyle(sidebar).width, 10)
+      : 0;
+
+    adjustYoutubeAppWidth(sidebarVisible, sidebarWidth);
+  }
+}
+
+function adjustYoutubeAppWidth(sidebarVisible, sidebarWidth = 0) {
+  const ytdApp = document.querySelector('ytd-app');
+  const mastheadContainer = document.querySelector('#masthead-container');
+
+  if (sidebarVisible && sidebarWidth > 0) {
+    if (ytdApp) {
+      ytdApp.style.width = `calc(100% - ${sidebarWidth}px)`;
+    }
+
+    if (mastheadContainer) {
+      mastheadContainer.style.width = `calc(100% - ${sidebarWidth}px)`;
+    }
+  } else {
+    if (ytdApp) {
+      ytdApp.style.width = '';
+    }
+
+    if (mastheadContainer) {
+      mastheadContainer.style.width = '';
+    }
   }
 }
 

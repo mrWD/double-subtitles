@@ -19,6 +19,10 @@ function openMenu({ text, translation }) {
   const textInput = document.querySelector('#text-input');
   const translationInput = document.querySelector('#translation-input');
 
+  if (!textInput || !translationInput) {
+    return;
+  }
+
   textInput.value = text;
   translationInput.value = translation;
 

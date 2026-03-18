@@ -536,3 +536,46 @@
 .watch-video {
   transition: width 0s ease-in-out;
 }
+
+.caption-window {
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.ytp-caption-window-container.double-subtitles-hide-native .caption-window {
+  opacity: 0 !important;
+}
+
+.visibleSubtitles.youtube-subtitles {
+  position: fixed;
+  z-index: 2;
+  transform: translateX(-50%);
+  align-items: center;
+  pointer-events: none;
+}
+
+.visibleSubtitles.youtube-subtitles .subtitle {
+  max-width: 100%;
+  margin-block: 0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: rgba(8, 8, 8, 0.75);
+  font-size: 24px;
+  line-height: 1.25;
+  text-align: center;
+  pointer-events: auto;
+}
+
+.visibleSubtitles.youtube-subtitles .subtitle:first-child {
+  color: #ffffff;
+}
+
+.visibleSubtitles.youtube-subtitles .subtitle:nth-child(2) {
+  margin-top: 6px;
+  color: #feffc3;
+}
+
+.visibleSubtitles.youtube-subtitles .menuButton {
+  transform: translate(8px, -50%);
+  pointer-events: auto;
+}
