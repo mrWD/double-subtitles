@@ -74,7 +74,7 @@ function createSidebarWithHistory() {
   return { history, historyList };
 }
 
-function addLineToHistory({ text, translation }) {
+function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
   const { historyList } = createSidebarWithHistory();
   const normalizedText = text?.trim();
 
@@ -112,6 +112,8 @@ function addLineToHistory({ text, translation }) {
   historyElem.classList.add('historyElem');
   historyElem.dataset.text = normalizedText;
   historyElem.dataset.translation = translation;
+  historyElem.dataset.timestamp = timestamp ?? '';
+  historyElem.dataset.sourceUrl = sourceUrl ?? '';
 
   updateHistoryElement(historyElem, {
     text: normalizedText,
@@ -119,14 +121,22 @@ function addLineToHistory({ text, translation }) {
   });
 
   historyElem.addEventListener('click', (e) => {
+    if (e.target.classList.contains('historyTimestamp')) {
+      const ts = historyElem.dataset.timestamp;
+      const url = historyElem.dataset.sourceUrl;
+      if (ts) {
+        seekFromSidebar(parseFloat(ts), url);
+      }
+      return;
+    }
+
     translateList(e.target);
     const { text, translation } = historyElem.dataset;
-
     openMenu({ text, translation });
   });
 
   historyElem.addEventListener('mouseover', () => {
-    translateList(historyElem.querySelector('span'));
+    translateList(historyElem.querySelector('span:not(.historyTimestamp)'));
 
     const translatedList = createTranslatedList();
 
@@ -160,14 +170,19 @@ function addLineToHistory({ text, translation }) {
 function updateHistoryElement(historyElem, { text, translation }) {
   historyElem.dataset.text = text;
   historyElem.dataset.translation = translation;
+
+  const ts = historyElem.dataset.timestamp;
+  const formattedTime = ts ? formatTimestamp(parseFloat(ts)) : '';
+
   historyElem.innerHTML = `
+    ${formattedTime ? `<span class="historyTimestamp">${formattedTime}</span>` : ''}
     <span>${text}</span>
     <span>${translation}</span>
   `;
 
   if (window.options && window.options.sidebarFontSize) {
     historyElem.style.fontSize = `${window.options.sidebarFontSize}px`;
-    const spans = historyElem.querySelectorAll('span');
+    const spans = historyElem.querySelectorAll('span:not(.historyTimestamp)');
     spans.forEach((span) => {
       span.style.fontSize = `${window.options.sidebarFontSize}px`;
     });
@@ -419,16 +434,75 @@ function adjustYoutubeAppWidth(sidebarVisible, sidebarWidth = 0) {
 function updateSidebarFontSize(fontSize) {
   const sidebar = document.querySelector('.sidebar');
   if (sidebar) {
-    // Update font size for all text elements in the sidebar
-    const textElements = sidebar.querySelectorAll('.historyTitle, .search-input, .historyElem, .historyElem span');
+    const textElements = sidebar.querySelectorAll(
+      '.historyTitle, .search-input, .historyElem, .historyElem span:not(.historyTimestamp)'
+    );
     textElements.forEach(element => {
       element.style.fontSize = `${fontSize}px`;
     });
 
-    // Also update the global options for future elements
     if (window.options) {
       window.options.sidebarFontSize = fontSize;
     }
+  }
+}
+
+function seekFromSidebar(timestamp, sourceUrl) {
+  if (timestamp == null || isNaN(timestamp)) return;
+
+  const isSamePage = !sourceUrl || (() => {
+    try {
+      const current = new URL(window.location.href);
+      const source = new URL(sourceUrl);
+
+      if (window.STREAMING_PLATFORM === 'youtube') {
+        if (current.pathname.startsWith('/shorts/') || source.pathname.startsWith('/shorts/')) {
+          return current.origin + current.pathname === source.origin + source.pathname;
+        }
+
+        const currentVideoId = current.searchParams.get('v');
+        const sourceVideoId = source.searchParams.get('v');
+
+        return current.origin === source.origin
+          && current.pathname === source.pathname
+          && currentVideoId
+          && currentVideoId === sourceVideoId;
+      }
+
+      return current.origin + current.pathname === source.origin + source.pathname;
+    } catch {
+      return false;
+    }
+  })();
+
+  if (isSamePage) {
+    if (window.seekVideoToTime) {
+      window.seekVideoToTime(timestamp);
+      return;
+    }
+
+    const video = document.querySelector('video');
+    if (video) {
+      video.currentTime = timestamp;
+      return;
+    }
+  }
+
+  if (sourceUrl) {
+    let targetUrl = sourceUrl;
+    if (window.STREAMING_PLATFORM === 'netflix') {
+      try {
+        const parsed = new URL(sourceUrl);
+        targetUrl = `${parsed.origin}${parsed.pathname}`;
+      } catch {
+        targetUrl = sourceUrl;
+      }
+    }
+
+    chrome.runtime.sendMessage({
+      message: 'seekOnSourcePage',
+      payload: { sourceUrl: targetUrl, timestamp },
+    });
   }
 }
 

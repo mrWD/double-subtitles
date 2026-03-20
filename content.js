@@ -5,28 +5,19 @@ let savedSubtitle = null;
 let options;
 let latestTranslationRequestId = 0;
 let latestAppliedTranslationRequestId = 0;
+let isWatchPageActive = false;
+let lastKnownLocation = window.location.href;
 
 async function initContent() {
   options = await loadOptionsOrSetDefaults();
   window.options = options;
 
-  startMonitoringForElements(0);
   secondLanguage = options.secondLanguage;
   originalLanguage = decodeLang(options.currentForeignLanguage);
 
-  createSidebarWithHistory();
-
-  if (window.toggleSidebar) {
-    window.toggleSidebar(options.showSidebar);
-  }
-
-  if (window.toggleDoubleSubtitles) {
-    window.toggleDoubleSubtitles(options.showDoubleSubtitles);
-  }
-
-  if (window.updateSidebarFontSize) {
-    window.updateSidebarFontSize(options.sidebarFontSize || 16);
-  }
+  startMonitoringForElements(0);
+  syncPageUiState();
+  startPageContextWatcher();
 }
 
 initContent();
@@ -42,25 +33,15 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
   secondLanguage = options.secondLanguage;
   originalLanguage = decodeLang(options.currentForeignLanguage);
 
-  if (!document.querySelector('.sidebar')) {
-    createSidebarWithHistory();
-  }
-
-  if (window.toggleSidebar) {
-    window.toggleSidebar(options.showSidebar);
-  }
-
-  if (window.toggleDoubleSubtitles) {
-    window.toggleDoubleSubtitles(options.showDoubleSubtitles);
-  }
-
-  if (window.updateSidebarFontSize) {
-    window.updateSidebarFontSize(options.sidebarFontSize || 16);
-  }
+  syncPageUiState();
 });
 
 chrome.runtime.onMessage.addListener((req) => {
   if (req.message === 'translated') {
+    if (!isWatchPageActive) {
+      return;
+    }
+
     if (
       window.STREAMING_PLATFORM === 'youtube'
       && req.payload.requestId
@@ -77,10 +58,19 @@ chrome.runtime.onMessage.addListener((req) => {
   }
 
   if (req.message === 'translatedList') {
+    if (!isWatchPageActive) {
+      return;
+    }
+
     showTranslatedList(req.payload.data);
   }
 
   if (req.message === 'toggleSidebar') {
+    if (!isWatchPageActive) {
+      forceHideExtensionUi();
+      return;
+    }
+
     if (!document.querySelector('.sidebar')) {
       createSidebarWithHistory();
     }
@@ -91,6 +81,11 @@ chrome.runtime.onMessage.addListener((req) => {
   }
 
   if (req.message === 'toggleDoubleSubtitles') {
+    if (!isWatchPageActive) {
+      forceHideExtensionUi();
+      return;
+    }
+
     if (window.toggleDoubleSubtitles) {
       window.toggleDoubleSubtitles(req.payload.show);
     }
@@ -101,9 +96,15 @@ chrome.runtime.onMessage.addListener((req) => {
       window.updateSidebarFontSize(req.payload.fontSize);
     }
   }
+
+  if (req.message === 'seekToTimestamp') {
+    if (window.seekVideoToTime) {
+      window.seekVideoToTime(req.payload.timestamp);
+    }
+  }
 });
 
-function handleMessage(text) {
+function handleMessage(text, timestamp) {
   if (!originalLanguage || !secondLanguage) {
     console.log('no languages');
     return;
@@ -118,6 +119,7 @@ function handleMessage(text) {
       lang1: encodeLang(originalLanguage),
       lang2: secondLanguage,
       requestId: latestTranslationRequestId,
+      timestamp,
     },
   });
 }
@@ -137,4 +139,76 @@ function translateList(target) {
       lang2: secondLanguage,
     },
   });
+}
+
+function isWatchPage() {
+  if (!window.STREAMING_PLATFORM || !window.isStreamingWatchPage) {
+    return false;
+  }
+
+  return window.isStreamingWatchPage();
+}
+
+function applyExtensionUiState() {
+  if (!document.querySelector('.sidebar')) {
+    createSidebarWithHistory();
+  }
+
+  if (window.toggleSidebar) {
+    window.toggleSidebar(options.showSidebar);
+  }
+
+  if (window.toggleDoubleSubtitles) {
+    window.toggleDoubleSubtitles(options.showDoubleSubtitles);
+  }
+
+  if (window.updateSidebarFontSize) {
+    window.updateSidebarFontSize(options.sidebarFontSize || 16);
+  }
+}
+
+function forceHideExtensionUi() {
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar) {
+    if (window.hideSidebar) {
+      window.hideSidebar();
+    }
+    sidebar.remove();
+  }
+
+  const visibleSubtitles = document.querySelector('.visibleSubtitles');
+  if (visibleSubtitles) {
+    visibleSubtitles.remove();
+  }
+
+  if (window.toggleYoutubeNativeSubtitles) {
+    window.toggleYoutubeNativeSubtitles(true);
+  }
+}
+
+function syncPageUiState() {
+  const shouldBeActive = isWatchPage();
+
+  if (shouldBeActive === isWatchPageActive) {
+    return;
+  }
+
+  isWatchPageActive = shouldBeActive;
+
+  if (isWatchPageActive) {
+    applyExtensionUiState();
+  } else {
+    forceHideExtensionUi();
+  }
+}
+
+function startPageContextWatcher() {
+  setInterval(() => {
+    if (window.location.href === lastKnownLocation) {
+      return;
+    }
+
+    lastKnownLocation = window.location.href;
+    syncPageUiState();
+  }, 500);
 }

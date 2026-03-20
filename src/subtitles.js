@@ -101,6 +101,8 @@ function syncYoutubeSubtitlesPosition(subtitleWrapper) {
     return;
   }
 
+  const player = document.querySelector('#movie_player');
+
   const captionWindows = Array.from(
     document.querySelectorAll('.ytp-caption-window-container .caption-window')
   ).filter((captionWindow) => {
@@ -120,14 +122,19 @@ function syncYoutubeSubtitlesPosition(subtitleWrapper) {
   }
 
   const rects = captionWindows.map((windowElem) => windowElem.getBoundingClientRect());
-  const top = Math.min(...rects.map((rect) => rect.top));
+  const captionBottom = Math.max(...rects.map((rect) => rect.bottom));
   const left = Math.min(...rects.map((rect) => rect.left));
   const right = Math.max(...rects.map((rect) => rect.right));
 
-  subtitleWrapper.style.top = `${top}px`;
+  const playerRect = player?.getBoundingClientRect();
+  const maxBottom = playerRect
+    ? Math.min(captionBottom, playerRect.bottom)
+    : captionBottom;
+
+  subtitleWrapper.style.top = 'auto';
+  subtitleWrapper.style.bottom = `${window.innerHeight - maxBottom}px`;
   subtitleWrapper.style.left = `${left + ((right - left) / 2)}px`;
   subtitleWrapper.style.width = `${right - left}px`;
-  subtitleWrapper.style.bottom = 'auto';
 }
 
 function toggleYoutubeNativeSubtitles(showNative) {

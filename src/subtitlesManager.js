@@ -2,12 +2,17 @@ const SUBTITLES_CLASS = getSubtitleMainClass();
 const MAIN_SUBTITLES_CLASS = `.${SUBTITLES_CLASS}:not(.secondSubtitles)`;
 const SECOND_SUBTITLES_CLASS = `.${SUBTITLES_CLASS}.secondSubtitles`;
 
-function fillSubtitles({ data, originText }) {
+function fillSubtitles({ data, originText, timestamp }) {
   const originalSubtitleLines = getSubtitlesFromDom();
   const previousTranslatedElem = getTranslatedSubtitlesFromDom();
 
   addLineToSubtitles({ text: originText, translation: data });
-  addLineToHistory({ text: originText, translation: data });
+  addLineToHistory({
+    text: originText,
+    translation: data,
+    timestamp,
+    sourceUrl: window.location.href,
+  });
 
   if (!originalSubtitleLines) {
     return;
@@ -90,6 +95,11 @@ function getYoutubeSubtitleText() {
 }
 
 function monitorSuptitleUpdates() {
+  if (window.isStreamingWatchPage && !window.isStreamingWatchPage()) {
+    savedSubtitle = null;
+    return;
+  }
+
   const subtitleWrapper = getSubtitlesFromDom();
   const currentSubtitleText = window.STREAMING_PLATFORM === 'youtube'
     ? getYoutubeSubtitleText()
@@ -117,7 +127,10 @@ function monitorSuptitleUpdates() {
     savedSubtitle != currentSubtitleText
   ) {
     savedSubtitle = currentSubtitleText;
-    handleMessage(savedSubtitle);
+    const timestamp = window.getVideoCurrentTime
+      ? window.getVideoCurrentTime()
+      : null;
+    handleMessage(savedSubtitle, timestamp);
   }
 
   if (!originalLanguage && options.currentForeignLanguage) {
