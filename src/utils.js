@@ -3,6 +3,8 @@ window.LEARNING_PLATFORM = getLearningPlatform();
 const NETFLIX_SEEK_EVENT = 'double-subtitles-netflix-seek';
 const NETFLIX_SEEK_STATUS_ATTR = 'data-double-subtitles-netflix-seek-status';
 const NETFLIX_SEEK_BRIDGE_ATTR = 'data-double-subtitles-netflix-seek-bridge';
+const NETFLIX_GET_TIME_EVENT = 'double-subtitles-netflix-get-time';
+const NETFLIX_CURRENT_TIME_ATTR = 'data-double-subtitles-netflix-current-time-ms';
 
 setupNetflixSeekBridge();
 
@@ -371,6 +373,13 @@ function getLearningPlatform() {
 }
 
 function getVideoCurrentTime() {
+  if (window.STREAMING_PLATFORM === 'netflix') {
+    const netflixTime = getNetflixCurrentTime();
+    if (netflixTime != null) {
+      return netflixTime;
+    }
+  }
+
   const video = getPrimaryVideoElement();
   return video ? video.currentTime : null;
 }
@@ -438,6 +447,33 @@ function seekNetflixToTime(timeInSeconds) {
   return root.getAttribute(NETFLIX_SEEK_STATUS_ATTR) === 'ok';
 }
 
+function getNetflixCurrentTime() {
+  const root = document.documentElement;
+
+  if (!root) {
+    return null;
+  }
+
+  if (root.getAttribute(NETFLIX_SEEK_BRIDGE_ATTR) !== 'ready') {
+    setupNetflixSeekBridge();
+  }
+
+  root.setAttribute(NETFLIX_CURRENT_TIME_ATTR, '');
+  window.dispatchEvent(new CustomEvent(NETFLIX_GET_TIME_EVENT));
+
+  const rawValue = root.getAttribute(NETFLIX_CURRENT_TIME_ATTR);
+  if (rawValue == null || rawValue.trim() === '') {
+    return null;
+  }
+
+  const value = Number(rawValue);
+  if (!Number.isFinite(value) || value < 0) {
+    return null;
+  }
+
+  return value / 1000;
+}
+
 function setupNetflixSeekBridge() {
   if (window.STREAMING_PLATFORM !== 'netflix') {
     return;
@@ -452,12 +488,49 @@ function setupNetflixSeekBridge() {
   bridgeScript.textContent = `
     (() => {
       const EVENT_NAME = '${NETFLIX_SEEK_EVENT}';
+      const GET_TIME_EVENT = '${NETFLIX_GET_TIME_EVENT}';
       const STATUS_ATTR = '${NETFLIX_SEEK_STATUS_ATTR}';
       const BRIDGE_ATTR = '${NETFLIX_SEEK_BRIDGE_ATTR}';
+      const CURRENT_TIME_ATTR = '${NETFLIX_CURRENT_TIME_ATTR}';
       const root = document.documentElement;
       if (!root || root.getAttribute(BRIDGE_ATTR) === 'ready') {
         return;
       }
+
+      const getPlayer = () => {
+        const apiCandidates = [
+          () => window.netflix?.appContext?.state?.playerApp?.getAPI?.(),
+          () => window.netflix?.appContext?.state?.playerApp?.player?.getAPI?.(),
+          () => window.netflix?.appContext?.state?.playerApp?._api,
+        ];
+
+        let videoPlayer = null;
+        for (const getApi of apiCandidates) {
+          try {
+            const api = getApi?.();
+            if (api?.videoPlayer) {
+              videoPlayer = api.videoPlayer;
+              break;
+            }
+          } catch {
+            // try the next candidate
+          }
+        }
+
+        if (!videoPlayer) {
+          return null;
+        }
+
+        const sessionIds = videoPlayer.getAllPlayerSessionIds?.() ?? [];
+        for (let index = sessionIds.length - 1; index >= 0; index -= 1) {
+          const player = videoPlayer.getVideoPlayerBySessionId?.(sessionIds[index]);
+          if (player) {
+            return player;
+          }
+        }
+
+        return null;
+      };
 
       root.setAttribute(BRIDGE_ATTR, 'ready');
       window.addEventListener(EVENT_NAME, (event) => {
@@ -468,17 +541,7 @@ function setupNetflixSeekBridge() {
             return;
           }
 
-          const videoPlayer = window.netflix
-            ?.appContext
-            ?.state
-            ?.playerApp
-            ?.getAPI
-            ?.()
-            ?.videoPlayer;
-          const sessionId = videoPlayer?.getAllPlayerSessionIds?.()?.[0];
-          const player = sessionId
-            ? videoPlayer.getVideoPlayerBySessionId?.(sessionId)
-            : null;
+          const player = getPlayer();
 
           if (!player?.seek) {
             root.setAttribute(STATUS_ATTR, 'no-player');
@@ -489,6 +552,21 @@ function setupNetflixSeekBridge() {
           root.setAttribute(STATUS_ATTR, 'ok');
         } catch {
           root.setAttribute(STATUS_ATTR, 'error');
+        }
+      });
+
+      window.addEventListener(GET_TIME_EVENT, () => {
+        try {
+          const player = getPlayer();
+          const milliseconds = player?.getCurrentTime?.();
+          if (!Number.isFinite(milliseconds) || milliseconds < 0) {
+            root.setAttribute(CURRENT_TIME_ATTR, '');
+            return;
+          }
+
+          root.setAttribute(CURRENT_TIME_ATTR, String(Math.round(milliseconds)));
+        } catch {
+          root.setAttribute(CURRENT_TIME_ATTR, '');
         }
       });
     })();
