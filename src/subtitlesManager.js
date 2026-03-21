@@ -6,6 +6,7 @@ function fillSubtitles({ data, originText, timestamp }) {
   const originalSubtitleLines = getSubtitlesFromDom();
   const previousTranslatedElem = getTranslatedSubtitlesFromDom();
 
+  sessionStorage.setItem('double-subtitles-last', JSON.stringify({ text: originText, translation: data }));
   addLineToSubtitles({ text: originText, translation: data });
   addLineToHistory({
     text: originText,

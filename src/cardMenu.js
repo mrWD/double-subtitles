@@ -13,7 +13,7 @@ const QUIZLET_INPUT = 'quizletDeckName';
 const GSHEETS_INPUT = 'gSheetSpreadsheetId';
 const GSHEETS_RANGE = 'gSheetRangeName';
 
-function openMenu({ text, translation }) {
+function openMenu({ text, translation, timestamp, sourceUrl }) {
   const menu = createMenu();
 
   const textInput = document.querySelector('#text-input');
@@ -26,11 +26,14 @@ function openMenu({ text, translation }) {
   textInput.value = text;
   translationInput.value = translation;
 
-  menu.classList.toggle('visible');
+  menu.dataset.timestamp = timestamp ?? '';
+  menu.dataset.sourceUrl = sourceUrl ?? '';
+
+  menu.classList.add('visible');
 }
 
 function createMenu() {
-  const existedMenu = document.querySelector('#menu');
+  const existedMenu = document.querySelector('#double-subtitles-menu');
 
   if (existedMenu) {
     return existedMenu;
@@ -39,8 +42,8 @@ function createMenu() {
   const menu = document.createElement('div');
   const btnGroup = document.createElement('div');
 
-  menu.classList.add('menu');
-  menu.setAttribute('id', 'menu');
+  menu.classList.add('double-subtitles-menu');
+  menu.setAttribute('id', 'double-subtitles-menu');
 
   menu.appendChild(createInput('text-input'));
   menu.appendChild(createInput('translation-input'));
@@ -74,7 +77,7 @@ function createCancelButton() {
   cancelButton.textContent = 'Cancel';
 
   cancelButton.addEventListener('click', () => {
-    const menu = document.querySelector('#menu');
+    const menu = document.querySelector('#double-subtitles-menu');
     menu.classList.remove('visible');
   });
 
@@ -88,16 +91,22 @@ function createSaveButton() {
   saveButton.textContent = 'Save';
 
   saveButton.addEventListener('click', () => {
-    const menu = document.querySelector('#menu');
+    const menu = document.querySelector('#double-subtitles-menu');
     const textInput = document.querySelector('#text-input');
     const translationInput = document.querySelector('#translation-input');
+
+    const timestamp = menu.dataset.timestamp ? parseFloat(menu.dataset.timestamp) : null;
+    const sourceUrl = menu.dataset.sourceUrl || null;
 
     saveCards({
       text: textInput.value,
       translation: translationInput.value,
+      timestamp,
+      sourceUrl,
     });
 
     menu.classList.remove('visible');
+    showSaveToast();
   });
 
   return saveButton;
@@ -125,11 +134,11 @@ function createServiceCheckbox(id, svg, name) {
   return saveButton;
 }
 
-function saveCards({ text, translation }) {
+function saveCards({ text, translation, timestamp, sourceUrl }) {
   const checkboxes = document.querySelectorAll('.saveCheckbox');
   const mapCheckBoxToService = {
     [BROWSER_CHECKBOX]: () => {
-      saveToSyncStorage({ text, translation });
+      saveToSyncStorage({ text, translation, timestamp, sourceUrl });
     },
     [ANKIAPP_CHECKBOX]: () => {
       const deckName = document.getElementById(ANKIAPP_INPUT).value;
@@ -188,4 +197,25 @@ function createServiceForm(...fields) {
   });
 
   return div;
+}
+
+function showSaveToast() {
+  const existing = document.querySelector('.save-toast');
+  if (existing) {
+    existing.remove();
+  }
+
+  const toast = document.createElement('div');
+  toast.classList.add('save-toast');
+  toast.textContent = 'Saved!';
+  document.body.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.classList.add('save-toast--visible');
+  });
+
+  setTimeout(() => {
+    toast.classList.remove('save-toast--visible');
+    toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+  }, 2000);
 }

@@ -3,8 +3,7 @@ const THREE_DOTS_SVG = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="htt
 function addLineToSubtitles({ text, translation }) {
   const subtitleWrapper = createSubtitlesWrapper();
   const mainText = createSubtitleElement({ text, translation });
-
-  const translatedText = mainText.cloneNode(true);
+  const translatedText = createSubtitleElement({ text, translation });
   const isDoubleSubtitlesHidden = window.options && window.options.showDoubleSubtitles === false;
 
   mainText.innerHTML = text;
@@ -84,12 +83,17 @@ function createSubtitleElement({ text, translation }) {
   subtitle.dataset.translation = translation;
 
   subtitle.addEventListener('click', (e) => {
-    const text = e.target.dataset.text ?? e.target.innerText;
-    const translation = e.target.dataset.translation
-      ?? e.target.nextElementSibling?.innerText
-      ?? '';
+    e.stopPropagation();
+    e.preventDefault();
 
-    openMenu({ text, translation });
+    const text = e.currentTarget.dataset.text ?? e.currentTarget.innerText;
+    const translation = e.currentTarget.dataset.translation
+      ?? e.currentTarget.nextElementSibling?.innerText
+      ?? '';
+    const timestamp = window.getVideoCurrentTime ? window.getVideoCurrentTime() : null;
+    const sourceUrl = window.location.href;
+
+    openMenu({ text, translation, timestamp, sourceUrl });
   });
 
   return subtitle;
@@ -152,8 +156,13 @@ function createMenuButton({ text, translation }) {
   menuButton.classList.add('menuButton');
   menuButton.innerHTML = THREE_DOTS_SVG;
 
-  menuButton.addEventListener('click', () => {
-    openMenu({ text, translation });
+  menuButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    const timestamp = window.getVideoCurrentTime ? window.getVideoCurrentTime() : null;
+    const sourceUrl = window.location.href;
+    openMenu({ text, translation, timestamp, sourceUrl });
   });
 
 

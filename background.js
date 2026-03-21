@@ -59,6 +59,46 @@ chrome.runtime.onMessage.addListener(async (req, sender, sendResponse) => {
     });
   }
 
+  if (req.message === 'navigateToSource') {
+    const { sourceUrl, timestamp } = req.payload;
+
+    const matchingTabs = await chrome.tabs.query({ url: urls });
+    const targetTab = matchingTabs.find((tab) => {
+      try {
+        const tabUrl = new URL(tab.url);
+        const srcUrl = new URL(sourceUrl);
+        return tabUrl.origin + tabUrl.pathname === srcUrl.origin + srcUrl.pathname;
+      } catch {
+        return false;
+      }
+    });
+
+    if (targetTab) {
+      await chrome.tabs.update(targetTab.id, { active: true });
+      if (timestamp != null) {
+        chrome.tabs.sendMessage(targetTab.id, {
+          message: 'seekToTimestamp',
+          payload: { timestamp },
+        });
+      }
+    } else {
+      const newTab = await chrome.tabs.create({ url: sourceUrl });
+      if (timestamp != null) {
+        chrome.tabs.onUpdated.addListener(function listener(tabId, changeInfo) {
+          if (tabId === newTab.id && changeInfo.status === 'complete') {
+            chrome.tabs.onUpdated.removeListener(listener);
+            setTimeout(() => {
+              chrome.tabs.sendMessage(tabId, {
+                message: 'seekToTimestamp',
+                payload: { timestamp },
+              });
+            }, 3000);
+          }
+        });
+      }
+    }
+  }
+
   if (req.message === 'seekOnSourcePage') {
     const { sourceUrl, timestamp } = req.payload;
 

@@ -111,9 +111,21 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
         text: normalizedText,
         translation,
       });
+      saveHistoryToSession(historyList);
       scrollSidebarToBottom();
       return;
     }
+  }
+
+  const existingElem = Array.from(historyList.querySelectorAll('.historyElem'))
+    .find((elem) => elem.dataset.text === normalizedText);
+
+  if (existingElem) {
+    existingElem.classList.remove('historyElem--highlight');
+    void existingElem.offsetWidth;
+    existingElem.classList.add('historyElem--highlight');
+    existingElem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    return;
   }
 
   const historyElem = document.createElement('div');
@@ -140,8 +152,13 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
     }
 
     translateList(e.target);
-    const { text, translation } = historyElem.dataset;
-    openMenu({ text, translation });
+    const { text, translation, timestamp, sourceUrl } = historyElem.dataset;
+    openMenu({
+      text,
+      translation,
+      timestamp: timestamp ? parseFloat(timestamp) : null,
+      sourceUrl: sourceUrl || null,
+    });
   });
 
   historyElem.addEventListener('mouseover', () => {
@@ -173,6 +190,7 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
 
   historyList.appendChild(historyElem);
 
+  saveHistoryToSession(historyList);
   scrollSidebarToBottom();
 }
 
@@ -198,8 +216,18 @@ function updateHistoryElement(historyElem, { text, translation }) {
   }
 }
 
+function saveHistoryToSession(historyList) {
+  const items = Array.from(historyList.querySelectorAll('.historyElem')).map((elem) => ({
+    text: elem.dataset.text,
+    translation: elem.dataset.translation,
+    timestamp: elem.dataset.timestamp || null,
+    sourceUrl: elem.dataset.sourceUrl || null,
+  }));
+  sessionStorage.setItem('double-subtitles-history', JSON.stringify(items));
+}
+
 function scrollSidebarToBottom() {
-  const sidebar = document.querySelector('.sidebar');
+  const sidebar = document.querySelector('.double-subtitles-sidebar');
 
   if (sidebar) {
     sidebar.scrollTop = sidebar.scrollHeight;
@@ -230,7 +258,7 @@ function preparePageForSidebar() {
 
 function createSidebar() {
   const sidebar = document.createElement('div');
-  sidebar.classList.add('sidebar');
+  sidebar.classList.add('double-subtitles-sidebar');
 
   if (window.STREAMING_PLATFORM === 'netflix') {
     sidebar.style.position = 'absolute';
@@ -356,7 +384,7 @@ function makeSidebarResizable(sidebar, resizeHandle) {
 }
 
 function showSidebar() {
-  const sidebar = document.querySelector('.sidebar');
+  const sidebar = document.querySelector('.double-subtitles-sidebar');
   if (sidebar) {
     sidebar.classList.remove('hidden');
     sidebar.style.display = 'flex';
@@ -365,7 +393,7 @@ function showSidebar() {
 }
 
 function hideSidebar() {
-  const sidebar = document.querySelector('.sidebar');
+  const sidebar = document.querySelector('.double-subtitles-sidebar');
   if (sidebar) {
     sidebar.classList.add('hidden');
     sidebar.style.display = 'none';
@@ -386,7 +414,7 @@ function adjustContentWidth(sidebarVisible) {
     const videoContainer = document.querySelector('.watch-video');
     if (videoContainer) {
       if (sidebarVisible) {
-        const sidebar = document.querySelector('.sidebar');
+        const sidebar = document.querySelector('.double-subtitles-sidebar');
         if (sidebar) {
           const sidebarWidth = parseInt(getComputedStyle(sidebar).width, 10);
           const contentWidth = 100 - (sidebarWidth / window.innerWidth * 100);
@@ -410,7 +438,7 @@ function adjustContentWidth(sidebarVisible) {
   }
 
   if (window.STREAMING_PLATFORM === 'youtube') {
-    const sidebar = document.querySelector('.sidebar');
+    const sidebar = document.querySelector('.double-subtitles-sidebar');
     const sidebarWidth = sidebarVisible && sidebar
       ? parseInt(getComputedStyle(sidebar).width, 10)
       : 0;
@@ -443,7 +471,7 @@ function adjustYoutubeAppWidth(sidebarVisible, sidebarWidth = 0) {
 }
 
 function updateSidebarFontSize(fontSize) {
-  const sidebar = document.querySelector('.sidebar');
+  const sidebar = document.querySelector('.double-subtitles-sidebar');
   if (sidebar) {
     const textElements = sidebar.querySelectorAll(
       '.historyTitle, .search-input, .historyElem, .historyElem span:not(.historyTimestamp)'

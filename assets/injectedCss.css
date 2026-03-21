@@ -71,12 +71,12 @@
   background: var(--secondary-color);
 }
 
-#dv-web-player {
+#dv-web-player.dv-player-fullscreen {
   display: flex;
   transition: none;
 }
 
-.sidebar {
+.double-subtitles-sidebar {
   position: relative;
   z-index: 99999;
 
@@ -93,14 +93,12 @@
   background-color: var(--primary-color);
   color: var(--text-primary-color);
 
-  overflow-y: auto;
-  scrollbar-color: var(--secondary-color) var(--primary-color);
-  scrollbar-width: thin;
+  overflow: hidden;
 
   transition: none;
 }
 
-.sidebar.hidden {
+.double-subtitles-sidebar.hidden {
   display: none !important;
 }
 
@@ -151,8 +149,15 @@
   opacity: 1;
 }
 
-.sidebar hr {
+.double-subtitles-sidebar hr {
   margin-top: 14px;
+}
+
+.history {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-color: var(--secondary-color) var(--primary-color);
+  scrollbar-width: thin;
 }
 
 .historyTitle {
@@ -162,10 +167,15 @@
 }
 
 .historySearch {
-  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  z-index: 1;
   width: 100%;
   padding-top: 10px;
+  padding-bottom: 16px;
   padding-inline: 10px;
+  box-sizing: border-box;
+  background-color: var(--primary-color);
 }
 
 .search-input {
@@ -191,7 +201,7 @@
 
 .historyList {
   box-sizing: border-box;
-  padding-block: 16px;
+  padding-bottom: 16px;
 }
 
 .historyElem {
@@ -242,6 +252,16 @@
 
 .historyElem:hover {
   background-color: var(--secondary-color);
+}
+
+@keyframes history-highlight {
+  0%   { background-color: var(--secondary-color); }
+  40%  { background-color: #2a4a6a; }
+  100% { background-color: var(--secondary-color); }
+}
+
+.historyElem--highlight {
+  animation: history-highlight 1.5s ease;
 }
 
 .visibleSubtitles {
@@ -450,7 +470,7 @@
   cursor: pointer;
 }
 
-.menu {
+.double-subtitles-menu {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -467,11 +487,11 @@
   background-color: var(--primary-color);
 }
 
-.menu * {
+.double-subtitles-menu * {
   box-sizing: border-box;
 }
 
-.menu.visible {
+.double-subtitles-menu.visible {
   display: flex;
 }
 
@@ -564,6 +584,7 @@
 
 .ytp-caption-window-container.double-subtitles-hide-native .caption-window {
   opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .visibleSubtitles.youtube-subtitles {
@@ -598,4 +619,28 @@
 .visibleSubtitles.youtube-subtitles .menuButton {
   transform: translate(8px, -50%);
   pointer-events: auto;
+}
+
+.save-toast {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  z-index: 99999999999;
+  transform: translateX(-50%) translateY(20px);
+  box-sizing: border-box;
+  padding: 12px 32px;
+  border-radius: 8px;
+  background-color: #42D369;
+  font-family: Barlow, Helvetica, Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.save-toast--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }

@@ -72,7 +72,7 @@ chrome.runtime.onMessage.addListener((req) => {
       return;
     }
 
-    if (!document.querySelector('.sidebar')) {
+    if (!document.querySelector('.double-subtitles-sidebar')) {
       createSidebarWithHistory();
     }
 
@@ -151,7 +151,7 @@ function isWatchPage() {
 }
 
 function applyExtensionUiState() {
-  if (!document.querySelector('.sidebar')) {
+  if (!document.querySelector('.double-subtitles-sidebar')) {
     createSidebarWithHistory();
   }
 
@@ -166,10 +166,26 @@ function applyExtensionUiState() {
   if (window.updateSidebarFontSize) {
     window.updateSidebarFontSize(options.sidebarFontSize || 16);
   }
+
+  const savedHistory = sessionStorage.getItem('double-subtitles-history');
+  if (savedHistory) {
+    try {
+      const items = JSON.parse(savedHistory);
+      items.forEach((item) => addLineToHistory(item));
+    } catch {}
+  }
+
+  const lastSubtitle = sessionStorage.getItem('double-subtitles-last');
+  if (lastSubtitle) {
+    try {
+      const { text, translation } = JSON.parse(lastSubtitle);
+      addLineToSubtitles({ text, translation });
+    } catch {}
+  }
 }
 
 function forceHideExtensionUi() {
-  const sidebar = document.querySelector('.sidebar');
+  const sidebar = document.querySelector('.double-subtitles-sidebar');
   if (sidebar) {
     if (window.hideSidebar) {
       window.hideSidebar();
@@ -191,6 +207,9 @@ function syncPageUiState() {
   const shouldBeActive = isWatchPage();
 
   if (shouldBeActive === isWatchPageActive) {
+    if (shouldBeActive && !document.querySelector('.double-subtitles-sidebar')) {
+      applyExtensionUiState();
+    }
     return;
   }
 
