@@ -93,9 +93,7 @@
   background-color: var(--primary-color);
   color: var(--text-primary-color);
 
-  overflow-y: auto;
-  scrollbar-color: var(--secondary-color) var(--primary-color);
-  scrollbar-width: thin;
+  overflow: hidden;
 
   transition: none;
 }
@@ -155,6 +153,13 @@
   margin-top: 14px;
 }
 
+.history {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-color: var(--secondary-color) var(--primary-color);
+  scrollbar-width: thin;
+}
+
 .historyTitle {
   font-size: 18px;
   text-align: center;
@@ -162,10 +167,15 @@
 }
 
 .historySearch {
-  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  z-index: 1;
   width: 100%;
   padding-top: 10px;
+  padding-bottom: 16px;
   padding-inline: 10px;
+  box-sizing: border-box;
+  background-color: var(--primary-color);
 }
 
 .search-input {
@@ -191,7 +201,7 @@
 
 .historyList {
   box-sizing: border-box;
-  padding-block: 16px;
+  padding-bottom: 16px;
 }
 
 .historyElem {
