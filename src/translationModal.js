@@ -7,11 +7,21 @@ function showTranslatedList(data) {
     const translatedElem = document.createElement('div');
 
     translatedElem.classList.add('translatedElem');
-    translatedElem.textContent = `${text} - ${translation}`;
+
+    const textSpan = document.createElement('span');
+    textSpan.textContent = `${text} - ${translation}`;
+    textSpan.style.flex = '1';
+    textSpan.style.pointerEvents = 'none';
+
+    translatedElem.appendChild(textSpan);
+    translatedElem.appendChild(window.createSpeakerButton(text, { inline: true }));
+    translatedElem.style.display = 'flex';
+    translatedElem.style.alignItems = 'center';
 
     translatedList.appendChild(translatedElem);
 
-    translatedElem.addEventListener('click', () => {
+    translatedElem.addEventListener('click', (e) => {
+      if (e.target.closest('.speakerButton')) return;
       const timestamp = window.getVideoCurrentTime ? window.getVideoCurrentTime() : null;
       const sourceUrl = window.location.href;
       openMenu({ text, translation, timestamp, sourceUrl });

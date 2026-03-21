@@ -121,11 +121,18 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
     .find((elem) => elem.dataset.text === normalizedText);
 
   if (existingElem) {
-    existingElem.classList.remove('historyElem--highlight');
-    void existingElem.offsetWidth;
-    existingElem.classList.add('historyElem--highlight');
-    existingElem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    return;
+    const existingTimestamp = existingElem.dataset.timestamp;
+    const newTimestamp = timestamp != null ? String(timestamp) : '';
+    const isSameTimestamp = existingTimestamp === newTimestamp
+      || (existingTimestamp && newTimestamp && Math.abs(parseFloat(existingTimestamp) - parseFloat(newTimestamp)) < 2);
+
+    if (isSameTimestamp) {
+      existingElem.classList.remove('historyElem--highlight');
+      void existingElem.offsetWidth;
+      existingElem.classList.add('historyElem--highlight');
+      existingElem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      return;
+    }
   }
 
   const historyElem = document.createElement('div');
@@ -142,6 +149,8 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
   });
 
   historyElem.addEventListener('click', (e) => {
+    if (e.target.closest('.speakerButton')) return;
+
     if (e.target.classList.contains('historyTimestamp')) {
       const ts = historyElem.dataset.timestamp;
       const url = historyElem.dataset.sourceUrl;
@@ -168,12 +177,37 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
 
     translatedList.classList.remove('is-hidden');
 
-    translatedList.style.left = 'auto';
+    const sidebar = document.querySelector('.double-subtitles-sidebar');
+    const sidebarRect = sidebar ? sidebar.getBoundingClientRect() : null;
+    const elemRect = historyElem.getBoundingClientRect();
+    const elemCenterY = elemRect.top + elemRect.height / 2;
 
-    translatedList.style.top = `${historyElem.offsetTop}px`;
-    translatedList.style.right = `${historyElem.offsetWidth}px`;
+    translatedList.style.right = 'auto';
+    translatedList.style.transform = 'none';
 
-    translatedList.style.transform = null;
+    if (sidebarRect) {
+      translatedList.style.left = `${sidebarRect.left}px`;
+      translatedList.style.transform = 'translateX(-100%)';
+    } else {
+      translatedList.style.left = `${elemRect.left}px`;
+      translatedList.style.transform = 'translateX(-100%)';
+    }
+
+    // Position vertically centered on the item, then clamp to viewport
+    translatedList.style.top = `${elemCenterY}px`;
+    translatedList.style.transform += ' translateY(-50%)';
+
+    // After rendering, clamp to viewport if needed
+    requestAnimationFrame(() => {
+      const listRect = translatedList.getBoundingClientRect();
+      if (listRect.top < 0) {
+        translatedList.style.top = '0px';
+        translatedList.style.transform = translatedList.style.transform.replace(' translateY(-50%)', '');
+      } else if (listRect.bottom > window.innerHeight) {
+        translatedList.style.top = `${window.innerHeight - listRect.height}px`;
+        translatedList.style.transform = translatedList.style.transform.replace(' translateY(-50%)', '');
+      }
+    });
   });
 
   historyElem.addEventListener('mouseout', (e) => {
@@ -201,11 +235,40 @@ function updateHistoryElement(historyElem, { text, translation }) {
   const ts = historyElem.dataset.timestamp;
   const formattedTime = ts ? formatTimestamp(parseFloat(ts)) : '';
 
-  historyElem.innerHTML = `
-    ${formattedTime ? `<span class="historyTimestamp">${formattedTime}</span>` : ''}
-    <span>${text}</span>
-    <span>${translation}</span>
-  `;
+  historyElem.innerHTML = '';
+
+  if (formattedTime) {
+    const topRow = document.createElement('div');
+    topRow.classList.add('historyTopRow');
+
+    const timestampSpan = document.createElement('span');
+    timestampSpan.classList.add('historyTimestamp');
+    timestampSpan.textContent = formattedTime;
+    topRow.appendChild(timestampSpan);
+
+    const speakerBtn = window.createSpeakerButton(text, { inline: true });
+    speakerBtn.classList.add('historySpeakerButton');
+    topRow.appendChild(speakerBtn);
+
+    historyElem.appendChild(topRow);
+  } else {
+    const topRow = document.createElement('div');
+    topRow.classList.add('historyTopRow');
+
+    const speakerBtn = window.createSpeakerButton(text, { inline: true });
+    speakerBtn.classList.add('historySpeakerButton');
+    topRow.appendChild(speakerBtn);
+
+    historyElem.appendChild(topRow);
+  }
+
+  const textSpan = document.createElement('span');
+  textSpan.innerHTML = text;
+  historyElem.appendChild(textSpan);
+
+  const translationSpan = document.createElement('span');
+  translationSpan.innerHTML = translation;
+  historyElem.appendChild(translationSpan);
 
   if (window.options && window.options.sidebarFontSize) {
     historyElem.style.fontSize = `${window.options.sidebarFontSize}px`;
@@ -227,10 +290,10 @@ function saveHistoryToSession(historyList) {
 }
 
 function scrollSidebarToBottom() {
-  const sidebar = document.querySelector('.double-subtitles-sidebar');
+  const history = document.querySelector('.history');
 
-  if (sidebar) {
-    sidebar.scrollTop = sidebar.scrollHeight;
+  if (history) {
+    history.scrollTop = history.scrollHeight;
   }
 }
 

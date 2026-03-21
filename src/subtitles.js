@@ -1,5 +1,7 @@
 const THREE_DOTS_SVG = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="currentColor" height="40px" width="40px" version="1.1" id="Capa_1" viewBox="0 0 32.055 32.055" xml:space="preserve"><path d="M3.968,12.061C1.775,12.061,0,13.835,0,16.027c0,2.192,1.773,3.967,3.968,3.967c2.189,0,3.966-1.772,3.966-3.967   C7.934,13.835,6.157,12.061,3.968,12.061z M16.233,12.061c-2.188,0-3.968,1.773-3.968,3.965c0,2.192,1.778,3.967,3.968,3.967   s3.97-1.772,3.97-3.967C20.201,13.835,18.423,12.061,16.233,12.061z M28.09,12.061c-2.192,0-3.969,1.774-3.969,3.967   c0,2.19,1.774,3.965,3.969,3.965c2.188,0,3.965-1.772,3.965-3.965S30.278,12.061,28.09,12.061z"/></svg>`;
 
+const SPEAKER_SVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="32px" width="32px" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>`;
+
 let _subtitleDragState = null;
 
 function addLineToSubtitles({ text, translation }) {
@@ -28,6 +30,7 @@ function addLineToSubtitles({ text, translation }) {
     }
   }
 
+  subtitleWrapper.appendChild(createSpeakerButton(text));
   subtitleWrapper.appendChild(createMenuButton({ text, translation }));
   subtitleWrapper.appendChild(createDragHandle(subtitleWrapper));
 
@@ -53,18 +56,18 @@ function createSubtitlesWrapper() {
     translatedList.classList.remove('is-hidden');
 
     const rect = subtitleWrapper.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
     const showBelow = rect.top < 200;
 
     translatedList.style.right = 'auto';
+    translatedList.style.left = `${centerX}px`;
 
     if (showBelow) {
       translatedList.style.top = `${rect.bottom}px`;
-      translatedList.style.left = `${rect.left}px`;
-      translatedList.style.transform = 'none';
+      translatedList.style.transform = 'translateX(-50%)';
     } else {
       translatedList.style.top = `${rect.top}px`;
-      translatedList.style.left = `${rect.left}px`;
-      translatedList.style.transform = 'translateY(-100%)';
+      translatedList.style.transform = 'translate(-50%, -100%)';
     }
   });
 
@@ -186,6 +189,36 @@ function createMenuButton({ text, translation }) {
   });
 
   return menuButton;
+}
+
+function speakText(text) {
+  const plainText = text.replace(/<[^>]*>/g, '').trim();
+  if (!plainText) return;
+
+  const lang = window.options?.currentForeignLanguage || 'en';
+
+  chrome.runtime.sendMessage({
+    message: 'speakText',
+    payload: { text: plainText, lang },
+  });
+}
+
+function createSpeakerButton(text, { inline = false } = {}) {
+  const speakerButton = document.createElement('button');
+
+  speakerButton.classList.add('speakerButton');
+  if (inline) {
+    speakerButton.classList.add('speakerButton--inline');
+  }
+  speakerButton.innerHTML = SPEAKER_SVG;
+
+  speakerButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    speakText(text);
+  });
+
+  return speakerButton;
 }
 
 function updateExistingSubtitlesVisibility(show) {
@@ -455,3 +488,5 @@ window.setupVideoPauseListeners = setupVideoPauseListeners;
 window.applyPauseOnlyVisibility = applyPauseOnlyVisibility;
 window.resetSubtitlePosition = resetSubtitlePosition;
 window.updateSubtitleColors = updateSubtitleColors;
+window.createSpeakerButton = createSpeakerButton;
+window.SPEAKER_SVG = SPEAKER_SVG;

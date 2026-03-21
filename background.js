@@ -48,15 +48,19 @@ chrome.runtime.onMessage.addListener(async (req, sender, sendResponse) => {
     const translatedList = await Promise.all(
       req.payload.textList.map((elem) => translateRow({ ...req.payload, text: elem }))
     );
-    chrome.tabs.sendMessage(targetTabId, {
-      message: 'translatedList',
-      payload: {
-        data: translatedList.map((elem, index) => ({
-          text: req.payload.textList[index],
-          translation: elem.messageText,
-        })),
-      },
-    });
+    try {
+      await chrome.tabs.sendMessage(targetTabId, {
+        message: 'translatedList',
+        payload: {
+          data: translatedList.map((elem, index) => ({
+            text: req.payload.textList[index],
+            translation: elem.messageText,
+          })),
+        },
+      });
+    } catch (e) {
+      console.warn('Could not send translatedList to tab', targetTabId, e.message);
+    }
   }
 
   if (req.message === 'navigateToSource') {
@@ -76,10 +80,14 @@ chrome.runtime.onMessage.addListener(async (req, sender, sendResponse) => {
     if (targetTab) {
       await chrome.tabs.update(targetTab.id, { active: true });
       if (timestamp != null) {
-        chrome.tabs.sendMessage(targetTab.id, {
-          message: 'seekToTimestamp',
-          payload: { timestamp },
-        });
+        try {
+          await chrome.tabs.sendMessage(targetTab.id, {
+            message: 'seekToTimestamp',
+            payload: { timestamp },
+          });
+        } catch (e) {
+          console.warn('Could not send seekToTimestamp to tab', targetTab.id, e.message);
+        }
       }
     } else {
       const newTab = await chrome.tabs.create({ url: sourceUrl });
@@ -87,16 +95,27 @@ chrome.runtime.onMessage.addListener(async (req, sender, sendResponse) => {
         chrome.tabs.onUpdated.addListener(function listener(tabId, changeInfo) {
           if (tabId === newTab.id && changeInfo.status === 'complete') {
             chrome.tabs.onUpdated.removeListener(listener);
-            setTimeout(() => {
-              chrome.tabs.sendMessage(tabId, {
-                message: 'seekToTimestamp',
-                payload: { timestamp },
-              });
+            setTimeout(async () => {
+              try {
+                await chrome.tabs.sendMessage(tabId, {
+                  message: 'seekToTimestamp',
+                  payload: { timestamp },
+                });
+              } catch (e) {
+                console.warn('Could not send seekToTimestamp to new tab', tabId, e.message);
+              }
             }, 3000);
           }
         });
       }
     }
+  }
+
+  if (req.message === 'speakText') {
+    chrome.tts.stop();
+    chrome.tts.speak(req.payload.text, {
+      lang: req.payload.lang || 'en',
+    });
   }
 
   if (req.message === 'seekOnSourcePage') {
@@ -115,20 +134,28 @@ chrome.runtime.onMessage.addListener(async (req, sender, sendResponse) => {
 
     if (targetTab) {
       await chrome.tabs.update(targetTab.id, { active: true });
-      chrome.tabs.sendMessage(targetTab.id, {
-        message: 'seekToTimestamp',
-        payload: { timestamp },
-      });
+      try {
+        await chrome.tabs.sendMessage(targetTab.id, {
+          message: 'seekToTimestamp',
+          payload: { timestamp },
+        });
+      } catch (e) {
+        console.warn('Could not send seekToTimestamp to tab', targetTab.id, e.message);
+      }
     } else {
       const newTab = await chrome.tabs.create({ url: sourceUrl });
       chrome.tabs.onUpdated.addListener(function listener(tabId, changeInfo) {
         if (tabId === newTab.id && changeInfo.status === 'complete') {
           chrome.tabs.onUpdated.removeListener(listener);
-          setTimeout(() => {
-            chrome.tabs.sendMessage(tabId, {
-              message: 'seekToTimestamp',
-              payload: { timestamp },
-            });
+          setTimeout(async () => {
+            try {
+              await chrome.tabs.sendMessage(tabId, {
+                message: 'seekToTimestamp',
+                payload: { timestamp },
+              });
+            } catch (e) {
+              console.warn('Could not send seekToTimestamp to new tab', tabId, e.message);
+            }
           }, 3000);
         }
       });
@@ -182,9 +209,13 @@ async function translateRow(obj) {
 
 async function sendTranslatedMessage(data, originText, requestId, timestamp) {
   if (recentTabId != null) {
-    chrome.tabs.sendMessage(recentTabId, {
-      message: 'translated',
-      payload: { data, originText, requestId, timestamp },
-    });
+    try {
+      await chrome.tabs.sendMessage(recentTabId, {
+        message: 'translated',
+        payload: { data, originText, requestId, timestamp },
+      });
+    } catch (e) {
+      console.warn('Could not send translated message to tab', recentTabId, e.message);
+    }
   }
 }
