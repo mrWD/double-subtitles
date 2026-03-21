@@ -205,11 +205,13 @@ function syncPageUiState() {
 
 function startPageContextWatcher() {
   setInterval(() => {
-    if (window.location.href === lastKnownLocation) {
-      return;
+    const hasLocationChanged = window.location.href !== lastKnownLocation;
+    if (hasLocationChanged) {
+      lastKnownLocation = window.location.href;
     }
 
-    lastKnownLocation = window.location.href;
+    // Re-check even without URL change because some platforms (e.g. Amazon)
+    // mount the playback <video> later than initial content script execution.
     syncPageUiState();
   }, 500);
 }
