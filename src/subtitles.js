@@ -15,6 +15,8 @@ function addLineToSubtitles({ text, translation }) {
   subtitleWrapper.appendChild(mainText);
   subtitleWrapper.appendChild(translatedText);
 
+  applySubtitleColors(subtitleWrapper);
+
   if (isDoubleSubtitlesHidden) {
     translatedText.style.display = 'none';
   }
@@ -417,6 +419,34 @@ function applyPauseOnlyVisibility() {
   }
 }
 
+function applySubtitleColors(wrapper) {
+  if (!wrapper) return;
+
+  const opts = window.options || {};
+  const captionColor = opts.captionColor || '#ffffff';
+  const translationColor = opts.translationColor || '#aaaaaa';
+
+  const subtitles = wrapper.querySelectorAll('.subtitle');
+  if (subtitles[0]) {
+    subtitles[0].style.color = captionColor;
+  }
+  if (subtitles[1]) {
+    subtitles[1].style.color = translationColor;
+  }
+}
+
+function updateSubtitleColors(captionColor, translationColor) {
+  if (window.options) {
+    window.options.captionColor = captionColor;
+    window.options.translationColor = translationColor;
+  }
+
+  const wrapper = document.querySelector('.visibleSubtitles');
+  if (wrapper) {
+    applySubtitleColors(wrapper);
+  }
+}
+
 window.showDoubleSubtitles = showDoubleSubtitles;
 window.hideDoubleSubtitles = hideDoubleSubtitles;
 window.toggleDoubleSubtitles = toggleDoubleSubtitles;
@@ -424,3 +454,4 @@ window.toggleYoutubeNativeSubtitles = toggleYoutubeNativeSubtitles;
 window.setupVideoPauseListeners = setupVideoPauseListeners;
 window.applyPauseOnlyVisibility = applyPauseOnlyVisibility;
 window.resetSubtitlePosition = resetSubtitlePosition;
+window.updateSubtitleColors = updateSubtitleColors;

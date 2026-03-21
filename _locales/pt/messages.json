@@ -79,5 +79,11 @@
    },
    "resetSubtitlePosition": {
       "message": "Redefinir posição"
+   },
+   "captionColorLabel": {
+      "message": "Cor das legendas originais"
+   },
+   "translationColorLabel": {
+      "message": "Cor da tradução"
    }
 }

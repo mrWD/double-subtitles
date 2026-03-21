@@ -109,6 +109,12 @@ chrome.runtime.onMessage.addListener((req) => {
     }
   }
 
+  if (req.message === 'updateSubtitleColors') {
+    if (window.updateSubtitleColors) {
+      window.updateSubtitleColors(req.payload.captionColor, req.payload.translationColor);
+    }
+  }
+
   if (req.message === 'updateSidebarFontSize') {
     if (window.updateSidebarFontSize) {
       window.updateSidebarFontSize(req.payload.fontSize);

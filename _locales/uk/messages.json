@@ -79,5 +79,11 @@
    },
    "resetSubtitlePosition": {
       "message": "Скинути позицію"
+   },
+   "captionColorLabel": {
+      "message": "Колір оригінальних субтитрів"
+   },
+   "translationColorLabel": {
+      "message": "Колір перекладу"
    }
 }

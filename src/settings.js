@@ -19,6 +19,8 @@ async function loadOptionsOrSetDefaults() {
           captionsOnPauseOnly: false,
           translationOnPauseOnly: false,
           subtitlePosition: null,
+          captionColor: null,
+          translationColor: null,
         };
 
         chrome.storage.sync.set({

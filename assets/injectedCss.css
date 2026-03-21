@@ -298,7 +298,7 @@
 .visibleSubtitles .subtitle:last-child {
   border-top: 1px solid #ffffff;
   font-weight: 400;
-  color: #feffc3;
+  color: #aaaaaa;
 }
 
 .visibleSubtitles .subtitle:hover {
@@ -613,7 +613,7 @@
 
 .visibleSubtitles.youtube-subtitles .subtitle:nth-child(2) {
   margin-top: 6px;
-  color: #feffc3;
+  color: #aaaaaa;
 }
 
 .visibleSubtitles.youtube-subtitles .menuButton {

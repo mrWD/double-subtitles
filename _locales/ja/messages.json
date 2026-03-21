@@ -79,5 +79,11 @@
    },
    "resetSubtitlePosition": {
       "message": "位置をリセット"
+   },
+   "captionColorLabel": {
+      "message": "元の字幕の色"
+   },
+   "translationColorLabel": {
+      "message": "翻訳の色"
    }
 }

@@ -79,5 +79,11 @@
    },
    "resetSubtitlePosition": {
       "message": "위치 초기화"
+   },
+   "captionColorLabel": {
+      "message": "원본 자막 색상"
+   },
+   "translationColorLabel": {
+      "message": "번역 색상"
    }
 }

@@ -79,5 +79,11 @@
    },
    "resetSubtitlePosition": {
       "message": "Konumu sıfırla"
+   },
+   "captionColorLabel": {
+      "message": "Orijinal altyazı rengi"
+   },
+   "translationColorLabel": {
+      "message": "Çeviri rengi"
    }
 }
