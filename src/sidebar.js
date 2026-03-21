@@ -91,17 +91,6 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
     return;
   }
 
-  const existingElem = Array.from(historyList.querySelectorAll('.historyElem'))
-    .find((elem) => elem.dataset.text === normalizedText);
-
-  if (existingElem) {
-    existingElem.classList.remove('historyElem--highlight');
-    void existingElem.offsetWidth;
-    existingElem.classList.add('historyElem--highlight');
-    existingElem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    return;
-  }
-
   const lastHistoryElem = historyList.lastElementChild;
 
   if (
@@ -126,6 +115,17 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
       scrollSidebarToBottom();
       return;
     }
+  }
+
+  const existingElem = Array.from(historyList.querySelectorAll('.historyElem'))
+    .find((elem) => elem.dataset.text === normalizedText);
+
+  if (existingElem) {
+    existingElem.classList.remove('historyElem--highlight');
+    void existingElem.offsetWidth;
+    existingElem.classList.add('historyElem--highlight');
+    existingElem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    return;
   }
 
   const historyElem = document.createElement('div');
