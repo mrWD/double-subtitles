@@ -5,23 +5,22 @@ function addLineToSubtitles({ text, translation }) {
   const mainText = createSubtitleElement({ text, translation });
 
   const translatedText = mainText.cloneNode(true);
+  const isDoubleSubtitlesHidden = window.options && window.options.showDoubleSubtitles === false;
 
   mainText.innerHTML = text;
   translatedText.innerHTML = translation;
   subtitleWrapper.innerHTML = '';
 
-  if (window.STREAMING_PLATFORM === 'youtube') {
-    subtitleWrapper.appendChild(mainText);
-    subtitleWrapper.appendChild(translatedText);
-    syncYoutubeSubtitlesPosition(subtitleWrapper);
-    toggleYoutubeNativeSubtitles(false);
-  } else {
-    subtitleWrapper.appendChild(mainText);
-    subtitleWrapper.appendChild(translatedText);
+  subtitleWrapper.appendChild(mainText);
+  subtitleWrapper.appendChild(translatedText);
 
-    if (window.options && window.options.showDoubleSubtitles === false) {
-      translatedText.style.display = 'none';
-    }
+  if (isDoubleSubtitlesHidden) {
+    translatedText.style.display = 'none';
+  }
+
+  if (window.STREAMING_PLATFORM === 'youtube') {
+    toggleYoutubeNativeSubtitles(isDoubleSubtitlesHidden);
+    syncYoutubeSubtitlesPosition(subtitleWrapper);
   }
 
   subtitleWrapper.appendChild(createMenuButton({ text, translation }));
