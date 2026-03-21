@@ -213,11 +213,30 @@
   transition: font-size 0.2s ease;
 }
 
+.historyTopRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.historySpeakerButton {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.historyElem:hover .historySpeakerButton {
+  opacity: 0.6;
+}
+
+.historySpeakerButton:hover {
+  opacity: 1 !important;
+}
+
 .historyTimestamp {
   display: inline-block !important;
   pointer-events: auto !important;
   padding: 2px 8px;
-  margin-bottom: 6px;
   border-radius: 4px;
   background-color: var(--secondary-color);
   font-size: 11px !important;
@@ -452,11 +471,62 @@
   border-radius: 0 0 8px 8px !important;
 }
 
-.menuButton {
+.subtitle-button-group {
   position: absolute;
   top: 50%;
   left: 100%;
-  transform: translate(20px, -50%);
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 8px;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.visibleSubtitles:hover .subtitle-button-group {
+  opacity: 1;
+}
+
+.visibleSubtitles.youtube-subtitles .subtitle-button-group {
+  pointer-events: auto;
+}
+
+.speakerButton {
+  box-sizing: border-box;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background-color: transparent;
+  font-size: 0;
+  color: var(--text-primary-color);
+}
+
+.speakerButton:hover {
+  background-color: var(--primary-color);
+  cursor: pointer;
+}
+
+/* Inline speaker button for word lists and sidebar */
+.speakerButton--inline {
+  position: static;
+  transform: none;
+  flex-shrink: 0;
+  padding: 6px;
+  opacity: 0.5;
+}
+
+.speakerButton--inline:hover {
+  opacity: 1;
+}
+
+.speakerButton--inline svg {
+  height: 18px;
+  width: 18px;
+}
+
+.menuButton {
   box-sizing: border-box;
   padding: 8px 10px;
   border: none;
@@ -617,7 +687,6 @@
 }
 
 .visibleSubtitles.youtube-subtitles .menuButton {
-  transform: translate(8px, -50%);
   pointer-events: auto;
 }
 

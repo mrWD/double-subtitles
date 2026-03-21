@@ -80,6 +80,9 @@
    "resetSubtitlePosition": {
       "message": "Réinitialiser la position"
    },
+   "subtitleFontSizeLabel": {
+      "message": "Taille de police des sous-titres"
+   },
    "captionColorLabel": {
       "message": "Couleur des sous-titres originaux"
    },

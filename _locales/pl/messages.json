@@ -80,6 +80,9 @@
    "resetSubtitlePosition": {
       "message": "Zresetuj pozycję"
    },
+   "subtitleFontSizeLabel": {
+      "message": "Rozmiar czcionki napisów"
+   },
    "captionColorLabel": {
       "message": "Kolor oryginalnych napisów"
    },
