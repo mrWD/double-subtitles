@@ -7,6 +7,7 @@ let latestTranslationRequestId = 0;
 let latestAppliedTranslationRequestId = 0;
 let isWatchPageActive = false;
 let lastKnownLocation = window.location.href;
+let isRuntimeUnavailable = false;
 
 async function initContent() {
   options = await loadOptionsOrSetDefaults();
@@ -112,7 +113,7 @@ function handleMessage(text, timestamp) {
 
   latestTranslationRequestId += 1;
 
-  chrome.runtime.sendMessage({
+  safeRuntimeSendMessage({
     message: 'toTranslate',
     payload: {
       text,
@@ -131,7 +132,7 @@ function translateList(target) {
     return;
   }
 
-  chrome.runtime.sendMessage({
+  safeRuntimeSendMessage({
     message: 'toTranslateClicked',
     payload: {
       textList,
@@ -211,4 +212,27 @@ function startPageContextWatcher() {
     lastKnownLocation = window.location.href;
     syncPageUiState();
   }, 500);
+}
+
+function safeRuntimeSendMessage(message) {
+  if (isRuntimeUnavailable || !chrome?.runtime?.id) {
+    isRuntimeUnavailable = true;
+    return;
+  }
+
+  try {
+    chrome.runtime.sendMessage(message, () => {
+      const runtimeError = chrome.runtime.lastError;
+
+      if (
+        runtimeError
+        && runtimeError.message
+        && runtimeError.message.includes('Extension context invalidated')
+      ) {
+        isRuntimeUnavailable = true;
+      }
+    });
+  } catch {
+    isRuntimeUnavailable = true;
+  }
 }
