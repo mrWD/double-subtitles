@@ -10,8 +10,8 @@ async function loadOptionsOrSetDefaults() {
       if (!options) {
         options = {
           extensionOn: true,
-          secondLanguage: 'ru',
-          currentForeignLanguage: 'de',
+          secondLanguage: 'en',
+          currentForeignLanguage: 'en',
           showSidebar: true,
           showDoubleSubtitles: true,
           sidebarWidth: '20%',
