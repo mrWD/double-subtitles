@@ -6,15 +6,16 @@ const temp = {
   rangeName: 'Sheet1',
 }
 
-function saveToSyncStorage({ text, translation }) {
+function saveToSyncStorage({ text, translation, timestamp, sourceUrl }) {
   chrome.storage.sync.get(['cards'], result => {
     const cards = result.cards ?? [];
 
+    const card = { text, translation };
+    if (timestamp != null) card.timestamp = timestamp;
+    if (sourceUrl) card.sourceUrl = sourceUrl;
+
     chrome.storage.sync.set({
-      cards: [
-        ...cards,
-        { text, translation },
-      ],
+      cards: [...cards, card],
     });
   });
 }

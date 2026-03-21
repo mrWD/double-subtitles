@@ -152,8 +152,13 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
     }
 
     translateList(e.target);
-    const { text, translation } = historyElem.dataset;
-    openMenu({ text, translation });
+    const { text, translation, timestamp, sourceUrl } = historyElem.dataset;
+    openMenu({
+      text,
+      translation,
+      timestamp: timestamp ? parseFloat(timestamp) : null,
+      sourceUrl: sourceUrl || null,
+    });
   });
 
   historyElem.addEventListener('mouseover', () => {

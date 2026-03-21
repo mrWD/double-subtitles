@@ -226,11 +226,11 @@ a {
   font-size: 24px;
 }
 
-#savedCards ul li span:first-child {
+#savedCards ul li > span:first-child {
   margin-bottom: 5px;
 }
 
-#savedCards ul li span:last-child {
+#savedCards ul li > span:nth-child(2) {
   opacity: 0.7;
 }
 
@@ -311,6 +311,37 @@ a {
   padding: 6px 8px;
   color: var(--text-primary-color);
   cursor: pointer;
+}
+
+.sourceLink {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.sourceLink:hover {
+  opacity: 0.9;
+}
+
+.sourceLinkButton {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px !important;
+  border: none !important;
+  background: none !important;
+  color: var(--text-primary-color);
+  cursor: pointer;
+  font-size: 0;
+}
+
+.sourceLink span:last-child {
+  opacity: 1 !important;
+  font-size: 12px !important;
 }
 
 .donations {

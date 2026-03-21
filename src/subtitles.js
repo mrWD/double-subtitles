@@ -88,8 +88,10 @@ function createSubtitleElement({ text, translation }) {
     const translation = e.target.dataset.translation
       ?? e.target.nextElementSibling?.innerText
       ?? '';
+    const timestamp = window.getVideoCurrentTime ? window.getVideoCurrentTime() : null;
+    const sourceUrl = window.location.href;
 
-    openMenu({ text, translation });
+    openMenu({ text, translation, timestamp, sourceUrl });
   });
 
   return subtitle;
@@ -153,7 +155,9 @@ function createMenuButton({ text, translation }) {
   menuButton.innerHTML = THREE_DOTS_SVG;
 
   menuButton.addEventListener('click', () => {
-    openMenu({ text, translation });
+    const timestamp = window.getVideoCurrentTime ? window.getVideoCurrentTime() : null;
+    const sourceUrl = window.location.href;
+    openMenu({ text, translation, timestamp, sourceUrl });
   });
 
 

@@ -13,7 +13,7 @@ const QUIZLET_INPUT = 'quizletDeckName';
 const GSHEETS_INPUT = 'gSheetSpreadsheetId';
 const GSHEETS_RANGE = 'gSheetRangeName';
 
-function openMenu({ text, translation }) {
+function openMenu({ text, translation, timestamp, sourceUrl }) {
   const menu = createMenu();
 
   const textInput = document.querySelector('#text-input');
@@ -25,6 +25,9 @@ function openMenu({ text, translation }) {
 
   textInput.value = text;
   translationInput.value = translation;
+
+  menu.dataset.timestamp = timestamp ?? '';
+  menu.dataset.sourceUrl = sourceUrl ?? '';
 
   menu.classList.toggle('visible');
 }
@@ -92,9 +95,14 @@ function createSaveButton() {
     const textInput = document.querySelector('#text-input');
     const translationInput = document.querySelector('#translation-input');
 
+    const timestamp = menu.dataset.timestamp ? parseFloat(menu.dataset.timestamp) : null;
+    const sourceUrl = menu.dataset.sourceUrl || null;
+
     saveCards({
       text: textInput.value,
       translation: translationInput.value,
+      timestamp,
+      sourceUrl,
     });
 
     menu.classList.remove('visible');
@@ -125,11 +133,11 @@ function createServiceCheckbox(id, svg, name) {
   return saveButton;
 }
 
-function saveCards({ text, translation }) {
+function saveCards({ text, translation, timestamp, sourceUrl }) {
   const checkboxes = document.querySelectorAll('.saveCheckbox');
   const mapCheckBoxToService = {
     [BROWSER_CHECKBOX]: () => {
-      saveToSyncStorage({ text, translation });
+      saveToSyncStorage({ text, translation, timestamp, sourceUrl });
     },
     [ANKIAPP_CHECKBOX]: () => {
       const deckName = document.getElementById(ANKIAPP_INPUT).value;

@@ -12,7 +12,9 @@ function showTranslatedList(data) {
     translatedList.appendChild(translatedElem);
 
     translatedElem.addEventListener('click', () => {
-      openMenu({ text, translation });
+      const timestamp = window.getVideoCurrentTime ? window.getVideoCurrentTime() : null;
+      const sourceUrl = window.location.href;
+      openMenu({ text, translation, timestamp, sourceUrl });
     });
   });
 
