@@ -174,7 +174,7 @@
   padding: 8px 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 4px;
-  background: var(--secondary-color);
+  background: var(--secondary-color) !important;
   color: var(--text-primary-color);
   font-size: 20px;
   transition: font-size 0.2s ease;
@@ -203,6 +203,26 @@
   transition: font-size 0.2s ease;
 }
 
+.historyTimestamp {
+  display: inline-block !important;
+  pointer-events: auto !important;
+  padding: 2px 8px;
+  margin-bottom: 6px;
+  border-radius: 4px;
+  background-color: var(--secondary-color);
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  opacity: 0.6;
+  cursor: pointer;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.historyTimestamp:hover {
+  opacity: 1;
+  background-color: #3a3d40;
+}
+
 .historyElem span {
   display: block;
   font-size: 16px;
@@ -211,7 +231,7 @@
   transition: font-size 0.2s ease;
 }
 
-.historyElem span:first-child {
+.historyElem span:nth-child(2) {
   margin-bottom: 8px;
   font-weight: bold;
 }
@@ -535,4 +555,47 @@
 
 .watch-video {
   transition: width 0s ease-in-out;
+}
+
+.caption-window {
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.ytp-caption-window-container.double-subtitles-hide-native .caption-window {
+  opacity: 0 !important;
+}
+
+.visibleSubtitles.youtube-subtitles {
+  position: fixed;
+  z-index: 2;
+  transform: translateX(-50%);
+  align-items: center;
+  pointer-events: none;
+}
+
+.visibleSubtitles.youtube-subtitles .subtitle {
+  max-width: 100%;
+  margin-block: 0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: rgba(8, 8, 8, 0.75);
+  font-size: 24px;
+  line-height: 1.25;
+  text-align: center;
+  pointer-events: auto;
+}
+
+.visibleSubtitles.youtube-subtitles .subtitle:first-child {
+  color: #ffffff;
+}
+
+.visibleSubtitles.youtube-subtitles .subtitle:nth-child(2) {
+  margin-top: 6px;
+  color: #feffc3;
+}
+
+.visibleSubtitles.youtube-subtitles .menuButton {
+  transform: translate(8px, -50%);
+  pointer-events: auto;
 }

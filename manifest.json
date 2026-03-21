@@ -18,6 +18,7 @@
     "*://*.amazon.co.jp/*",
     "*://*.disneyplus.com/*",
     "*://*.netflix.com/*",
+    "*://*.youtube.com/*",
     "*://ankiuser.net/*",
     "*://quizlet.com/*",
     "https://translate.googleapis.com/*"
@@ -38,6 +39,16 @@
   "background": {
     "service_worker": "background.js"
   },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/netflixBridge.js"
+      ],
+      "matches": [
+        "*://*.netflix.com/*"
+      ]
+    }
+  ],
   "content_scripts": [
     {
       "css": [ "assets/injectedCss.css" ],
@@ -62,6 +73,7 @@
         "*://*.amazon.co.jp/*",
         "*://*.disneyplus.com/*",
         "*://*.netflix.com/*",
+        "*://*.youtube.com/*",
         "*://ankiuser.net/*",
         "*://quizlet.com/*"
       ]

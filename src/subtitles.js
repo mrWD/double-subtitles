@@ -2,9 +2,10 @@ const THREE_DOTS_SVG = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="htt
 
 function addLineToSubtitles({ text, translation }) {
   const subtitleWrapper = createSubtitlesWrapper();
-  const mainText = createSubtitleElement();
+  const mainText = createSubtitleElement({ text, translation });
 
   const translatedText = mainText.cloneNode(true);
+  const isDoubleSubtitlesHidden = window.options && window.options.showDoubleSubtitles === false;
 
   mainText.innerHTML = text;
   translatedText.innerHTML = translation;
@@ -13,8 +14,13 @@ function addLineToSubtitles({ text, translation }) {
   subtitleWrapper.appendChild(mainText);
   subtitleWrapper.appendChild(translatedText);
 
-  if (window.options && window.options.showDoubleSubtitles === false) {
+  if (isDoubleSubtitlesHidden) {
     translatedText.style.display = 'none';
+  }
+
+  if (window.STREAMING_PLATFORM === 'youtube') {
+    toggleYoutubeNativeSubtitles(isDoubleSubtitlesHidden);
+    syncYoutubeSubtitlesPosition(subtitleWrapper);
   }
 
   subtitleWrapper.appendChild(createMenuButton({ text, translation }));
@@ -60,24 +66,84 @@ function createSubtitlesWrapper() {
 
   subtitleWrapper.style.display = 'flex';
 
-  document.body.appendChild(subtitleWrapper);
+  if (window.STREAMING_PLATFORM === 'youtube') {
+    subtitleWrapper.classList.add('youtube-subtitles');
+    document.body.appendChild(subtitleWrapper);
+  } else {
+    document.body.appendChild(subtitleWrapper);
+  }
 
   return subtitleWrapper;
 }
 
-function createSubtitleElement() {
+function createSubtitleElement({ text, translation }) {
   const subtitle = document.createElement('p');
 
   subtitle.classList.add('subtitle');
+  subtitle.dataset.text = text;
+  subtitle.dataset.translation = translation;
 
   subtitle.addEventListener('click', (e) => {
-    const text = e.target.innerText;
-    const translation = e.target.nextElementSibling.innerText;
+    const text = e.target.dataset.text ?? e.target.innerText;
+    const translation = e.target.dataset.translation
+      ?? e.target.nextElementSibling?.innerText
+      ?? '';
 
     openMenu({ text, translation });
   });
 
   return subtitle;
+}
+
+function syncYoutubeSubtitlesPosition(subtitleWrapper) {
+  if (window.STREAMING_PLATFORM !== 'youtube') {
+    return;
+  }
+
+  const player = document.querySelector('#movie_player');
+
+  const captionWindows = Array.from(
+    document.querySelectorAll('.ytp-caption-window-container .caption-window')
+  ).filter((captionWindow) => {
+    const styles = window.getComputedStyle(captionWindow);
+
+    return styles.display !== 'none'
+      && styles.visibility !== 'hidden'
+      && captionWindow.textContent?.trim();
+  });
+
+  if (captionWindows.length === 0) {
+    subtitleWrapper.style.removeProperty('top');
+    subtitleWrapper.style.removeProperty('left');
+    subtitleWrapper.style.removeProperty('width');
+    subtitleWrapper.style.removeProperty('bottom');
+    return;
+  }
+
+  const rects = captionWindows.map((windowElem) => windowElem.getBoundingClientRect());
+  const captionBottom = Math.max(...rects.map((rect) => rect.bottom));
+  const left = Math.min(...rects.map((rect) => rect.left));
+  const right = Math.max(...rects.map((rect) => rect.right));
+
+  const playerRect = player?.getBoundingClientRect();
+  const maxBottom = playerRect
+    ? Math.min(captionBottom, playerRect.bottom)
+    : captionBottom;
+
+  subtitleWrapper.style.top = 'auto';
+  subtitleWrapper.style.bottom = `${window.innerHeight - maxBottom}px`;
+  subtitleWrapper.style.left = `${left + ((right - left) / 2)}px`;
+  subtitleWrapper.style.width = `${right - left}px`;
+}
+
+function toggleYoutubeNativeSubtitles(showNative) {
+  const captionContainer = document.querySelector('.ytp-caption-window-container');
+
+  if (!captionContainer) {
+    return;
+  }
+
+  captionContainer.classList.toggle('double-subtitles-hide-native', !showNative);
 }
 
 function createMenuButton({ text, translation }) {
@@ -97,7 +163,9 @@ function createMenuButton({ text, translation }) {
 function updateExistingSubtitlesVisibility(show) {
   const visibleSubtitles = document.querySelector('.visibleSubtitles');
   if (visibleSubtitles) {
-    const translatedSubtitles = visibleSubtitles.querySelectorAll('.subtitle:nth-child(2)');
+    const translatedSubtitles = window.STREAMING_PLATFORM === 'youtube'
+      ? visibleSubtitles.querySelectorAll('.subtitle')
+      : visibleSubtitles.querySelectorAll('.subtitle:nth-child(2)');
     translatedSubtitles.forEach(subtitle => {
       subtitle.style.display = show ? 'block' : 'none';
     });
@@ -119,6 +187,10 @@ function hideDoubleSubtitles() {
   if (visibleSubtitles) {
     updateExistingSubtitlesVisibility(false);
   }
+
+  if (window.STREAMING_PLATFORM === 'youtube') {
+    toggleYoutubeNativeSubtitles(true);
+  }
 }
 
 function toggleDoubleSubtitles(show) {
@@ -132,3 +204,4 @@ function toggleDoubleSubtitles(show) {
 window.showDoubleSubtitles = showDoubleSubtitles;
 window.hideDoubleSubtitles = hideDoubleSubtitles;
 window.toggleDoubleSubtitles = toggleDoubleSubtitles;
+window.toggleYoutubeNativeSubtitles = toggleYoutubeNativeSubtitles;
