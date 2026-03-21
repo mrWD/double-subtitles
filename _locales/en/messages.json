@@ -80,6 +80,9 @@
    "resetSubtitlePosition": {
       "message": "Reset position"
    },
+   "subtitleFontSizeLabel": {
+      "message": "Subtitle font size"
+   },
    "captionColorLabel": {
       "message": "Original caption color"
    },

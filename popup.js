@@ -13,6 +13,8 @@ const savedCardsModal = document.querySelector('#savedCards');
 const showCardsButton = document.querySelector('#showSavedCards');
 const closeSavedCardsButton = document.querySelector('#closeSavedCards');
 const uiLanguageSelect = document.querySelector('#uiLanguage');
+const subtitleFontSize = document.querySelector('#subtitleFontSize');
+const resetSubtitleFontSize = document.querySelector('#resetSubtitleFontSize');
 const captionColorInput = document.querySelector('#captionColor');
 const translationColorInput = document.querySelector('#translationColor');
 const resetCaptionColor = document.querySelector('#resetCaptionColor');
@@ -152,6 +154,34 @@ resetFontSize.addEventListener('click', () => {
   });
 });
 
+subtitleFontSize.addEventListener('input', () => {
+  setOptions();
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs[0]) {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        message: 'updateSubtitleFontSize',
+        payload: { fontSize: parseInt(subtitleFontSize.value) }
+      });
+    }
+  });
+});
+
+resetSubtitleFontSize.addEventListener('click', () => {
+  subtitleFontSize.value = '';
+  options.subtitleFontSize = null;
+  saveOptions(options);
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs[0]) {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        message: 'updateSubtitleFontSize',
+        payload: { fontSize: null }
+      });
+    }
+  });
+});
+
 captionColorInput.addEventListener('input', () => {
   setOptions();
   sendSubtitleColorsMessage();
@@ -218,6 +248,7 @@ function setOptions() {
   options.captionsOnPauseOnly = captionsOnPauseOnly.checked;
   options.translationOnPauseOnly = translationOnPauseOnly.checked;
   options.sidebarFontSize = parseInt(sidebarFontSize.value) || 16;
+  options.subtitleFontSize = parseInt(subtitleFontSize.value) || null;
   options.captionColor = captionColorInput.value;
   options.translationColor = translationColorInput.value;
   options.secondLanguage = languageSelect.value;
@@ -232,6 +263,7 @@ function setCheckbox(options) {
   captionsOnPauseOnly.checked = options.captionsOnPauseOnly || false;
   translationOnPauseOnly.checked = options.translationOnPauseOnly || false;
   sidebarFontSize.value = options.sidebarFontSize || 16;
+  subtitleFontSize.value = options.subtitleFontSize || '';
   captionColorInput.value = options.captionColor || DEFAULT_CAPTION_COLOR;
   translationColorInput.value = options.translationColor || DEFAULT_TRANSLATION_COLOR;
   languageSelect.value = options.secondLanguage;
@@ -301,6 +333,8 @@ function populateHtmlWithText() {
   document.querySelector('#resetSubtitlePositionLabel').textContent = t('resetSubtitlePosition');
   document.querySelector('#resetSubtitlePosition').textContent = t('resetButton');
   document.querySelector('#resetFontSize').textContent = t('resetButton');
+  document.querySelector('#subtitleFontSizeLabel').textContent = t('subtitleFontSizeLabel');
+  document.querySelector('#resetSubtitleFontSize').textContent = t('resetButton');
   document.querySelector('#captionColorLabel').textContent = t('captionColorLabel');
   document.querySelector('#translationColorLabel').textContent = t('translationColorLabel');
   document.querySelector('#resetCaptionColor').textContent = t('resetButton');

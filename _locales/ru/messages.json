@@ -80,6 +80,9 @@
    "resetSubtitlePosition": {
       "message": "Сбросить позицию"
    },
+   "subtitleFontSizeLabel": {
+      "message": "Размер шрифта субтитров"
+   },
    "captionColorLabel": {
       "message": "Цвет оригинальных субтитров"
    },

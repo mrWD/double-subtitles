@@ -80,6 +80,9 @@
    "resetSubtitlePosition": {
       "message": "위치 초기화"
    },
+   "subtitleFontSizeLabel": {
+      "message": "자막 글꼴 크기"
+   },
    "captionColorLabel": {
       "message": "원본 자막 색상"
    },

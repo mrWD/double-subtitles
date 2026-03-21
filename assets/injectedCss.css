@@ -471,23 +471,36 @@
   border-radius: 0 0 8px 8px !important;
 }
 
-.speakerButton {
+.subtitle-button-group {
   position: absolute;
   top: 50%;
   left: 100%;
-  transform: translate(68px, -50%);
-  box-sizing: border-box;
-  padding: 8px 10px;
-  border: none;
-  border-radius: 10px;
-  background-color: transparent;
-  color: var(--text-primary-color);
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 8px;
+  gap: 2px;
   opacity: 0;
   transition: opacity 0.2s ease;
 }
 
-.visibleSubtitles:hover .speakerButton {
+.visibleSubtitles:hover .subtitle-button-group {
   opacity: 1;
+}
+
+.visibleSubtitles.youtube-subtitles .subtitle-button-group {
+  pointer-events: auto;
+}
+
+.speakerButton {
+  box-sizing: border-box;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background-color: transparent;
+  font-size: 0;
+  color: var(--text-primary-color);
 }
 
 .speakerButton:hover {
@@ -495,17 +508,12 @@
   cursor: pointer;
 }
 
-.visibleSubtitles.youtube-subtitles .speakerButton {
-  transform: translate(56px, -50%);
-  pointer-events: auto;
-}
-
 /* Inline speaker button for word lists and sidebar */
 .speakerButton--inline {
   position: static;
   transform: none;
   flex-shrink: 0;
-  padding: 4px 6px;
+  padding: 6px;
   opacity: 0.5;
 }
 
@@ -519,10 +527,6 @@
 }
 
 .menuButton {
-  position: absolute;
-  top: 50%;
-  left: 100%;
-  transform: translate(20px, -50%);
   box-sizing: border-box;
   padding: 8px 10px;
   border: none;
@@ -683,7 +687,6 @@
 }
 
 .visibleSubtitles.youtube-subtitles .menuButton {
-  transform: translate(8px, -50%);
   pointer-events: auto;
 }
 

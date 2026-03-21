@@ -115,6 +115,7 @@ chrome.runtime.onMessage.addListener(async (req, sender, sendResponse) => {
     chrome.tts.stop();
     chrome.tts.speak(req.payload.text, {
       lang: req.payload.lang || 'en',
+      rate: req.payload.rate || 1.0,
     });
   }
 

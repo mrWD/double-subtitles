@@ -80,6 +80,9 @@
    "resetSubtitlePosition": {
       "message": "Redefinir posição"
    },
+   "subtitleFontSizeLabel": {
+      "message": "Tamanho da fonte das legendas"
+   },
    "captionColorLabel": {
       "message": "Cor das legendas originais"
    },

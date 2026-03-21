@@ -15,6 +15,7 @@ function showTranslatedList(data) {
 
     translatedElem.appendChild(textSpan);
     translatedElem.appendChild(window.createSpeakerButton(text, { inline: true }));
+    translatedElem.appendChild(window.createSlowSpeakerButton(text, { inline: true }));
     translatedElem.style.display = 'flex';
     translatedElem.style.alignItems = 'center';
 

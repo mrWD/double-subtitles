@@ -80,6 +80,9 @@
    "resetSubtitlePosition": {
       "message": "Konumu sıfırla"
    },
+   "subtitleFontSizeLabel": {
+      "message": "Altyazı yazı tipi boyutu"
+   },
    "captionColorLabel": {
       "message": "Orijinal altyazı rengi"
    },

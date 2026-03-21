@@ -115,6 +115,12 @@ chrome.runtime.onMessage.addListener((req) => {
     }
   }
 
+  if (req.message === 'updateSubtitleFontSize') {
+    if (window.updateSubtitleFontSize) {
+      window.updateSubtitleFontSize(req.payload.fontSize);
+    }
+  }
+
   if (req.message === 'updateSidebarFontSize') {
     if (window.updateSidebarFontSize) {
       window.updateSidebarFontSize(req.payload.fontSize);
@@ -188,6 +194,10 @@ function applyExtensionUiState() {
 
   if (window.updateSidebarFontSize) {
     window.updateSidebarFontSize(options.sidebarFontSize || 16);
+  }
+
+  if (window.updateSubtitleFontSize && options.subtitleFontSize) {
+    window.updateSubtitleFontSize(options.subtitleFontSize);
   }
 
   if (window.setupVideoPauseListeners) {

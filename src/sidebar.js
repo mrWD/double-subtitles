@@ -250,6 +250,10 @@ function updateHistoryElement(historyElem, { text, translation }) {
     speakerBtn.classList.add('historySpeakerButton');
     topRow.appendChild(speakerBtn);
 
+    const slowBtn = window.createSlowSpeakerButton(text, { inline: true });
+    slowBtn.classList.add('historySpeakerButton');
+    topRow.appendChild(slowBtn);
+
     historyElem.appendChild(topRow);
   } else {
     const topRow = document.createElement('div');
@@ -258,6 +262,10 @@ function updateHistoryElement(historyElem, { text, translation }) {
     const speakerBtn = window.createSpeakerButton(text, { inline: true });
     speakerBtn.classList.add('historySpeakerButton');
     topRow.appendChild(speakerBtn);
+
+    const slowBtn = window.createSlowSpeakerButton(text, { inline: true });
+    slowBtn.classList.add('historySpeakerButton');
+    topRow.appendChild(slowBtn);
 
     historyElem.appendChild(topRow);
   }
