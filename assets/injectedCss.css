@@ -621,6 +621,15 @@
   pointer-events: auto;
 }
 
+.visibleSubtitles.youtube-subtitles .subtitle-drag-handle {
+  pointer-events: auto;
+  opacity: 0.5;
+}
+
+.visibleSubtitles.youtube-subtitles .subtitle-drag-handle:hover {
+  opacity: 1;
+}
+
 .save-toast {
   position: fixed;
   bottom: 40px;
@@ -647,23 +656,37 @@
 
 .subtitle-drag-handle {
   position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 6px;
-  border-radius: 3px;
-  background-color: rgba(255, 255, 255, 0.3);
+  left: -24px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 40px;
+  padding-right: 18px;
+  box-sizing: border-box;
   cursor: grab;
   opacity: 0;
   transition: opacity 0.2s ease;
+  z-index: 99999999999;
 }
 
-.visibleSubtitles:hover .subtitle-drag-handle {
+.subtitle-drag-handle::after {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 100%;
+  border-radius: 3px;
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.visibleSubtitles:hover .subtitle-drag-handle,
+.subtitle-drag-handle:hover {
   opacity: 1;
 }
 
 .subtitle-drag-handle:active {
   cursor: grabbing;
-  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.subtitle-drag-handle:active::after {
+  background-color: rgba(255, 255, 255, 0.8);
 }

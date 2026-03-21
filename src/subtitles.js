@@ -27,6 +27,7 @@ function addLineToSubtitles({ text, translation }) {
   }
 
   subtitleWrapper.appendChild(createMenuButton({ text, translation }));
+  subtitleWrapper.appendChild(createDragHandle(subtitleWrapper));
 
   applyPauseOnlyVisibility();
 }
@@ -49,12 +50,20 @@ function createSubtitlesWrapper() {
 
     translatedList.classList.remove('is-hidden');
 
+    const rect = subtitleWrapper.getBoundingClientRect();
+    const showBelow = rect.top < 200;
+
     translatedList.style.right = 'auto';
 
-    translatedList.style.top = `${subtitleWrapper.offsetTop}px`;
-    translatedList.style.left = `${subtitleWrapper.offsetLeft}px`;
-
-    translatedList.style.transform = 'translate(-50%, -100%)';
+    if (showBelow) {
+      translatedList.style.top = `${rect.bottom}px`;
+      translatedList.style.left = `${rect.left}px`;
+      translatedList.style.transform = 'none';
+    } else {
+      translatedList.style.top = `${rect.top}px`;
+      translatedList.style.left = `${rect.left}px`;
+      translatedList.style.transform = 'translateY(-100%)';
+    }
   });
 
   subtitleWrapper.addEventListener('mouseout', (e) => {
@@ -221,22 +230,18 @@ function toggleDoubleSubtitles(show) {
 // --- Draggable subtitle position ---
 
 function setupSubtitleDrag(wrapper) {
-  wrapper.addEventListener('mousedown', (e) => {
-    if (e.target.closest('.menuButton') || e.target.closest('.subtitle')) {
-      return;
-    }
-    startSubtitleDrag(e, wrapper);
-  });
-
   wrapper.classList.add('draggable-subtitles');
+}
 
+function createDragHandle(wrapper) {
   const dragHandle = document.createElement('div');
   dragHandle.classList.add('subtitle-drag-handle');
   dragHandle.addEventListener('mousedown', (e) => {
     e.stopPropagation();
+    e.preventDefault();
     startSubtitleDrag(e, wrapper);
   });
-  wrapper.appendChild(dragHandle);
+  return dragHandle;
 }
 
 function startSubtitleDrag(e, wrapper) {
