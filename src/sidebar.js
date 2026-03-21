@@ -7,6 +7,10 @@ function createSidebarWithHistory() {
   }
 
   const wrapper = preparePageForSidebar();
+  if (!wrapper) {
+    return null;
+  }
+
   const sidebar = createSidebar();
 
   wrapper.appendChild(sidebar);
@@ -75,7 +79,12 @@ function createSidebarWithHistory() {
 }
 
 function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
-  const { historyList } = createSidebarWithHistory();
+  const sidebarState = createSidebarWithHistory();
+  if (!sidebarState) {
+    return;
+  }
+
+  const { historyList } = sidebarState;
   const normalizedText = text?.trim();
 
   if (!normalizedText) {
@@ -199,11 +208,11 @@ function scrollSidebarToBottom() {
 
 function preparePageForSidebar() {
   if (window.STREAMING_PLATFORM === 'amazon') {
-    return document.querySelector('#dv-web-player');
+    return document.querySelector('#dv-web-player') || document.body;
   }
 
   if (window.STREAMING_PLATFORM === 'disney') {
-    return document.querySelector('.video_view--theater');
+    return document.querySelector('.video_view--theater') || document.body;
   }
 
   if (window.STREAMING_PLATFORM === 'youtube') {
@@ -212,9 +221,11 @@ function preparePageForSidebar() {
 
   const videoContainer = document.querySelector('.watch-video');
 
-  videoContainer.style.width = '80%';
+  if (videoContainer) {
+    videoContainer.style.width = '80%';
+  }
 
-  return document.querySelector('body');
+  return document.body;
 }
 
 function createSidebar() {
