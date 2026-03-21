@@ -171,6 +171,7 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
   });
 
   historyElem.addEventListener('mouseover', () => {
+    clearTimeout(_translatedListHideTimeout);
     translateList(historyElem.querySelector('span:not(.historyTimestamp)'));
 
     const translatedList = createTranslatedList();
@@ -200,16 +201,16 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
     translatedList.style.transform += ' translateY(-50%)';
   });
 
-  historyElem.addEventListener('mouseout', (e) => {
-    if (
-      e.toElement?.classList.contains('translatedList')
-      || e.toElement?.classList.contains('historyElem')
-    ) {
+  historyElem.addEventListener('mouseleave', (e) => {
+    const related = e.relatedTarget;
+    if (related && (related.closest('.translatedList') || related.closest('.historyElem'))) {
       return;
     }
 
-    document.querySelector('.translatedList')
-      ?.classList.add('is-hidden');
+    _translatedListHideTimeout = setTimeout(() => {
+      document.querySelector('.translatedList')
+        ?.classList.add('is-hidden');
+    }, 150);
   });
 
   historyList.appendChild(historyElem);
