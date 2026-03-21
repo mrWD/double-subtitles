@@ -70,5 +70,14 @@
    },
    "uiLanguageLabel": {
       "message": "Idioma de la interfaz"
+   },
+   "captionsOnPauseOnlyLabel": {
+      "message": "Mostrar subtítulos solo en pausa"
+   },
+   "translationOnPauseOnlyLabel": {
+      "message": "Mostrar traducción solo en pausa"
+   },
+   "resetSubtitlePosition": {
+      "message": "Restablecer posición"
    }
 }

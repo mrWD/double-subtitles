@@ -70,5 +70,14 @@
    },
    "uiLanguageLabel": {
       "message": "Interface language"
+   },
+   "captionsOnPauseOnlyLabel": {
+      "message": "Show captions only on pause"
+   },
+   "translationOnPauseOnlyLabel": {
+      "message": "Show translation only on pause"
+   },
+   "resetSubtitlePosition": {
+      "message": "Reset position"
    }
 }

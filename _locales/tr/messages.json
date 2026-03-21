@@ -70,5 +70,14 @@
    },
    "uiLanguageLabel": {
       "message": "Arayüz dili"
+   },
+   "captionsOnPauseOnlyLabel": {
+      "message": "Altyazıları yalnızca duraklatmada göster"
+   },
+   "translationOnPauseOnlyLabel": {
+      "message": "Çeviriyi yalnızca duraklatmada göster"
+   },
+   "resetSubtitlePosition": {
+      "message": "Konumu sıfırla"
    }
 }

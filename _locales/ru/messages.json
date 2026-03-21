@@ -70,5 +70,14 @@
    },
    "uiLanguageLabel": {
       "message": "Язык интерфейса"
+   },
+   "captionsOnPauseOnlyLabel": {
+      "message": "Показывать субтитры только на паузе"
+   },
+   "translationOnPauseOnlyLabel": {
+      "message": "Показывать перевод только на паузе"
+   },
+   "resetSubtitlePosition": {
+      "message": "Сбросить позицию"
    }
 }

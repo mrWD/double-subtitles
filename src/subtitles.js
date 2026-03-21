@@ -1,5 +1,7 @@
 const THREE_DOTS_SVG = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="currentColor" height="40px" width="40px" version="1.1" id="Capa_1" viewBox="0 0 32.055 32.055" xml:space="preserve"><path d="M3.968,12.061C1.775,12.061,0,13.835,0,16.027c0,2.192,1.773,3.967,3.968,3.967c2.189,0,3.966-1.772,3.966-3.967   C7.934,13.835,6.157,12.061,3.968,12.061z M16.233,12.061c-2.188,0-3.968,1.773-3.968,3.965c0,2.192,1.778,3.967,3.968,3.967   s3.97-1.772,3.97-3.967C20.201,13.835,18.423,12.061,16.233,12.061z M28.09,12.061c-2.192,0-3.969,1.774-3.969,3.967   c0,2.19,1.774,3.965,3.969,3.965c2.188,0,3.965-1.772,3.965-3.965S30.278,12.061,28.09,12.061z"/></svg>`;
 
+let _subtitleDragState = null;
+
 function addLineToSubtitles({ text, translation }) {
   const subtitleWrapper = createSubtitlesWrapper();
   const mainText = createSubtitleElement({ text, translation });
@@ -19,10 +21,14 @@ function addLineToSubtitles({ text, translation }) {
 
   if (window.STREAMING_PLATFORM === 'youtube') {
     toggleYoutubeNativeSubtitles(isDoubleSubtitlesHidden);
-    syncYoutubeSubtitlesPosition(subtitleWrapper);
+    if (!window.options?.subtitlePosition) {
+      syncYoutubeSubtitlesPosition(subtitleWrapper);
+    }
   }
 
   subtitleWrapper.appendChild(createMenuButton({ text, translation }));
+
+  applyPauseOnlyVisibility();
 }
 
 function createSubtitlesWrapper() {
@@ -71,6 +77,9 @@ function createSubtitlesWrapper() {
   } else {
     document.body.appendChild(subtitleWrapper);
   }
+
+  setupSubtitleDrag(subtitleWrapper);
+  applySavedSubtitlePosition(subtitleWrapper);
 
   return subtitleWrapper;
 }
@@ -165,7 +174,6 @@ function createMenuButton({ text, translation }) {
     openMenu({ text, translation, timestamp, sourceUrl });
   });
 
-
   return menuButton;
 }
 
@@ -210,7 +218,204 @@ function toggleDoubleSubtitles(show) {
   }
 }
 
+// --- Draggable subtitle position ---
+
+function setupSubtitleDrag(wrapper) {
+  wrapper.addEventListener('mousedown', (e) => {
+    if (e.target.closest('.menuButton') || e.target.closest('.subtitle')) {
+      return;
+    }
+    startSubtitleDrag(e, wrapper);
+  });
+
+  wrapper.classList.add('draggable-subtitles');
+
+  const dragHandle = document.createElement('div');
+  dragHandle.classList.add('subtitle-drag-handle');
+  dragHandle.addEventListener('mousedown', (e) => {
+    e.stopPropagation();
+    startSubtitleDrag(e, wrapper);
+  });
+  wrapper.appendChild(dragHandle);
+}
+
+function startSubtitleDrag(e, wrapper) {
+  e.preventDefault();
+  const rect = wrapper.getBoundingClientRect();
+  _subtitleDragState = {
+    startX: e.clientX,
+    startY: e.clientY,
+    startLeft: rect.left,
+    startTop: rect.top,
+    wrapper,
+    moved: false,
+  };
+
+  document.addEventListener('mousemove', onSubtitleDragMove);
+  document.addEventListener('mouseup', onSubtitleDragEnd);
+}
+
+function onSubtitleDragMove(e) {
+  if (!_subtitleDragState) return;
+
+  const dx = e.clientX - _subtitleDragState.startX;
+  const dy = e.clientY - _subtitleDragState.startY;
+
+  if (!_subtitleDragState.moved && Math.abs(dx) < 3 && Math.abs(dy) < 3) {
+    return;
+  }
+  _subtitleDragState.moved = true;
+
+  const newLeft = _subtitleDragState.startLeft + dx;
+  const newTop = _subtitleDragState.startTop + dy;
+
+  const wrapper = _subtitleDragState.wrapper;
+  wrapper.style.left = `${newLeft}px`;
+  wrapper.style.top = `${newTop}px`;
+  wrapper.style.bottom = 'auto';
+  wrapper.style.transform = 'none';
+}
+
+function onSubtitleDragEnd() {
+  if (_subtitleDragState && _subtitleDragState.moved) {
+    const wrapper = _subtitleDragState.wrapper;
+    const position = {
+      left: wrapper.style.left,
+      top: wrapper.style.top,
+    };
+
+    if (window.options) {
+      window.options.subtitlePosition = position;
+    }
+
+    chrome.storage.sync.get('options', (item) => {
+      if (item?.options) {
+        item.options.subtitlePosition = position;
+        chrome.storage.sync.set({ options: item.options });
+      }
+    });
+  }
+
+  _subtitleDragState = null;
+  document.removeEventListener('mousemove', onSubtitleDragMove);
+  document.removeEventListener('mouseup', onSubtitleDragEnd);
+}
+
+function applySavedSubtitlePosition(wrapper) {
+  const position = window.options?.subtitlePosition;
+  if (position && position.left && position.top) {
+    wrapper.style.left = position.left;
+    wrapper.style.top = position.top;
+    wrapper.style.bottom = 'auto';
+    wrapper.style.transform = 'none';
+  }
+}
+
+function resetSubtitlePosition() {
+  const wrapper = document.querySelector('.visibleSubtitles');
+  if (wrapper) {
+    wrapper.style.removeProperty('top');
+    wrapper.style.removeProperty('left');
+    wrapper.style.removeProperty('width');
+    wrapper.style.removeProperty('bottom');
+    wrapper.style.removeProperty('transform');
+  }
+
+  if (window.options) {
+    window.options.subtitlePosition = null;
+  }
+}
+
+// --- Pause-only visibility ---
+
+let _videoPauseListener = null;
+let _videoPlayListener = null;
+let _trackedVideo = null;
+let _lastPausedState = null;
+
+function setupVideoPauseListeners() {
+  cleanupVideoPauseListeners();
+
+  const video = typeof getPrimaryVideoElement === 'function' ? getPrimaryVideoElement() : document.querySelector('video');
+  if (!video) return;
+
+  _trackedVideo = video;
+  window._trackedVideo = video;
+  _lastPausedState = video.paused;
+
+  _videoPauseListener = () => {
+    _lastPausedState = true;
+    applyPauseOnlyVisibility();
+  };
+  _videoPlayListener = () => {
+    _lastPausedState = false;
+    applyPauseOnlyVisibility();
+  };
+
+  video.addEventListener('pause', _videoPauseListener);
+  video.addEventListener('play', _videoPlayListener);
+  video.addEventListener('playing', _videoPlayListener);
+
+  applyPauseOnlyVisibility();
+}
+
+function cleanupVideoPauseListeners() {
+  if (_trackedVideo) {
+    if (_videoPauseListener) _trackedVideo.removeEventListener('pause', _videoPauseListener);
+    if (_videoPlayListener) {
+      _trackedVideo.removeEventListener('play', _videoPlayListener);
+      _trackedVideo.removeEventListener('playing', _videoPlayListener);
+    }
+    _trackedVideo = null;
+    window._trackedVideo = null;
+    _lastPausedState = null;
+  }
+}
+
+function isVideoPaused() {
+  const video = typeof getPrimaryVideoElement === 'function' ? getPrimaryVideoElement() : document.querySelector('video');
+  return video ? video.paused : false;
+}
+
+function applyPauseOnlyVisibility() {
+  const wrapper = document.querySelector('.visibleSubtitles');
+  if (!wrapper) return;
+
+  const opts = window.options || {};
+  const paused = isVideoPaused();
+
+  const captionsOnPause = opts.captionsOnPauseOnly || false;
+  const translationOnPause = opts.translationOnPauseOnly || false;
+
+  const subtitles = wrapper.querySelectorAll('.subtitle');
+  const originalSubtitle = subtitles[0];
+  const translationSubtitle = subtitles[1];
+
+  if (originalSubtitle) {
+    if (captionsOnPause) {
+      originalSubtitle.style.visibility = paused ? 'visible' : 'hidden';
+    } else {
+      originalSubtitle.style.visibility = 'visible';
+    }
+  }
+
+  if (translationSubtitle) {
+    if (opts.showDoubleSubtitles === false) {
+      translationSubtitle.style.display = 'none';
+    } else if (translationOnPause) {
+      translationSubtitle.style.display = 'block';
+      translationSubtitle.style.visibility = paused ? 'visible' : 'hidden';
+    } else {
+      translationSubtitle.style.display = 'block';
+      translationSubtitle.style.visibility = 'visible';
+    }
+  }
+}
+
 window.showDoubleSubtitles = showDoubleSubtitles;
 window.hideDoubleSubtitles = hideDoubleSubtitles;
 window.toggleDoubleSubtitles = toggleDoubleSubtitles;
 window.toggleYoutubeNativeSubtitles = toggleYoutubeNativeSubtitles;
+window.setupVideoPauseListeners = setupVideoPauseListeners;
+window.applyPauseOnlyVisibility = applyPauseOnlyVisibility;
+window.resetSubtitlePosition = resetSubtitlePosition;

@@ -93,6 +93,22 @@ chrome.runtime.onMessage.addListener((req) => {
     }
   }
 
+  if (req.message === 'updatePauseOnlyMode') {
+    if (window.options) {
+      window.options.captionsOnPauseOnly = req.payload.captionsOnPauseOnly;
+      window.options.translationOnPauseOnly = req.payload.translationOnPauseOnly;
+    }
+    if (window.applyPauseOnlyVisibility) {
+      window.applyPauseOnlyVisibility();
+    }
+  }
+
+  if (req.message === 'resetSubtitlePosition') {
+    if (window.resetSubtitlePosition) {
+      window.resetSubtitlePosition();
+    }
+  }
+
   if (req.message === 'updateSidebarFontSize') {
     if (window.updateSidebarFontSize) {
       window.updateSidebarFontSize(req.payload.fontSize);
@@ -168,6 +184,10 @@ function applyExtensionUiState() {
     window.updateSidebarFontSize(options.sidebarFontSize || 16);
   }
 
+  if (window.setupVideoPauseListeners) {
+    window.setupVideoPauseListeners();
+  }
+
   const savedHistory = sessionStorage.getItem('double-subtitles-history');
   if (savedHistory) {
     try {
@@ -233,6 +253,16 @@ function startPageContextWatcher() {
     // Re-check even without URL change because some platforms (e.g. Amazon)
     // mount the playback <video> later than initial content script execution.
     syncPageUiState();
+
+    // Re-attach video pause listeners if the video element appeared or changed.
+    if (isWatchPageActive && window.setupVideoPauseListeners) {
+      const currentVideo = typeof getPrimaryVideoElement === 'function'
+        ? getPrimaryVideoElement()
+        : document.querySelector('video');
+      if (currentVideo && currentVideo !== window._trackedVideo) {
+        window.setupVideoPauseListeners();
+      }
+    }
   }, 500);
 }
 

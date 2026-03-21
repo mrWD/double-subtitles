@@ -70,5 +70,14 @@
    },
    "uiLanguageLabel": {
       "message": "界面语言"
+   },
+   "captionsOnPauseOnlyLabel": {
+      "message": "仅在暂停时显示字幕"
+   },
+   "translationOnPauseOnlyLabel": {
+      "message": "仅在暂停时显示翻译"
+   },
+   "resetSubtitlePosition": {
+      "message": "重置位置"
    }
 }

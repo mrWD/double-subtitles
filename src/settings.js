@@ -16,6 +16,9 @@ async function loadOptionsOrSetDefaults() {
           showDoubleSubtitles: true,
           sidebarWidth: '20%',
           sidebarFontSize: 16,
+          captionsOnPauseOnly: false,
+          translationOnPauseOnly: false,
+          subtitlePosition: null,
         };
 
         chrome.storage.sync.set({

@@ -1,6 +1,9 @@
 const onOff = document.querySelector('#onOff');
 const showHideSidebar = document.querySelector('#showHideSidebar');
 const showHideDoubleSubtitles = document.querySelector('#showHideDoubleSubtitles');
+const captionsOnPauseOnly = document.querySelector('#captionsOnPauseOnly');
+const translationOnPauseOnly = document.querySelector('#translationOnPauseOnly');
+const resetSubtitlePosition = document.querySelector('#resetSubtitlePosition');
 const sidebarFontSize = document.querySelector('#sidebarFontSize');
 const resetFontSize = document.querySelector('#resetFontSize');
 const languageSelect = document.querySelector('#secondLanguage');
@@ -70,6 +73,51 @@ showHideDoubleSubtitles.addEventListener('change', () => {
   });
 });
 
+captionsOnPauseOnly.addEventListener('change', () => {
+  setOptions();
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs[0]) {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        message: 'updatePauseOnlyMode',
+        payload: {
+          captionsOnPauseOnly: captionsOnPauseOnly.checked,
+          translationOnPauseOnly: translationOnPauseOnly.checked,
+        }
+      });
+    }
+  });
+});
+
+translationOnPauseOnly.addEventListener('change', () => {
+  setOptions();
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs[0]) {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        message: 'updatePauseOnlyMode',
+        payload: {
+          captionsOnPauseOnly: captionsOnPauseOnly.checked,
+          translationOnPauseOnly: translationOnPauseOnly.checked,
+        }
+      });
+    }
+  });
+});
+
+resetSubtitlePosition.addEventListener('click', () => {
+  options.subtitlePosition = null;
+  saveOptions(options);
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs[0]) {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        message: 'resetSubtitlePosition',
+      });
+    }
+  });
+});
+
 sidebarFontSize.addEventListener('input', () => {
   setOptions();
 
@@ -124,6 +172,8 @@ function setOptions() {
   options.extensionOn = onOff.checked;
   options.showSidebar = showHideSidebar.checked;
   options.showDoubleSubtitles = showHideDoubleSubtitles.checked;
+  options.captionsOnPauseOnly = captionsOnPauseOnly.checked;
+  options.translationOnPauseOnly = translationOnPauseOnly.checked;
   options.sidebarFontSize = parseInt(sidebarFontSize.value) || 16;
   options.secondLanguage = languageSelect.value;
   options.currentForeignLanguage = currentForeignLanguageSelect.value;
@@ -134,6 +184,8 @@ function setCheckbox(options) {
   onOff.checked = options.extensionOn;
   showHideSidebar.checked = options.showSidebar;
   showHideDoubleSubtitles.checked = options.showDoubleSubtitles;
+  captionsOnPauseOnly.checked = options.captionsOnPauseOnly || false;
+  translationOnPauseOnly.checked = options.translationOnPauseOnly || false;
   sidebarFontSize.value = options.sidebarFontSize || 16;
   languageSelect.value = options.secondLanguage;
   currentForeignLanguageSelect.value = options.currentForeignLanguage;
@@ -197,6 +249,10 @@ function populateHtmlWithText() {
   document.querySelector('#langLabel').textContent = t('langLabel');
   document.querySelector('#currentForeignLangLabel').textContent = t('currentForeignLangLabel');
   document.querySelector('#uiLanguageLabel').textContent = t('uiLanguageLabel');
+  document.querySelector('#captionsOnPauseOnlyLabel').textContent = t('captionsOnPauseOnlyLabel');
+  document.querySelector('#translationOnPauseOnlyLabel').textContent = t('translationOnPauseOnlyLabel');
+  document.querySelector('#resetSubtitlePositionLabel').textContent = t('resetSubtitlePosition');
+  document.querySelector('#resetSubtitlePosition').textContent = t('resetButton');
   document.querySelector('#resetFontSize').textContent = t('resetButton');
   document.querySelector('#showSavedCards').textContent = t('showSavedTranslations');
   document.querySelector('.donations__text').textContent = t('supportExtension');

@@ -70,5 +70,14 @@
    },
    "uiLanguageLabel": {
       "message": "인터페이스 언어"
+   },
+   "captionsOnPauseOnlyLabel": {
+      "message": "일시정지 시에만 자막 표시"
+   },
+   "translationOnPauseOnlyLabel": {
+      "message": "일시정지 시에만 번역 표시"
+   },
+   "resetSubtitlePosition": {
+      "message": "위치 초기화"
    }
 }

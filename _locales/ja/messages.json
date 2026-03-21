@@ -70,5 +70,14 @@
    },
    "uiLanguageLabel": {
       "message": "表示言語"
+   },
+   "captionsOnPauseOnlyLabel": {
+      "message": "一時停止時のみ字幕を表示"
+   },
+   "translationOnPauseOnlyLabel": {
+      "message": "一時停止時のみ翻訳を表示"
+   },
+   "resetSubtitlePosition": {
+      "message": "位置をリセット"
    }
 }

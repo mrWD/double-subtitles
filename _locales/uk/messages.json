@@ -70,5 +70,14 @@
    },
    "uiLanguageLabel": {
       "message": "Мова інтерфейсу"
+   },
+   "captionsOnPauseOnlyLabel": {
+      "message": "Показувати субтитри лише на паузі"
+   },
+   "translationOnPauseOnlyLabel": {
+      "message": "Показувати переклад лише на паузі"
+   },
+   "resetSubtitlePosition": {
+      "message": "Скинути позицію"
    }
 }
