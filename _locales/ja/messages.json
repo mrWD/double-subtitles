@@ -1,0 +1,74 @@
+{
+   "description": {
+      "message": "標準の字幕の上に追加の字幕を表示できる拡張機能です。"
+   },
+   "name": {
+      "message": "Double Subtitles"
+   },
+   "popupText": {
+      "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
+   },
+   "onOffLabel": {
+      "message": "拡張機能をオンにする"
+   },
+   "showHideSidebarLabel": {
+      "message": "サイドバーを表示"
+   },
+   "sidebarFontSizeLabel": {
+      "message": "サイドバーのフォントサイズ"
+   },
+   "showHideDoubleSubtitlesLabel": {
+      "message": "二重字幕を表示"
+   },
+   "langLabel": {
+      "message": "第二言語を選択"
+   },
+   "currentForeignLangLabel": {
+      "message": "現在の外国語"
+   },
+   "resetButton": {
+      "message": "リセット"
+   },
+   "showSavedTranslations": {
+      "message": "保存した翻訳を表示"
+   },
+   "supportExtension": {
+      "message": "拡張機能をサポート："
+   },
+   "savedTranslations": {
+      "message": "保存した翻訳"
+   },
+   "searchTranslations": {
+      "message": "翻訳を検索..."
+   },
+   "noSavedCards": {
+      "message": "保存されたカードはありません"
+   },
+   "history": {
+      "message": "履歴"
+   },
+   "cancel": {
+      "message": "キャンセル"
+   },
+   "save": {
+      "message": "保存"
+   },
+   "saved": {
+      "message": "保存しました！"
+   },
+   "browser": {
+      "message": "ブラウザ"
+   },
+   "googleSheet": {
+      "message": "Google Sheet"
+   },
+   "add": {
+      "message": "追加"
+   },
+   "addAndDelete": {
+      "message": "追加して削除"
+   },
+   "uiLanguageLabel": {
+      "message": "表示言語"
+   }
+}

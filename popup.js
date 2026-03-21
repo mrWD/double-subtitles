@@ -9,11 +9,14 @@ const languageOptions = document.querySelectorAll('#secondLanguage option');
 const savedCardsModal = document.querySelector('#savedCards');
 const showCardsButton = document.querySelector('#showSavedCards');
 const closeSavedCardsButton = document.querySelector('#closeSavedCards');
+const uiLanguageSelect = document.querySelector('#uiLanguage');
 const linkBtns = document.querySelectorAll('.js-link');
 let options;
 
 window.addEventListener('DOMContentLoaded', async () => {
   options = await loadOptionsOrSetDefaults();
+  await initI18n();
+  populateUiLanguageDropdown();
   setCheckbox(options);
   populateHtmlWithText();
   loadSavedCards();
@@ -110,6 +113,13 @@ linkBtns.forEach(btn => {
   });
 });
 
+uiLanguageSelect.addEventListener('change', async () => {
+  options.uiLanguage = uiLanguageSelect.value;
+  saveOptions(options);
+  await initI18n(uiLanguageSelect.value);
+  populateHtmlWithText();
+});
+
 function setOptions() {
   options.extensionOn = onOff.checked;
   options.showSidebar = showHideSidebar.checked;
@@ -160,28 +170,37 @@ function decodeLang(lang) {
   return mapCodeToLang[lang];
 }
 
+function populateUiLanguageDropdown() {
+  uiLanguageSelect.innerHTML = '';
+
+  for (const [code, name] of Object.entries(AVAILABLE_LOCALES)) {
+    const option = document.createElement('option');
+    option.value = code;
+    option.textContent = name;
+    uiLanguageSelect.appendChild(option);
+  }
+
+  if (options.uiLanguage && AVAILABLE_LOCALES[options.uiLanguage]) {
+    uiLanguageSelect.value = options.uiLanguage;
+  } else {
+    const browserLang = (chrome.i18n.getUILanguage() || 'en').split('-')[0];
+    uiLanguageSelect.value = AVAILABLE_LOCALES[browserLang] ? browserLang : 'en';
+  }
+}
+
 function populateHtmlWithText() {
-  const popupText = document.querySelector('.text1');
-  const onOffLabel = document.querySelector('#onOffLabel');
-  const showHideSidebarLabel = document.querySelector('#showHideSidebarLabel');
-  const sidebarFontSizeLabel = document.querySelector('#sidebarFontSizeLabel');
-  const showHideDoubleSubtitlesLabel = document.querySelector('#showHideDoubleSubtitlesLabel');
-  const langLabel = document.querySelector('#langLabel');
-  const currentForeignLangLabel = document.querySelector('#currentForeignLangLabel');
-
-  const popupTex1Msg = chrome.i18n.getMessage('popupTex1');
-  const onOffLabelMsg = chrome.i18n.getMessage('onOffLabel');
-  const showHideSidebarLabelMsg = chrome.i18n.getMessage('showHideSidebarLabel');
-  const sidebarFontSizeLabelMsg = chrome.i18n.getMessage('sidebarFontSizeLabel');
-  const showHideDoubleSubtitlesLabelMsg = chrome.i18n.getMessage('showHideDoubleSubtitlesLabel');
-  const langLabelMsg = chrome.i18n.getMessage('langLabel');
-  const currentForeignLangLabelMsg = chrome.i18n.getMessage('currentForeignLangLabel');
-
-  popupText.innerHTML = popupTex1Msg;
-  onOffLabel.textContent = onOffLabelMsg;
-  showHideSidebarLabel.textContent = showHideSidebarLabelMsg;
-  sidebarFontSizeLabel.textContent = sidebarFontSizeLabelMsg;
-  showHideDoubleSubtitlesLabel.textContent = showHideDoubleSubtitlesLabelMsg;
-  langLabel.textContent = langLabelMsg;
-  currentForeignLangLabel.textContent = currentForeignLangLabelMsg;
+  document.querySelector('.text1').innerHTML = t('popupText');
+  document.querySelector('#onOffLabel').textContent = t('onOffLabel');
+  document.querySelector('#showHideSidebarLabel').textContent = t('showHideSidebarLabel');
+  document.querySelector('#sidebarFontSizeLabel').textContent = t('sidebarFontSizeLabel');
+  document.querySelector('#showHideDoubleSubtitlesLabel').textContent = t('showHideDoubleSubtitlesLabel');
+  document.querySelector('#langLabel').textContent = t('langLabel');
+  document.querySelector('#currentForeignLangLabel').textContent = t('currentForeignLangLabel');
+  document.querySelector('#uiLanguageLabel').textContent = t('uiLanguageLabel');
+  document.querySelector('#resetFontSize').textContent = t('resetButton');
+  document.querySelector('#showSavedCards').textContent = t('showSavedTranslations');
+  document.querySelector('.donations__text').textContent = t('supportExtension');
+  document.querySelector('#savedTranslationsTitle').textContent = t('savedTranslations');
+  document.querySelector('#searchCards').placeholder = t('searchTranslations');
+  document.querySelector('#emptyCards').textContent = t('noSavedCards');
 }

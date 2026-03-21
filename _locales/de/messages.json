@@ -1,0 +1,74 @@
+{
+   "description": {
+      "message": "Erweiterung ermöglicht die Anzeige zusätzlicher Untertitel über den Standarduntertiteln."
+   },
+   "name": {
+      "message": "Double Subtitles"
+   },
+   "popupText": {
+      "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
+   },
+   "onOffLabel": {
+      "message": "Erweiterung aktivieren"
+   },
+   "showHideSidebarLabel": {
+      "message": "Seitenleiste anzeigen"
+   },
+   "sidebarFontSizeLabel": {
+      "message": "Schriftgröße der Seitenleiste"
+   },
+   "showHideDoubleSubtitlesLabel": {
+      "message": "Doppelte Untertitel anzeigen"
+   },
+   "langLabel": {
+      "message": "Zweite Sprache auswählen"
+   },
+   "currentForeignLangLabel": {
+      "message": "Aktuelle Fremdsprache"
+   },
+   "resetButton": {
+      "message": "Zurücksetzen"
+   },
+   "showSavedTranslations": {
+      "message": "Gespeicherte Übersetzungen anzeigen"
+   },
+   "supportExtension": {
+      "message": "Erweiterung unterstützen:"
+   },
+   "savedTranslations": {
+      "message": "Gespeicherte Übersetzungen"
+   },
+   "searchTranslations": {
+      "message": "Übersetzungen suchen..."
+   },
+   "noSavedCards": {
+      "message": "Keine gespeicherten Karten"
+   },
+   "history": {
+      "message": "VERLAUF"
+   },
+   "cancel": {
+      "message": "Abbrechen"
+   },
+   "save": {
+      "message": "Speichern"
+   },
+   "saved": {
+      "message": "Gespeichert!"
+   },
+   "browser": {
+      "message": "Browser"
+   },
+   "googleSheet": {
+      "message": "Google Sheet"
+   },
+   "add": {
+      "message": "Hinzufügen"
+   },
+   "addAndDelete": {
+      "message": "Hinzufügen und löschen"
+   },
+   "uiLanguageLabel": {
+      "message": "Sprache der Benutzeroberfläche"
+   }
+}

@@ -49,7 +49,7 @@
 
         <div class="fontSizeControls">
           <input type="number" id="sidebarFontSize" name="sidebarFontSize" min="8" max="32" step="1" class="fontSizeInput">
-          <button id="resetFontSize" class="resetButton">Reset</button>
+          <button id="resetFontSize" class="resetButton"></button>
         </div>
       </div>
 
@@ -130,14 +130,20 @@
           </select>
         </div>
       </div>
+
+      <div class="smallContainer">
+        <div class="label" id="uiLanguageLabel"></div>
+
+        <div class="customSelect">
+          <select class="uiLanguage" name="uiLanguage" id="uiLanguage"></select>
+        </div>
+      </div>
     </div>
 
-    <button id="showSavedCards" class="btn">
-      Show saved translations
-    </button>
+    <button id="showSavedCards" class="btn"></button>
 
     <div class="donations">
-      <span class="donations__text">Support the extension:</span>
+      <span class="donations__text"></span>
 
       <button
         class="donations__link js-link"
@@ -186,7 +192,7 @@
 
     <dialog id="savedCards">
       <div class="savedCards__content">
-        <h2>Saved translations</h2>
+        <h2 id="savedTranslationsTitle"></h2>
 
         <button id="closeSavedCards" class="btn">
           <svg viewBox="0 0 1024 1024" width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="currentColor" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"></path></g></svg>
@@ -194,17 +200,16 @@
       </div>
 
       <div class="savedCards__search">
-        <input type="text" id="searchCards" placeholder="Search translations..." class="search-input">
+        <input type="text" id="searchCards" class="search-input">
       </div>
 
-      <p id="emptyCards" class="closeSavedCards__empty">
-        No saved cards
-      </p>
+      <p id="emptyCards" class="closeSavedCards__empty"></p>
 
       <ul></ul>
     </dialog>
   </div>
 
+  <script src="./src/i18n.js"></script>
   <script src="./popup.js"></script>
   <script src="./src/settings.js"></script>
   <script src="./src/savedCards.js"></script>

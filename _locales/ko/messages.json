@@ -1,0 +1,74 @@
+{
+   "description": {
+      "message": "표준 자막 위에 추가 자막을 표시할 수 있는 확장 프로그램입니다."
+   },
+   "name": {
+      "message": "Double Subtitles"
+   },
+   "popupText": {
+      "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
+   },
+   "onOffLabel": {
+      "message": "확장 프로그램 켜기"
+   },
+   "showHideSidebarLabel": {
+      "message": "사이드바 표시"
+   },
+   "sidebarFontSizeLabel": {
+      "message": "사이드바 글꼴 크기"
+   },
+   "showHideDoubleSubtitlesLabel": {
+      "message": "이중 자막 표시"
+   },
+   "langLabel": {
+      "message": "두 번째 언어 선택"
+   },
+   "currentForeignLangLabel": {
+      "message": "현재 외국어"
+   },
+   "resetButton": {
+      "message": "초기화"
+   },
+   "showSavedTranslations": {
+      "message": "저장된 번역 보기"
+   },
+   "supportExtension": {
+      "message": "확장 프로그램 지원:"
+   },
+   "savedTranslations": {
+      "message": "저장된 번역"
+   },
+   "searchTranslations": {
+      "message": "번역 검색..."
+   },
+   "noSavedCards": {
+      "message": "저장된 카드 없음"
+   },
+   "history": {
+      "message": "기록"
+   },
+   "cancel": {
+      "message": "취소"
+   },
+   "save": {
+      "message": "저장"
+   },
+   "saved": {
+      "message": "저장됨!"
+   },
+   "browser": {
+      "message": "브라우저"
+   },
+   "googleSheet": {
+      "message": "Google Sheet"
+   },
+   "add": {
+      "message": "추가"
+   },
+   "addAndDelete": {
+      "message": "추가 후 삭제"
+   },
+   "uiLanguageLabel": {
+      "message": "인터페이스 언어"
+   }
+}

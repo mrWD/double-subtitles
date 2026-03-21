@@ -144,7 +144,9 @@ a {
 }
 
 .secondLanguage,
-.currentForeignLanguage {
+.currentForeignLanguage,
+.uiLanguage {
+  width: 100%;
   background-color: var(--secondary-color);
   border: none;
   color: var(--text-primary-color);

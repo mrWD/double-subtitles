@@ -1,0 +1,74 @@
+{
+   "description": {
+      "message": "L'extension permet d'afficher des sous-titres supplémentaires au-dessus des sous-titres standard."
+   },
+   "name": {
+      "message": "Double Subtitles"
+   },
+   "popupText": {
+      "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
+   },
+   "onOffLabel": {
+      "message": "Activer l'extension"
+   },
+   "showHideSidebarLabel": {
+      "message": "Afficher la barre latérale"
+   },
+   "sidebarFontSizeLabel": {
+      "message": "Taille de police de la barre latérale"
+   },
+   "showHideDoubleSubtitlesLabel": {
+      "message": "Afficher les doubles sous-titres"
+   },
+   "langLabel": {
+      "message": "Sélectionner la deuxième langue"
+   },
+   "currentForeignLangLabel": {
+      "message": "Langue étrangère actuelle"
+   },
+   "resetButton": {
+      "message": "Réinitialiser"
+   },
+   "showSavedTranslations": {
+      "message": "Afficher les traductions enregistrées"
+   },
+   "supportExtension": {
+      "message": "Soutenir l'extension :"
+   },
+   "savedTranslations": {
+      "message": "Traductions enregistrées"
+   },
+   "searchTranslations": {
+      "message": "Rechercher des traductions..."
+   },
+   "noSavedCards": {
+      "message": "Aucune carte enregistrée"
+   },
+   "history": {
+      "message": "HISTORIQUE"
+   },
+   "cancel": {
+      "message": "Annuler"
+   },
+   "save": {
+      "message": "Enregistrer"
+   },
+   "saved": {
+      "message": "Enregistré !"
+   },
+   "browser": {
+      "message": "Navigateur"
+   },
+   "googleSheet": {
+      "message": "Google Sheet"
+   },
+   "add": {
+      "message": "Ajouter"
+   },
+   "addAndDelete": {
+      "message": "Ajouter et supprimer"
+   },
+   "uiLanguageLabel": {
+      "message": "Langue de l'interface"
+   }
+}

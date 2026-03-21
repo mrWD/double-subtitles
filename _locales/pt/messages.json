@@ -1,0 +1,74 @@
+{
+   "description": {
+      "message": "A extensão permite exibir legendas adicionais acima das legendas padrão."
+   },
+   "name": {
+      "message": "Double Subtitles"
+   },
+   "popupText": {
+      "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
+   },
+   "onOffLabel": {
+      "message": "Ativar extensão"
+   },
+   "showHideSidebarLabel": {
+      "message": "Mostrar barra lateral"
+   },
+   "sidebarFontSizeLabel": {
+      "message": "Tamanho da fonte da barra lateral"
+   },
+   "showHideDoubleSubtitlesLabel": {
+      "message": "Mostrar legendas duplas"
+   },
+   "langLabel": {
+      "message": "Selecionar segundo idioma"
+   },
+   "currentForeignLangLabel": {
+      "message": "Idioma estrangeiro atual"
+   },
+   "resetButton": {
+      "message": "Redefinir"
+   },
+   "showSavedTranslations": {
+      "message": "Mostrar traduções salvas"
+   },
+   "supportExtension": {
+      "message": "Apoie a extensão:"
+   },
+   "savedTranslations": {
+      "message": "Traduções salvas"
+   },
+   "searchTranslations": {
+      "message": "Pesquisar traduções..."
+   },
+   "noSavedCards": {
+      "message": "Nenhum cartão salvo"
+   },
+   "history": {
+      "message": "HISTÓRICO"
+   },
+   "cancel": {
+      "message": "Cancelar"
+   },
+   "save": {
+      "message": "Salvar"
+   },
+   "saved": {
+      "message": "Salvo!"
+   },
+   "browser": {
+      "message": "Navegador"
+   },
+   "googleSheet": {
+      "message": "Google Sheet"
+   },
+   "add": {
+      "message": "Adicionar"
+   },
+   "addAndDelete": {
+      "message": "Adicionar e excluir"
+   },
+   "uiLanguageLabel": {
+      "message": "Idioma da interface"
+   }
+}

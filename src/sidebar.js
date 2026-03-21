@@ -21,7 +21,7 @@ function createSidebarWithHistory() {
 
   const historyTitle = document.createElement('div');
   historyTitle.classList.add('historyTitle');
-  historyTitle.textContent = 'HISTORY';
+  historyTitle.textContent = t('history');
 
   // Apply current font size to history title
   if (window.options && window.options.sidebarFontSize) {
@@ -33,7 +33,7 @@ function createSidebarWithHistory() {
   const historySearchInput = document.createElement('input');
   historySearchInput.type = 'text';
   historySearchInput.id = 'searchHistory';
-  historySearchInput.placeholder = 'Search translations...';
+  historySearchInput.placeholder = t('searchTranslations');
   historySearchInput.classList.add('search-input');
 
   // Apply current font size to search input

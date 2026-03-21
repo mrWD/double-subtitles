@@ -1,0 +1,74 @@
+{
+   "description": {
+      "message": "Rozszerzenie umożliwia wyświetlanie dodatkowych napisów nad standardowymi."
+   },
+   "name": {
+      "message": "Double Subtitles"
+   },
+   "popupText": {
+      "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
+   },
+   "onOffLabel": {
+      "message": "Włącz rozszerzenie"
+   },
+   "showHideSidebarLabel": {
+      "message": "Pokaż panel boczny"
+   },
+   "sidebarFontSizeLabel": {
+      "message": "Rozmiar czcionki panelu bocznego"
+   },
+   "showHideDoubleSubtitlesLabel": {
+      "message": "Pokaż podwójne napisy"
+   },
+   "langLabel": {
+      "message": "Wybierz drugi język"
+   },
+   "currentForeignLangLabel": {
+      "message": "Aktualny język obcy"
+   },
+   "resetButton": {
+      "message": "Resetuj"
+   },
+   "showSavedTranslations": {
+      "message": "Pokaż zapisane tłumaczenia"
+   },
+   "supportExtension": {
+      "message": "Wesprzyj rozszerzenie:"
+   },
+   "savedTranslations": {
+      "message": "Zapisane tłumaczenia"
+   },
+   "searchTranslations": {
+      "message": "Szukaj tłumaczeń..."
+   },
+   "noSavedCards": {
+      "message": "Brak zapisanych kart"
+   },
+   "history": {
+      "message": "HISTORIA"
+   },
+   "cancel": {
+      "message": "Anuluj"
+   },
+   "save": {
+      "message": "Zapisz"
+   },
+   "saved": {
+      "message": "Zapisano!"
+   },
+   "browser": {
+      "message": "Przeglądarka"
+   },
+   "googleSheet": {
+      "message": "Google Sheet"
+   },
+   "add": {
+      "message": "Dodaj"
+   },
+   "addAndDelete": {
+      "message": "Dodaj i usuń"
+   },
+   "uiLanguageLabel": {
+      "message": "Język interfejsu"
+   }
+}
