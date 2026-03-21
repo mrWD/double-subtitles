@@ -244,6 +244,16 @@
   background-color: var(--secondary-color);
 }
 
+@keyframes history-highlight {
+  0%   { background-color: var(--secondary-color); }
+  40%  { background-color: #2a4a6a; }
+  100% { background-color: var(--secondary-color); }
+}
+
+.historyElem--highlight {
+  animation: history-highlight 1.5s ease;
+}
+
 .visibleSubtitles {
   position: fixed;
   bottom: 15%;

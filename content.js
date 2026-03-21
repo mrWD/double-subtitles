@@ -166,6 +166,22 @@ function applyExtensionUiState() {
   if (window.updateSidebarFontSize) {
     window.updateSidebarFontSize(options.sidebarFontSize || 16);
   }
+
+  const savedHistory = sessionStorage.getItem('double-subtitles-history');
+  if (savedHistory) {
+    try {
+      const items = JSON.parse(savedHistory);
+      items.forEach((item) => addLineToHistory(item));
+    } catch {}
+  }
+
+  const lastSubtitle = sessionStorage.getItem('double-subtitles-last');
+  if (lastSubtitle) {
+    try {
+      const { text, translation } = JSON.parse(lastSubtitle);
+      addLineToSubtitles({ text, translation });
+    } catch {}
+  }
 }
 
 function forceHideExtensionUi() {
@@ -191,6 +207,9 @@ function syncPageUiState() {
   const shouldBeActive = isWatchPage();
 
   if (shouldBeActive === isWatchPageActive) {
+    if (shouldBeActive && !document.querySelector('.sidebar')) {
+      applyExtensionUiState();
+    }
     return;
   }
 

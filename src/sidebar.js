@@ -91,6 +91,17 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
     return;
   }
 
+  const existingElem = Array.from(historyList.querySelectorAll('.historyElem'))
+    .find((elem) => elem.dataset.text === normalizedText);
+
+  if (existingElem) {
+    existingElem.classList.remove('historyElem--highlight');
+    void existingElem.offsetWidth;
+    existingElem.classList.add('historyElem--highlight');
+    existingElem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    return;
+  }
+
   const lastHistoryElem = historyList.lastElementChild;
 
   if (
@@ -111,6 +122,7 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
         text: normalizedText,
         translation,
       });
+      saveHistoryToSession(historyList);
       scrollSidebarToBottom();
       return;
     }
@@ -173,6 +185,7 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
 
   historyList.appendChild(historyElem);
 
+  saveHistoryToSession(historyList);
   scrollSidebarToBottom();
 }
 
@@ -196,6 +209,16 @@ function updateHistoryElement(historyElem, { text, translation }) {
       span.style.fontSize = `${window.options.sidebarFontSize}px`;
     });
   }
+}
+
+function saveHistoryToSession(historyList) {
+  const items = Array.from(historyList.querySelectorAll('.historyElem')).map((elem) => ({
+    text: elem.dataset.text,
+    translation: elem.dataset.translation,
+    timestamp: elem.dataset.timestamp || null,
+    sourceUrl: elem.dataset.sourceUrl || null,
+  }));
+  sessionStorage.setItem('double-subtitles-history', JSON.stringify(items));
 }
 
 function scrollSidebarToBottom() {
