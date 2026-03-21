@@ -193,21 +193,11 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
       translatedList.style.transform = 'translateX(-100%)';
     }
 
-    // Position vertically centered on the item, then clamp to viewport
+    // Position vertically centered on the item
+    // Clamping to viewport happens in clampTranslatedListToViewport()
+    // which is called from showTranslatedList() after content is populated
     translatedList.style.top = `${elemCenterY}px`;
     translatedList.style.transform += ' translateY(-50%)';
-
-    // After rendering, clamp to viewport if needed
-    requestAnimationFrame(() => {
-      const listRect = translatedList.getBoundingClientRect();
-      if (listRect.top < 0) {
-        translatedList.style.top = '0px';
-        translatedList.style.transform = translatedList.style.transform.replace(' translateY(-50%)', '');
-      } else if (listRect.bottom > window.innerHeight) {
-        translatedList.style.top = `${window.innerHeight - listRect.height}px`;
-        translatedList.style.transform = translatedList.style.transform.replace(' translateY(-50%)', '');
-      }
-    });
   });
 
   historyElem.addEventListener('mouseout', (e) => {
