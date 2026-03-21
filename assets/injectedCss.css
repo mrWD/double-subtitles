@@ -71,7 +71,7 @@
   background: var(--secondary-color);
 }
 
-#dv-web-player {
+#dv-web-player.dv-player-fullscreen {
   display: flex;
   transition: none;
 }
