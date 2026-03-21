@@ -39,6 +39,16 @@
   "background": {
     "service_worker": "background.js"
   },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/netflixBridge.js"
+      ],
+      "matches": [
+        "*://*.netflix.com/*"
+      ]
+    }
+  ],
   "content_scripts": [
     {
       "css": [ "assets/injectedCss.css" ],
