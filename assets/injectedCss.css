@@ -76,7 +76,7 @@
   transition: none;
 }
 
-.sidebar {
+.double-subtitles-sidebar {
   position: relative;
   z-index: 99999;
 
@@ -100,7 +100,7 @@
   transition: none;
 }
 
-.sidebar.hidden {
+.double-subtitles-sidebar.hidden {
   display: none !important;
 }
 
@@ -151,7 +151,7 @@
   opacity: 1;
 }
 
-.sidebar hr {
+.double-subtitles-sidebar hr {
   margin-top: 14px;
 }
 
@@ -460,7 +460,7 @@
   cursor: pointer;
 }
 
-.menu {
+.double-subtitles-menu {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -477,11 +477,11 @@
   background-color: var(--primary-color);
 }
 
-.menu * {
+.double-subtitles-menu * {
   box-sizing: border-box;
 }
 
-.menu.visible {
+.double-subtitles-menu.visible {
   display: flex;
 }
 
@@ -574,6 +574,7 @@
 
 .ytp-caption-window-container.double-subtitles-hide-native .caption-window {
   opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .visibleSubtitles.youtube-subtitles {
@@ -608,4 +609,28 @@
 .visibleSubtitles.youtube-subtitles .menuButton {
   transform: translate(8px, -50%);
   pointer-events: auto;
+}
+
+.save-toast {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  z-index: 99999999999;
+  transform: translateX(-50%) translateY(20px);
+  box-sizing: border-box;
+  padding: 12px 32px;
+  border-radius: 8px;
+  background-color: #42D369;
+  font-family: Barlow, Helvetica, Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.save-toast--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }

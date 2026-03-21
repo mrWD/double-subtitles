@@ -72,7 +72,7 @@ chrome.runtime.onMessage.addListener((req) => {
       return;
     }
 
-    if (!document.querySelector('.sidebar')) {
+    if (!document.querySelector('.double-subtitles-sidebar')) {
       createSidebarWithHistory();
     }
 
@@ -151,7 +151,7 @@ function isWatchPage() {
 }
 
 function applyExtensionUiState() {
-  if (!document.querySelector('.sidebar')) {
+  if (!document.querySelector('.double-subtitles-sidebar')) {
     createSidebarWithHistory();
   }
 
@@ -185,7 +185,7 @@ function applyExtensionUiState() {
 }
 
 function forceHideExtensionUi() {
-  const sidebar = document.querySelector('.sidebar');
+  const sidebar = document.querySelector('.double-subtitles-sidebar');
   if (sidebar) {
     if (window.hideSidebar) {
       window.hideSidebar();
@@ -207,7 +207,7 @@ function syncPageUiState() {
   const shouldBeActive = isWatchPage();
 
   if (shouldBeActive === isWatchPageActive) {
-    if (shouldBeActive && !document.querySelector('.sidebar')) {
+    if (shouldBeActive && !document.querySelector('.double-subtitles-sidebar')) {
       applyExtensionUiState();
     }
     return;

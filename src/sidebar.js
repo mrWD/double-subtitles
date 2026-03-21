@@ -227,7 +227,7 @@ function saveHistoryToSession(historyList) {
 }
 
 function scrollSidebarToBottom() {
-  const sidebar = document.querySelector('.sidebar');
+  const sidebar = document.querySelector('.double-subtitles-sidebar');
 
   if (sidebar) {
     sidebar.scrollTop = sidebar.scrollHeight;
@@ -258,7 +258,7 @@ function preparePageForSidebar() {
 
 function createSidebar() {
   const sidebar = document.createElement('div');
-  sidebar.classList.add('sidebar');
+  sidebar.classList.add('double-subtitles-sidebar');
 
   if (window.STREAMING_PLATFORM === 'netflix') {
     sidebar.style.position = 'absolute';
@@ -384,7 +384,7 @@ function makeSidebarResizable(sidebar, resizeHandle) {
 }
 
 function showSidebar() {
-  const sidebar = document.querySelector('.sidebar');
+  const sidebar = document.querySelector('.double-subtitles-sidebar');
   if (sidebar) {
     sidebar.classList.remove('hidden');
     sidebar.style.display = 'flex';
@@ -393,7 +393,7 @@ function showSidebar() {
 }
 
 function hideSidebar() {
-  const sidebar = document.querySelector('.sidebar');
+  const sidebar = document.querySelector('.double-subtitles-sidebar');
   if (sidebar) {
     sidebar.classList.add('hidden');
     sidebar.style.display = 'none';
@@ -414,7 +414,7 @@ function adjustContentWidth(sidebarVisible) {
     const videoContainer = document.querySelector('.watch-video');
     if (videoContainer) {
       if (sidebarVisible) {
-        const sidebar = document.querySelector('.sidebar');
+        const sidebar = document.querySelector('.double-subtitles-sidebar');
         if (sidebar) {
           const sidebarWidth = parseInt(getComputedStyle(sidebar).width, 10);
           const contentWidth = 100 - (sidebarWidth / window.innerWidth * 100);
@@ -438,7 +438,7 @@ function adjustContentWidth(sidebarVisible) {
   }
 
   if (window.STREAMING_PLATFORM === 'youtube') {
-    const sidebar = document.querySelector('.sidebar');
+    const sidebar = document.querySelector('.double-subtitles-sidebar');
     const sidebarWidth = sidebarVisible && sidebar
       ? parseInt(getComputedStyle(sidebar).width, 10)
       : 0;
@@ -471,7 +471,7 @@ function adjustYoutubeAppWidth(sidebarVisible, sidebarWidth = 0) {
 }
 
 function updateSidebarFontSize(fontSize) {
-  const sidebar = document.querySelector('.sidebar');
+  const sidebar = document.querySelector('.double-subtitles-sidebar');
   if (sidebar) {
     const textElements = sidebar.querySelectorAll(
       '.historyTitle, .search-input, .historyElem, .historyElem span:not(.historyTimestamp)'

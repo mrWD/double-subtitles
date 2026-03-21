@@ -29,11 +29,11 @@ function openMenu({ text, translation, timestamp, sourceUrl }) {
   menu.dataset.timestamp = timestamp ?? '';
   menu.dataset.sourceUrl = sourceUrl ?? '';
 
-  menu.classList.toggle('visible');
+  menu.classList.add('visible');
 }
 
 function createMenu() {
-  const existedMenu = document.querySelector('#menu');
+  const existedMenu = document.querySelector('#double-subtitles-menu');
 
   if (existedMenu) {
     return existedMenu;
@@ -42,8 +42,8 @@ function createMenu() {
   const menu = document.createElement('div');
   const btnGroup = document.createElement('div');
 
-  menu.classList.add('menu');
-  menu.setAttribute('id', 'menu');
+  menu.classList.add('double-subtitles-menu');
+  menu.setAttribute('id', 'double-subtitles-menu');
 
   menu.appendChild(createInput('text-input'));
   menu.appendChild(createInput('translation-input'));
@@ -77,7 +77,7 @@ function createCancelButton() {
   cancelButton.textContent = 'Cancel';
 
   cancelButton.addEventListener('click', () => {
-    const menu = document.querySelector('#menu');
+    const menu = document.querySelector('#double-subtitles-menu');
     menu.classList.remove('visible');
   });
 
@@ -91,7 +91,7 @@ function createSaveButton() {
   saveButton.textContent = 'Save';
 
   saveButton.addEventListener('click', () => {
-    const menu = document.querySelector('#menu');
+    const menu = document.querySelector('#double-subtitles-menu');
     const textInput = document.querySelector('#text-input');
     const translationInput = document.querySelector('#translation-input');
 
@@ -106,6 +106,7 @@ function createSaveButton() {
     });
 
     menu.classList.remove('visible');
+    showSaveToast();
   });
 
   return saveButton;
@@ -196,4 +197,25 @@ function createServiceForm(...fields) {
   });
 
   return div;
+}
+
+function showSaveToast() {
+  const existing = document.querySelector('.save-toast');
+  if (existing) {
+    existing.remove();
+  }
+
+  const toast = document.createElement('div');
+  toast.classList.add('save-toast');
+  toast.textContent = 'Saved!';
+  document.body.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.classList.add('save-toast--visible');
+  });
+
+  setTimeout(() => {
+    toast.classList.remove('save-toast--visible');
+    toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+  }, 2000);
 }
