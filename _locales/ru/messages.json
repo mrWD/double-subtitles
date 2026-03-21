@@ -1,0 +1,74 @@
+{
+   "description": {
+      "message": "Расширение позволяет отображать дополнительные субтитры над стандартными."
+   },
+   "name": {
+      "message": "Double Subtitles"
+   },
+   "popupText": {
+      "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
+   },
+   "onOffLabel": {
+      "message": "Включить расширение"
+   },
+   "showHideSidebarLabel": {
+      "message": "Показать боковую панель"
+   },
+   "sidebarFontSizeLabel": {
+      "message": "Размер шрифта боковой панели"
+   },
+   "showHideDoubleSubtitlesLabel": {
+      "message": "Показать двойные субтитры"
+   },
+   "langLabel": {
+      "message": "Выбрать второй язык"
+   },
+   "currentForeignLangLabel": {
+      "message": "Текущий иностранный язык"
+   },
+   "resetButton": {
+      "message": "Сбросить"
+   },
+   "showSavedTranslations": {
+      "message": "Показать сохранённые переводы"
+   },
+   "supportExtension": {
+      "message": "Поддержать расширение:"
+   },
+   "savedTranslations": {
+      "message": "Сохранённые переводы"
+   },
+   "searchTranslations": {
+      "message": "Поиск переводов..."
+   },
+   "noSavedCards": {
+      "message": "Нет сохранённых карточек"
+   },
+   "history": {
+      "message": "ИСТОРИЯ"
+   },
+   "cancel": {
+      "message": "Отмена"
+   },
+   "save": {
+      "message": "Сохранить"
+   },
+   "saved": {
+      "message": "Сохранено!"
+   },
+   "browser": {
+      "message": "Браузер"
+   },
+   "googleSheet": {
+      "message": "Google Sheet"
+   },
+   "add": {
+      "message": "Добавить"
+   },
+   "addAndDelete": {
+      "message": "Добавить и удалить"
+   },
+   "uiLanguageLabel": {
+      "message": "Язык интерфейса"
+   }
+}

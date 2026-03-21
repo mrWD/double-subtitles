@@ -1,0 +1,74 @@
+{
+   "description": {
+      "message": "Uzantı, standart altyazıların üzerinde ek altyazılar görüntülemeye olanak tanır."
+   },
+   "name": {
+      "message": "Double Subtitles"
+   },
+   "popupText": {
+      "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
+   },
+   "onOffLabel": {
+      "message": "Uzantıyı aç"
+   },
+   "showHideSidebarLabel": {
+      "message": "Kenar çubuğunu göster"
+   },
+   "sidebarFontSizeLabel": {
+      "message": "Kenar çubuğu yazı boyutu"
+   },
+   "showHideDoubleSubtitlesLabel": {
+      "message": "Çift altyazıları göster"
+   },
+   "langLabel": {
+      "message": "İkinci dili seçin"
+   },
+   "currentForeignLangLabel": {
+      "message": "Mevcut yabancı dil"
+   },
+   "resetButton": {
+      "message": "Sıfırla"
+   },
+   "showSavedTranslations": {
+      "message": "Kayıtlı çevirileri göster"
+   },
+   "supportExtension": {
+      "message": "Uzantıyı destekleyin:"
+   },
+   "savedTranslations": {
+      "message": "Kayıtlı çeviriler"
+   },
+   "searchTranslations": {
+      "message": "Çevirileri ara..."
+   },
+   "noSavedCards": {
+      "message": "Kayıtlı kart yok"
+   },
+   "history": {
+      "message": "GEÇMİŞ"
+   },
+   "cancel": {
+      "message": "İptal"
+   },
+   "save": {
+      "message": "Kaydet"
+   },
+   "saved": {
+      "message": "Kaydedildi!"
+   },
+   "browser": {
+      "message": "Tarayıcı"
+   },
+   "googleSheet": {
+      "message": "Google Sheet"
+   },
+   "add": {
+      "message": "Ekle"
+   },
+   "addAndDelete": {
+      "message": "Ekle ve sil"
+   },
+   "uiLanguageLabel": {
+      "message": "Arayüz dili"
+   }
+}

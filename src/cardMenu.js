@@ -48,7 +48,7 @@ function createMenu() {
   menu.appendChild(createInput('text-input'));
   menu.appendChild(createInput('translation-input'));
 
-  menu.appendChild(createServiceCheckbox(BROWSER_CHECKBOX, BROWSER_SVG, 'Browser'));
+  menu.appendChild(createServiceCheckbox(BROWSER_CHECKBOX, BROWSER_SVG, t('browser')));
 
   // menu.appendChild(createServiceCheckbox(ANKIAPP_CHECKBOX, ANKIAPP_SVG, 'Anki'));
   // menu.appendChild(createServiceForm(ANKIAPP_INPUT));
@@ -56,7 +56,7 @@ function createMenu() {
   // menu.appendChild(createServiceCheckbox(QUIZLET_CHECKBOX, QUIZLET_SVG, 'Quizlet'));
   // menu.appendChild(createServiceForm(QUIZLET_INPUT));
 
-  menu.appendChild(createServiceCheckbox(GSHEETS_CHECKBOX, GSHEETS_SVG, 'Google Sheet'));
+  menu.appendChild(createServiceCheckbox(GSHEETS_CHECKBOX, GSHEETS_SVG, t('googleSheet')));
   menu.appendChild(createServiceForm(GSHEETS_INPUT, GSHEETS_RANGE));
 
   btnGroup.classList.add('btnGroup');
@@ -74,7 +74,7 @@ function createCancelButton() {
   const cancelButton = document.createElement('button');
 
   cancelButton.classList.add('cancelButton');
-  cancelButton.textContent = 'Cancel';
+  cancelButton.textContent = t('cancel');
 
   cancelButton.addEventListener('click', () => {
     const menu = document.querySelector('#double-subtitles-menu');
@@ -88,7 +88,7 @@ function createSaveButton() {
   const saveButton = document.createElement('button');
 
   saveButton.classList.add('saveButton');
-  saveButton.textContent = 'Save';
+  saveButton.textContent = t('save');
 
   saveButton.addEventListener('click', () => {
     const menu = document.querySelector('#double-subtitles-menu');
@@ -207,7 +207,7 @@ function showSaveToast() {
 
   const toast = document.createElement('div');
   toast.classList.add('save-toast');
-  toast.textContent = 'Saved!';
+  toast.textContent = t('saved');
   document.body.appendChild(toast);
 
   requestAnimationFrame(() => {

@@ -1,6 +1,6 @@
 {
    "description": {
-      "message": "Extension allows for displaying additional subtitles above the standard ones."
+      "message": "L'estensione consente di visualizzare sottotitoli aggiuntivi sopra quelli standard."
    },
    "name": {
       "message": "Double Subtitles"
@@ -9,52 +9,52 @@
       "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
    },
    "onOffLabel": {
-      "message": "Turn extension on"
+      "message": "Attiva estensione"
    },
    "showHideSidebarLabel": {
-      "message": "Show sidebar"
+      "message": "Mostra barra laterale"
    },
    "sidebarFontSizeLabel": {
-      "message": "Sidebar font size"
+      "message": "Dimensione carattere barra laterale"
    },
    "showHideDoubleSubtitlesLabel": {
-      "message": "Show double subtitles"
+      "message": "Mostra doppi sottotitoli"
    },
    "langLabel": {
-      "message": "Select second language"
+      "message": "Seleziona seconda lingua"
    },
    "currentForeignLangLabel": {
-      "message": "Current foreign language"
+      "message": "Lingua straniera corrente"
    },
    "resetButton": {
-      "message": "Reset"
+      "message": "Ripristina"
    },
    "showSavedTranslations": {
-      "message": "Show saved translations"
+      "message": "Mostra traduzioni salvate"
    },
    "supportExtension": {
-      "message": "Support the extension:"
+      "message": "Supporta l'estensione:"
    },
    "savedTranslations": {
-      "message": "Saved translations"
+      "message": "Traduzioni salvate"
    },
    "searchTranslations": {
-      "message": "Search translations..."
+      "message": "Cerca traduzioni..."
    },
    "noSavedCards": {
-      "message": "No saved cards"
+      "message": "Nessuna scheda salvata"
    },
    "history": {
-      "message": "HISTORY"
+      "message": "CRONOLOGIA"
    },
    "cancel": {
-      "message": "Cancel"
+      "message": "Annulla"
    },
    "save": {
-      "message": "Save"
+      "message": "Salva"
    },
    "saved": {
-      "message": "Saved!"
+      "message": "Salvato!"
    },
    "browser": {
       "message": "Browser"
@@ -63,12 +63,12 @@
       "message": "Google Sheet"
    },
    "add": {
-      "message": "Add"
+      "message": "Aggiungi"
    },
    "addAndDelete": {
-      "message": "Add and delete"
+      "message": "Aggiungi ed elimina"
    },
    "uiLanguageLabel": {
-      "message": "Interface language"
+      "message": "Lingua dell'interfaccia"
    }
 }

@@ -1,0 +1,74 @@
+{
+   "description": {
+      "message": "Розширення дозволяє відображати додаткові субтитри над стандартними."
+   },
+   "name": {
+      "message": "Double Subtitles"
+   },
+   "popupText": {
+      "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
+   },
+   "onOffLabel": {
+      "message": "Увімкнути розширення"
+   },
+   "showHideSidebarLabel": {
+      "message": "Показати бічну панель"
+   },
+   "sidebarFontSizeLabel": {
+      "message": "Розмір шрифту бічної панелі"
+   },
+   "showHideDoubleSubtitlesLabel": {
+      "message": "Показати подвійні субтитри"
+   },
+   "langLabel": {
+      "message": "Обрати другу мову"
+   },
+   "currentForeignLangLabel": {
+      "message": "Поточна іноземна мова"
+   },
+   "resetButton": {
+      "message": "Скинути"
+   },
+   "showSavedTranslations": {
+      "message": "Показати збережені переклади"
+   },
+   "supportExtension": {
+      "message": "Підтримати розширення:"
+   },
+   "savedTranslations": {
+      "message": "Збережені переклади"
+   },
+   "searchTranslations": {
+      "message": "Пошук перекладів..."
+   },
+   "noSavedCards": {
+      "message": "Немає збережених карток"
+   },
+   "history": {
+      "message": "ІСТОРІЯ"
+   },
+   "cancel": {
+      "message": "Скасувати"
+   },
+   "save": {
+      "message": "Зберегти"
+   },
+   "saved": {
+      "message": "Збережено!"
+   },
+   "browser": {
+      "message": "Браузер"
+   },
+   "googleSheet": {
+      "message": "Google Sheet"
+   },
+   "add": {
+      "message": "Додати"
+   },
+   "addAndDelete": {
+      "message": "Додати та видалити"
+   },
+   "uiLanguageLabel": {
+      "message": "Мова інтерфейсу"
+   }
+}

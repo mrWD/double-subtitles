@@ -10,6 +10,7 @@ let lastKnownLocation = window.location.href;
 let isRuntimeUnavailable = false;
 
 async function initContent() {
+  await initI18n();
   options = await loadOptionsOrSetDefaults();
   window.options = options;
 

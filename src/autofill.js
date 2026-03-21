@@ -101,8 +101,8 @@ function createTipRow(text, input) {
   addAndDeleteBtn.classList.add('suggestion-btn');
 
   textEl.textContent = text;
-  addBtn.textContent = 'Add';
-  addAndDeleteBtn.textContent = 'Add and delete';
+  addBtn.textContent = t('add');
+  addAndDeleteBtn.textContent = t('addAndDelete');
 
   row.appendChild(textEl);
   row.appendChild(addBtn);

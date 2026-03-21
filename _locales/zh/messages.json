@@ -1,6 +1,6 @@
 {
    "description": {
-      "message": "Extension allows for displaying additional subtitles above the standard ones."
+      "message": "此扩展允许在标准字幕上方显示附加字幕。"
    },
    "name": {
       "message": "Double Subtitles"
@@ -9,66 +9,66 @@
       "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
    },
    "onOffLabel": {
-      "message": "Turn extension on"
+      "message": "开启扩展"
    },
    "showHideSidebarLabel": {
-      "message": "Show sidebar"
+      "message": "显示侧边栏"
    },
    "sidebarFontSizeLabel": {
-      "message": "Sidebar font size"
+      "message": "侧边栏字体大小"
    },
    "showHideDoubleSubtitlesLabel": {
-      "message": "Show double subtitles"
+      "message": "显示双语字幕"
    },
    "langLabel": {
-      "message": "Select second language"
+      "message": "选择第二语言"
    },
    "currentForeignLangLabel": {
-      "message": "Current foreign language"
+      "message": "当前外语"
    },
    "resetButton": {
-      "message": "Reset"
+      "message": "重置"
    },
    "showSavedTranslations": {
-      "message": "Show saved translations"
+      "message": "显示已保存的翻译"
    },
    "supportExtension": {
-      "message": "Support the extension:"
+      "message": "支持此扩展："
    },
    "savedTranslations": {
-      "message": "Saved translations"
+      "message": "已保存的翻译"
    },
    "searchTranslations": {
-      "message": "Search translations..."
+      "message": "搜索翻译..."
    },
    "noSavedCards": {
-      "message": "No saved cards"
+      "message": "没有已保存的卡片"
    },
    "history": {
-      "message": "HISTORY"
+      "message": "历史记录"
    },
    "cancel": {
-      "message": "Cancel"
+      "message": "取消"
    },
    "save": {
-      "message": "Save"
+      "message": "保存"
    },
    "saved": {
-      "message": "Saved!"
+      "message": "已保存！"
    },
    "browser": {
-      "message": "Browser"
+      "message": "浏览器"
    },
    "googleSheet": {
       "message": "Google Sheet"
    },
    "add": {
-      "message": "Add"
+      "message": "添加"
    },
    "addAndDelete": {
-      "message": "Add and delete"
+      "message": "添加并删除"
    },
    "uiLanguageLabel": {
-      "message": "Interface language"
+      "message": "界面语言"
    }
 }
