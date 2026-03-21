@@ -48,17 +48,15 @@ function createTranslatedList() {
 
   translatedList.classList.add('translatedList');
 
-  translatedList.addEventListener('mouseover', (e) => {
-    e.stopPropagation();
+  translatedList.addEventListener('mouseenter', () => {
+    clearTimeout(_translatedListHideTimeout);
     translatedList.classList.remove('is-hidden');
   });
 
-  translatedList.addEventListener('mouseout', (e) => {
-    if (e.toElement?.classList.contains('translatedList')) {
-      return;
-    }
-
-    translatedList.classList.add('is-hidden');
+  translatedList.addEventListener('mouseleave', () => {
+    _translatedListHideTimeout = setTimeout(() => {
+      translatedList.classList.add('is-hidden');
+    }, 150);
   });
 
   document.body.appendChild(translatedList);
