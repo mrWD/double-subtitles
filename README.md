@@ -77,6 +77,28 @@ Double Subtitles is a browser extension that enhances your video-watching experi
 * popup.html: HTML for the extension's popup interface.
 * popup.js: JavaScript for the popup interface.
 
+## Deployment
+
+This project uses GitHub Actions to automatically deploy to both the Chrome Web Store and Firefox Add-ons on every push to `main`. The two deployments run in parallel and are independent.
+
+**Required GitHub Secrets:**
+
+| Secret | Store | Description |
+|--------|-------|-------------|
+| `CHROME_EXTENSION_ID` | Chrome | 32-character extension ID from the Developer Dashboard |
+| `CHROME_CLIENT_ID` | Chrome | Google OAuth 2.0 client ID |
+| `CHROME_CLIENT_SECRET` | Chrome | Google OAuth 2.0 client secret |
+| `CHROME_REFRESH_TOKEN` | Chrome | OAuth refresh token for the Chrome Web Store API |
+| `FIREFOX_EXTENSION_ID` | Firefox | Gecko add-on ID (e.g. `addon@author` or `{uuid}`) |
+| `AMO_API_KEY` | Firefox | JWT issuer from AMO Developer Hub |
+| `AMO_API_SECRET` | Firefox | JWT secret from AMO Developer Hub |
+
+**Manual deployment:** Go to the Actions tab → "Deploy Extension" → Run workflow. You can target `chrome`, `firefox`, or `both`.
+
+Setup guides:
+- Chrome: [docs/chrome-web-store-deploy.md](docs/chrome-web-store-deploy.md)
+- Firefox: [docs/firefox-addons-deploy.md](docs/firefox-addons-deploy.md)
+
 ## Contributing
 1. Fork the repository.
 2. Create a new branch (git checkout -b feature-branch).
