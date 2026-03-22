@@ -85,7 +85,7 @@ function getYoutubeSubtitleText() {
 
   const lines = captionWindows.map((captionWindow) => {
     const segments = Array.from(captionWindow.querySelectorAll('.ytp-caption-segment'));
-    const segmentText = segments.map((segment) => segment.textContent ?? '').join('');
+    const segmentText = segments.map((segment) => segment.textContent ?? '').join(' ');
 
     return normalizeSubtitleText(segmentText || captionWindow.textContent || '');
   }).filter(Boolean);
