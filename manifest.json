@@ -20,6 +20,7 @@
     "*://*.disneyplus.com/*",
     "*://*.netflix.com/*",
     "*://*.youtube.com/*",
+    "*://*.twitch.tv/*",
     "*://ankiuser.net/*",
     "*://quizlet.com/*",
     "https://translate.googleapis.com/*"
@@ -76,6 +77,7 @@
         "*://*.disneyplus.com/*",
         "*://*.netflix.com/*",
         "*://*.youtube.com/*",
+        "*://*.twitch.tv/*",
         "*://ankiuser.net/*",
         "*://quizlet.com/*"
       ]

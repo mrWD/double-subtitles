@@ -657,6 +657,11 @@
   pointer-events: none !important;
 }
 
+.player-captions-container.double-subtitles-hide-native .player-captions-container__caption-window {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 .visibleSubtitles.youtube-subtitles {
   position: fixed;
   z-index: 2;

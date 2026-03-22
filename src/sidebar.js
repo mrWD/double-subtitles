@@ -94,7 +94,7 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
   const lastHistoryElem = historyList.lastElementChild;
 
   if (
-    window.STREAMING_PLATFORM === 'youtube'
+    (window.STREAMING_PLATFORM === 'youtube' || window.STREAMING_PLATFORM === 'twitch')
     && lastHistoryElem?.classList.contains('historyElem')
   ) {
     const previousText = lastHistoryElem.dataset.text ?? '';
@@ -309,6 +309,10 @@ function preparePageForSidebar() {
     return document.querySelector('body');
   }
 
+  if (window.STREAMING_PLATFORM === 'twitch') {
+    return document.body;
+  }
+
   const videoContainer = document.querySelector('.watch-video');
 
   if (videoContainer) {
@@ -333,6 +337,12 @@ function createSidebar() {
     sidebar.style.top = 0;
     sidebar.style.right = 0;
     sidebar.style.height = '100vh';
+  }
+
+  if (window.STREAMING_PLATFORM === 'twitch') {
+    sidebar.style.position = 'relative';
+    sidebar.style.height = '100vh';
+    sidebar.style.flexShrink = '0';
   }
 
   // Set initial width from options
@@ -398,6 +408,10 @@ function makeSidebarResizable(sidebar, resizeHandle) {
 
     if (window.STREAMING_PLATFORM === 'youtube') {
       adjustYoutubeAppWidth(true, constrainedWidth);
+    }
+
+    if (window.STREAMING_PLATFORM === 'twitch') {
+      adjustTwitchAppWidth(true, constrainedWidth);
     }
   }
 
@@ -507,6 +521,15 @@ function adjustContentWidth(sidebarVisible) {
 
     adjustYoutubeAppWidth(sidebarVisible, sidebarWidth);
   }
+
+  if (window.STREAMING_PLATFORM === 'twitch') {
+    const sidebar = document.querySelector('.double-subtitles-sidebar');
+    const sidebarWidth = sidebarVisible && sidebar
+      ? parseInt(getComputedStyle(sidebar).width, 10)
+      : 0;
+
+    adjustTwitchAppWidth(sidebarVisible, sidebarWidth);
+  }
 }
 
 function adjustYoutubeAppWidth(sidebarVisible, sidebarWidth = 0) {
@@ -528,6 +551,31 @@ function adjustYoutubeAppWidth(sidebarVisible, sidebarWidth = 0) {
 
     if (mastheadContainer) {
       mastheadContainer.style.width = '';
+    }
+  }
+}
+
+function adjustTwitchAppWidth(sidebarVisible, sidebarWidth = 0) {
+  const body = document.body;
+  const rootDiv = document.querySelector('#root');
+
+  if (sidebarVisible && sidebarWidth > 0) {
+    body.style.display = 'flex';
+    body.style.flexDirection = 'row';
+    body.style.overflow = 'hidden';
+    if (rootDiv) {
+      rootDiv.style.flex = '1';
+      rootDiv.style.minWidth = '0';
+      rootDiv.style.overflow = 'auto';
+    }
+  } else {
+    body.style.display = '';
+    body.style.flexDirection = '';
+    body.style.overflow = '';
+    if (rootDiv) {
+      rootDiv.style.flex = '';
+      rootDiv.style.minWidth = '';
+      rootDiv.style.overflow = '';
     }
   }
 }

@@ -34,6 +34,10 @@ function addLineToSubtitles({ text, translation }) {
     }
   }
 
+  if (window.STREAMING_PLATFORM === 'twitch') {
+    toggleTwitchNativeSubtitles(isDoubleSubtitlesHidden);
+  }
+
   const buttonGroup = document.createElement('div');
   buttonGroup.classList.add('subtitle-button-group');
   buttonGroup.appendChild(createMenuButton({ text, translation }));
@@ -178,6 +182,16 @@ function toggleYoutubeNativeSubtitles(showNative) {
   captionContainer.classList.toggle('double-subtitles-hide-native', !showNative);
 }
 
+function toggleTwitchNativeSubtitles(showNative) {
+  const captionContainer = document.querySelector('.player-captions-container');
+
+  if (!captionContainer) {
+    return;
+  }
+
+  captionContainer.classList.toggle('double-subtitles-hide-native', !showNative);
+}
+
 function createMenuButton({ text, translation }) {
   const menuButton = document.createElement('button');
 
@@ -274,6 +288,10 @@ function hideDoubleSubtitles() {
 
   if (window.STREAMING_PLATFORM === 'youtube') {
     toggleYoutubeNativeSubtitles(true);
+  }
+
+  if (window.STREAMING_PLATFORM === 'twitch') {
+    toggleTwitchNativeSubtitles(true);
   }
 }
 
@@ -537,6 +555,7 @@ window.showDoubleSubtitles = showDoubleSubtitles;
 window.hideDoubleSubtitles = hideDoubleSubtitles;
 window.toggleDoubleSubtitles = toggleDoubleSubtitles;
 window.toggleYoutubeNativeSubtitles = toggleYoutubeNativeSubtitles;
+window.toggleTwitchNativeSubtitles = toggleTwitchNativeSubtitles;
 window.setupVideoPauseListeners = setupVideoPauseListeners;
 window.applyPauseOnlyVisibility = applyPauseOnlyVisibility;
 window.resetSubtitlePosition = resetSubtitlePosition;

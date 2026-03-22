@@ -4,6 +4,7 @@ const urls = [
   '*://*.disneyplus.com/*',
   '*://*.netflix.com/*',
   '*://*.youtube.com/*',
+  '*://*.twitch.tv/*',
   '*://ankiuser.net/*',
   '*://quizlet.com/*',
 ];
