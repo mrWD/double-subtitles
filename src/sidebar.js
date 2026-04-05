@@ -13,7 +13,37 @@ function createSidebarWithHistory() {
 
   const sidebar = createSidebar();
 
+  // Add toggle button (lives outside sidebar so it's visible when sidebar is hidden)
+  const toggleBtn = document.createElement('button');
+  toggleBtn.classList.add('sidebar-toggle-btn');
+  toggleBtn.textContent = '‹';
+  toggleBtn.addEventListener('click', () => {
+    const isHidden = sidebar.classList.contains('hidden');
+    toggleSidebar(isHidden);
+    toggleBtn.textContent = isHidden ? '›' : '‹';
+    if (window.options) {
+      window.options.showSidebar = isHidden;
+      chrome.storage.sync.set({ options: window.options });
+    }
+  });
+
+  if (sidebar.classList.contains('hidden')) {
+    toggleBtn.textContent = '‹';
+    toggleBtn.style.right = '0';
+  } else {
+    toggleBtn.textContent = '›';
+  }
+
+  wrapper.appendChild(toggleBtn);
   wrapper.appendChild(sidebar);
+
+  // Position toggle button after sidebar is in DOM
+  if (!sidebar.classList.contains('hidden')) {
+    requestAnimationFrame(() => {
+      const sidebarWidth = parseInt(getComputedStyle(sidebar).width, 10);
+      toggleBtn.style.right = `${sidebarWidth}px`;
+    });
+  }
 
   const history = document.createElement('div');
   history.classList.add('history');
@@ -397,6 +427,12 @@ function makeSidebarResizable(sidebar, resizeHandle) {
 
     sidebar.style.width = `${constrainedWidth}px`;
 
+    // Update toggle button position
+    const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+    if (toggleBtn) {
+      toggleBtn.style.right = `${constrainedWidth}px`;
+    }
+
     // Adjust content width for Netflix
     if (window.STREAMING_PLATFORM === 'netflix') {
       const videoContainer = document.querySelector('.watch-video');
@@ -461,19 +497,30 @@ function makeSidebarResizable(sidebar, resizeHandle) {
 
 function showSidebar() {
   const sidebar = document.querySelector('.double-subtitles-sidebar');
+  const toggleBtn = document.querySelector('.sidebar-toggle-btn');
   if (sidebar) {
     sidebar.classList.remove('hidden');
     sidebar.style.display = 'flex';
     adjustContentWidth(true);
   }
+  if (toggleBtn) {
+    const sidebarWidth = sidebar ? parseInt(getComputedStyle(sidebar).width, 10) : 0;
+    toggleBtn.style.right = `${sidebarWidth}px`;
+    toggleBtn.textContent = '›';
+  }
 }
 
 function hideSidebar() {
   const sidebar = document.querySelector('.double-subtitles-sidebar');
+  const toggleBtn = document.querySelector('.sidebar-toggle-btn');
   if (sidebar) {
     sidebar.classList.add('hidden');
     sidebar.style.display = 'none';
     adjustContentWidth(false);
+  }
+  if (toggleBtn) {
+    toggleBtn.style.right = '0';
+    toggleBtn.textContent = '‹';
   }
 }
 
