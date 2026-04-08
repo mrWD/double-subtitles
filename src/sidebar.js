@@ -13,7 +13,37 @@ function createSidebarWithHistory() {
 
   const sidebar = createSidebar();
 
+  // Add toggle button (lives outside sidebar so it's visible when sidebar is hidden)
+  const toggleBtn = document.createElement('button');
+  toggleBtn.classList.add('sidebar-toggle-btn');
+  toggleBtn.textContent = '‹';
+  toggleBtn.addEventListener('click', () => {
+    const isHidden = sidebar.classList.contains('hidden');
+    toggleSidebar(isHidden);
+    toggleBtn.textContent = isHidden ? '›' : '‹';
+    if (window.options) {
+      window.options.showSidebar = isHidden;
+      chrome.storage.sync.set({ options: window.options });
+    }
+  });
+
+  if (sidebar.classList.contains('hidden')) {
+    toggleBtn.textContent = '‹';
+    toggleBtn.style.right = '0';
+  } else {
+    toggleBtn.textContent = '›';
+  }
+
+  wrapper.appendChild(toggleBtn);
   wrapper.appendChild(sidebar);
+
+  // Position toggle button after sidebar is in DOM
+  if (!sidebar.classList.contains('hidden')) {
+    requestAnimationFrame(() => {
+      const sidebarWidth = parseInt(getComputedStyle(sidebar).width, 10);
+      toggleBtn.style.right = `${sidebarWidth}px`;
+    });
+  }
 
   const history = document.createElement('div');
   history.classList.add('history');
@@ -94,7 +124,7 @@ function addLineToHistory({ text, translation, timestamp, sourceUrl }) {
   const lastHistoryElem = historyList.lastElementChild;
 
   if (
-    window.STREAMING_PLATFORM === 'youtube'
+    (window.STREAMING_PLATFORM === 'youtube' || window.STREAMING_PLATFORM === 'twitch')
     && lastHistoryElem?.classList.contains('historyElem')
   ) {
     const previousText = lastHistoryElem.dataset.text ?? '';
@@ -309,6 +339,10 @@ function preparePageForSidebar() {
     return document.querySelector('body');
   }
 
+  if (window.STREAMING_PLATFORM === 'twitch') {
+    return document.body;
+  }
+
   const videoContainer = document.querySelector('.watch-video');
 
   if (videoContainer) {
@@ -333,6 +367,12 @@ function createSidebar() {
     sidebar.style.top = 0;
     sidebar.style.right = 0;
     sidebar.style.height = '100vh';
+  }
+
+  if (window.STREAMING_PLATFORM === 'twitch') {
+    sidebar.style.position = 'relative';
+    sidebar.style.height = '100vh';
+    sidebar.style.flexShrink = '0';
   }
 
   // Set initial width from options
@@ -387,6 +427,12 @@ function makeSidebarResizable(sidebar, resizeHandle) {
 
     sidebar.style.width = `${constrainedWidth}px`;
 
+    // Update toggle button position
+    const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+    if (toggleBtn) {
+      toggleBtn.style.right = `${constrainedWidth}px`;
+    }
+
     // Adjust content width for Netflix
     if (window.STREAMING_PLATFORM === 'netflix') {
       const videoContainer = document.querySelector('.watch-video');
@@ -398,6 +444,10 @@ function makeSidebarResizable(sidebar, resizeHandle) {
 
     if (window.STREAMING_PLATFORM === 'youtube') {
       adjustYoutubeAppWidth(true, constrainedWidth);
+    }
+
+    if (window.STREAMING_PLATFORM === 'twitch') {
+      adjustTwitchAppWidth(true, constrainedWidth);
     }
   }
 
@@ -447,19 +497,30 @@ function makeSidebarResizable(sidebar, resizeHandle) {
 
 function showSidebar() {
   const sidebar = document.querySelector('.double-subtitles-sidebar');
+  const toggleBtn = document.querySelector('.sidebar-toggle-btn');
   if (sidebar) {
     sidebar.classList.remove('hidden');
     sidebar.style.display = 'flex';
     adjustContentWidth(true);
   }
+  if (toggleBtn) {
+    const sidebarWidth = sidebar ? parseInt(getComputedStyle(sidebar).width, 10) : 0;
+    toggleBtn.style.right = `${sidebarWidth}px`;
+    toggleBtn.textContent = '›';
+  }
 }
 
 function hideSidebar() {
   const sidebar = document.querySelector('.double-subtitles-sidebar');
+  const toggleBtn = document.querySelector('.sidebar-toggle-btn');
   if (sidebar) {
     sidebar.classList.add('hidden');
     sidebar.style.display = 'none';
     adjustContentWidth(false);
+  }
+  if (toggleBtn) {
+    toggleBtn.style.right = '0';
+    toggleBtn.textContent = '‹';
   }
 }
 
@@ -507,6 +568,15 @@ function adjustContentWidth(sidebarVisible) {
 
     adjustYoutubeAppWidth(sidebarVisible, sidebarWidth);
   }
+
+  if (window.STREAMING_PLATFORM === 'twitch') {
+    const sidebar = document.querySelector('.double-subtitles-sidebar');
+    const sidebarWidth = sidebarVisible && sidebar
+      ? parseInt(getComputedStyle(sidebar).width, 10)
+      : 0;
+
+    adjustTwitchAppWidth(sidebarVisible, sidebarWidth);
+  }
 }
 
 function adjustYoutubeAppWidth(sidebarVisible, sidebarWidth = 0) {
@@ -528,6 +598,31 @@ function adjustYoutubeAppWidth(sidebarVisible, sidebarWidth = 0) {
 
     if (mastheadContainer) {
       mastheadContainer.style.width = '';
+    }
+  }
+}
+
+function adjustTwitchAppWidth(sidebarVisible, sidebarWidth = 0) {
+  const body = document.body;
+  const rootDiv = document.querySelector('#root');
+
+  if (sidebarVisible && sidebarWidth > 0) {
+    body.style.display = 'flex';
+    body.style.flexDirection = 'row';
+    body.style.overflow = 'hidden';
+    if (rootDiv) {
+      rootDiv.style.flex = '1';
+      rootDiv.style.minWidth = '0';
+      rootDiv.style.overflow = 'auto';
+    }
+  } else {
+    body.style.display = '';
+    body.style.flexDirection = '';
+    body.style.overflow = '';
+    if (rootDiv) {
+      rootDiv.style.flex = '';
+      rootDiv.style.minWidth = '';
+      rootDiv.style.overflow = '';
     }
   }
 }

@@ -23,7 +23,7 @@ function fillSubtitles({ data, originText, timestamp }) {
     previousTranslatedElem.remove();
   }
 
-  if (window.STREAMING_PLATFORM === 'youtube') {
+  if (window.STREAMING_PLATFORM === 'youtube' || window.STREAMING_PLATFORM === 'twitch') {
     return;
   }
 
@@ -40,6 +40,10 @@ function getSubtitlesFromDom() {
 
   if (window.STREAMING_PLATFORM === 'youtube') {
     return document.querySelector('.ytp-caption-window-container');
+  }
+
+  if (window.STREAMING_PLATFORM === 'twitch') {
+    return document.querySelector('.player-captions-container');
   }
 
   // Amazon and Netflix
@@ -62,6 +66,7 @@ function getSubtitleMainClass() {
     disney: 'hive-subtitle-renderer-line',
     netflix: 'player-timedtext-text-container',
     youtube: 'caption-window',
+    twitch: 'player-captions-container__caption-line',
   };
 
   return mapPlatformToClass[window.STREAMING_PLATFORM];
@@ -95,6 +100,20 @@ function getYoutubeSubtitleText() {
   return uniqueLines.join('\n');
 }
 
+function getTwitchSubtitleText() {
+  const captionLines = Array.from(document.querySelectorAll(
+    '.player-captions-container .player-captions-container__caption-line'
+  ));
+
+  const lines = captionLines.map((line) => {
+    return normalizeSubtitleText(line.textContent || '');
+  }).filter(Boolean);
+
+  const uniqueLines = lines.filter((line, index) => lines.indexOf(line) === index);
+
+  return uniqueLines.join('\n');
+}
+
 function monitorSuptitleUpdates() {
   if (window.isStreamingWatchPage && !window.isStreamingWatchPage()) {
     savedSubtitle = null;
@@ -104,7 +123,9 @@ function monitorSuptitleUpdates() {
   const subtitleWrapper = getSubtitlesFromDom();
   const currentSubtitleText = window.STREAMING_PLATFORM === 'youtube'
     ? getYoutubeSubtitleText()
-    : normalizeSubtitleText(subtitleWrapper?.innerText);
+    : window.STREAMING_PLATFORM === 'twitch'
+      ? getTwitchSubtitleText()
+      : normalizeSubtitleText(subtitleWrapper?.innerText);
 
   if (!currentSubtitleText) {
     savedSubtitle = currentSubtitleText;
@@ -115,6 +136,15 @@ function monitorSuptitleUpdates() {
         && window.options.showDoubleSubtitles === false
       ) {
         window.toggleYoutubeNativeSubtitles(true);
+      }
+    }
+    if (window.STREAMING_PLATFORM === 'twitch') {
+      if (
+        window.toggleTwitchNativeSubtitles
+        && window.options
+        && window.options.showDoubleSubtitles === false
+      ) {
+        window.toggleTwitchNativeSubtitles(true);
       }
     }
     return;
