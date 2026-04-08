@@ -1,0 +1,159 @@
+name: Deploy Extension
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Deploy target"
+        required: true
+        default: "both"
+        type: choice
+        options:
+          - "both"
+          - "chrome"
+          - "firefox"
+      publish:
+        description: "Publish after upload (set to false to upload without publishing)"
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: read
+
+# ─────────────────────────────────────────────────────────────────────────
+#  Chrome Web Store deployment
+# ─────────────────────────────────────────────────────────────────────────
+jobs:
+  deploy-chrome:
+    name: Chrome Web Store
+    if: github.event.inputs.target != 'firefox'
+    runs-on: ubuntu-latest
+    environment: chrome-web-store
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Secrets must be configured in GitHub → Settings → Secrets and variables → Actions
+      # (or in an Environment named "chrome-web-store").
+      - name: Validate required secrets
+        run: |
+          missing=()
+          [ -z "${{ secrets.CHROME_EXTENSION_ID }}" ]   && missing+=("CHROME_EXTENSION_ID")
+          [ -z "${{ secrets.CHROME_CLIENT_ID }}" ]       && missing+=("CHROME_CLIENT_ID")
+          [ -z "${{ secrets.CHROME_CLIENT_SECRET }}" ]   && missing+=("CHROME_CLIENT_SECRET")
+          [ -z "${{ secrets.CHROME_REFRESH_TOKEN }}" ]   && missing+=("CHROME_REFRESH_TOKEN")
+
+          if [ ${#missing[@]} -ne 0 ]; then
+            echo "::error::Missing required secrets: ${missing[*]}"
+            echo "Configure them in GitHub → Settings → Secrets. See docs/chrome-web-store-deploy.md"
+            exit 1
+          fi
+          echo "All Chrome secrets present."
+
+      - name: Verify manifest.json
+        run: |
+          if [ ! -f manifest.json ]; then
+            echo "::error::manifest.json not found in the repository root."
+            exit 1
+          fi
+          echo "Extension version: $(grep '"version"' manifest.json)"
+
+      - name: Create extension zip
+        run: |
+          zip -r extension.zip \
+            manifest.json \
+            background.js \
+            content.js \
+            popup.html \
+            popup.js \
+            assets/ \
+            src/ \
+            _locales/ \
+            -x "*.DS_Store"
+
+          echo "Created extension.zip ($(du -h extension.zip | cut -f1))"
+
+          ZIP_LISTING=$(unzip -l extension.zip)
+          if ! echo "$ZIP_LISTING" | grep -q "manifest\.json"; then
+            echo "::error::manifest.json is not at the root of the zip archive."
+            exit 1
+          fi
+
+      - name: Upload zip as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-chrome-zip
+          path: extension.zip
+          retention-days: 30
+
+      - name: Deploy to Chrome Web Store
+        env:
+          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          PUBLISH: ${{ github.event.inputs.publish || 'true' }}
+        run: bash scripts/deploy-to-chrome-web-store.sh extension.zip
+
+  # ───────────────────────────────────────────────────────────────────────
+  #  Firefox Add-ons (AMO) deployment
+  # ───────────────────────────────────────────────────────────────────────
+  deploy-firefox:
+    name: Firefox Add-ons (AMO)
+    if: github.event.inputs.target != 'chrome'
+    runs-on: ubuntu-latest
+    environment: firefox-addons
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Secrets must be configured in GitHub → Settings → Secrets and variables → Actions
+      # (or in an Environment named "firefox-addons").
+      - name: Validate required secrets
+        run: |
+          missing=()
+          [ -z "${{ secrets.FIREFOX_EXTENSION_ID }}" ] && missing+=("FIREFOX_EXTENSION_ID")
+          [ -z "${{ secrets.AMO_API_KEY }}" ]           && missing+=("AMO_API_KEY")
+          [ -z "${{ secrets.AMO_API_SECRET }}" ]         && missing+=("AMO_API_SECRET")
+
+          if [ ${#missing[@]} -ne 0 ]; then
+            echo "::error::Missing required secrets: ${missing[*]}"
+            echo "Configure them in GitHub → Settings → Secrets. See docs/firefox-addons-deploy.md"
+            exit 1
+          fi
+          echo "All Firefox secrets present."
+
+      - name: Verify manifest.json
+        run: |
+          if [ ! -f manifest.json ]; then
+            echo "::error::manifest.json not found in the repository root."
+            exit 1
+          fi
+          echo "Extension version: $(grep '"version"' manifest.json)"
+
+      - name: Build Firefox extension
+        env:
+          FIREFOX_EXTENSION_ID: ${{ secrets.FIREFOX_EXTENSION_ID }}
+        run: bash scripts/build-firefox-extension.sh extension-firefox.zip
+
+      - name: Upload zip as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-firefox-zip
+          path: extension-firefox.zip
+          retention-days: 30
+
+      - name: Deploy to Firefox Add-ons
+        env:
+          FIREFOX_EXTENSION_ID: ${{ secrets.FIREFOX_EXTENSION_ID }}
+          AMO_API_KEY: ${{ secrets.AMO_API_KEY }}
+          AMO_API_SECRET: ${{ secrets.AMO_API_SECRET }}
+        run: bash scripts/deploy-to-firefox-addons.sh extension-firefox.zip
