@@ -5,6 +5,9 @@ const urls = [
   '*://*.netflix.com/*',
   '*://*.youtube.com/*',
   '*://*.twitch.tv/*',
+  '*://*.max.com/*',
+  '*://*.hbomax.com/*',
+  '*://*.hulu.com/*',
   '*://ankiuser.net/*',
   '*://quizlet.com/*',
 ];

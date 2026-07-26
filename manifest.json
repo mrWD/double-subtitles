@@ -21,6 +21,9 @@
     "*://*.netflix.com/*",
     "*://*.youtube.com/*",
     "*://*.twitch.tv/*",
+    "*://*.max.com/*",
+    "*://*.hbomax.com/*",
+    "*://*.hulu.com/*",
     "*://ankiuser.net/*",
     "*://quizlet.com/*",
     "https://translate.googleapis.com/*"
@@ -78,6 +81,9 @@
         "*://*.netflix.com/*",
         "*://*.youtube.com/*",
         "*://*.twitch.tv/*",
+        "*://*.max.com/*",
+        "*://*.hbomax.com/*",
+        "*://*.hulu.com/*",
         "*://ankiuser.net/*",
         "*://quizlet.com/*"
       ]

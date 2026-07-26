@@ -688,6 +688,20 @@
   pointer-events: none !important;
 }
 
+/* TODO: refine selectors once the real HBO Max captions DOM is known. */
+.hbo-captions-container.double-subtitles-hide-native,
+.hbo-captions-container.double-subtitles-hide-native .hbo-captions-container__caption-line {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* TODO: confirm/refine Hulu captions hide rule. */
+.captions-layer.double-subtitles-hide-native,
+.captions-layer.double-subtitles-hide-native .captions-layer__caption-line {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 .visibleSubtitles.youtube-subtitles {
   position: fixed;
   z-index: 2;

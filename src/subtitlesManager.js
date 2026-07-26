@@ -23,7 +23,12 @@ function fillSubtitles({ data, originText, timestamp }) {
     previousTranslatedElem.remove();
   }
 
-  if (window.STREAMING_PLATFORM === 'youtube' || window.STREAMING_PLATFORM === 'twitch') {
+  if (
+    window.STREAMING_PLATFORM === 'youtube'
+    || window.STREAMING_PLATFORM === 'twitch'
+    || window.STREAMING_PLATFORM === 'hbo'
+    || window.STREAMING_PLATFORM === 'hulu'
+  ) {
     return;
   }
 
@@ -46,6 +51,16 @@ function getSubtitlesFromDom() {
     return document.querySelector('.player-captions-container');
   }
 
+  if (window.STREAMING_PLATFORM === 'hbo') {
+    // TODO: replace with the actual HBO Max captions container selector.
+    return document.querySelector('.hbo-captions-container');
+  }
+
+  if (window.STREAMING_PLATFORM === 'hulu') {
+    // TODO: confirm Hulu captions container selector.
+    return document.querySelector('.captions-layer');
+  }
+
   // Amazon and Netflix
   return document.querySelector(MAIN_SUBTITLES_CLASS);
 }
@@ -61,12 +76,15 @@ function getTranslatedSubtitlesFromDom() {
 }
 
 function getSubtitleMainClass() {
+  // TODO: replace `hbo` and `hulu` placeholder classes with real ones from the actual DOM.
   const mapPlatformToClass = {
     amazon: 'atvwebplayersdk-captions-text',
     disney: 'hive-subtitle-renderer-line',
     netflix: 'player-timedtext-text-container',
     youtube: 'caption-window',
     twitch: 'player-captions-container__caption-line',
+    hbo: 'hbo-captions-container__caption-line',
+    hulu: 'captions-layer__caption-line',
   };
 
   return mapPlatformToClass[window.STREAMING_PLATFORM];
@@ -114,6 +132,38 @@ function getTwitchSubtitleText() {
   return uniqueLines.join('\n');
 }
 
+function getHboSubtitleText() {
+  // TODO: refine selectors once the real HBO Max DOM is known.
+  const captionLines = Array.from(document.querySelectorAll(
+    '.hbo-captions-container .hbo-captions-container__caption-line'
+  ));
+
+  const lines = captionLines.map((line) => {
+    return normalizeSubtitleText(line.textContent || '');
+  }).filter(Boolean);
+
+  const uniqueLines = lines.filter((line, index) => lines.indexOf(line) === index);
+
+  return uniqueLines.join('\n');
+}
+
+function getHuluSubtitleText() {
+  // TODO: refine selectors once the real Hulu DOM is known.
+  // Hulu may render captions to a canvas; in that case DOM scraping won't work
+  // and a different strategy (e.g. WebVTT track interception) will be needed.
+  const captionLines = Array.from(document.querySelectorAll(
+    '.captions-layer .captions-layer__caption-line'
+  ));
+
+  const lines = captionLines.map((line) => {
+    return normalizeSubtitleText(line.textContent || '');
+  }).filter(Boolean);
+
+  const uniqueLines = lines.filter((line, index) => lines.indexOf(line) === index);
+
+  return uniqueLines.join('\n');
+}
+
 function monitorSuptitleUpdates() {
   if (window.isStreamingWatchPage && !window.isStreamingWatchPage()) {
     savedSubtitle = null;
@@ -125,7 +175,11 @@ function monitorSuptitleUpdates() {
     ? getYoutubeSubtitleText()
     : window.STREAMING_PLATFORM === 'twitch'
       ? getTwitchSubtitleText()
-      : normalizeSubtitleText(subtitleWrapper?.innerText);
+      : window.STREAMING_PLATFORM === 'hbo'
+        ? getHboSubtitleText()
+        : window.STREAMING_PLATFORM === 'hulu'
+          ? getHuluSubtitleText()
+          : normalizeSubtitleText(subtitleWrapper?.innerText);
 
   if (!currentSubtitleText) {
     savedSubtitle = currentSubtitleText;
@@ -145,6 +199,24 @@ function monitorSuptitleUpdates() {
         && window.options.showDoubleSubtitles === false
       ) {
         window.toggleTwitchNativeSubtitles(true);
+      }
+    }
+    if (window.STREAMING_PLATFORM === 'hbo') {
+      if (
+        window.toggleHboNativeSubtitles
+        && window.options
+        && window.options.showDoubleSubtitles === false
+      ) {
+        window.toggleHboNativeSubtitles(true);
+      }
+    }
+    if (window.STREAMING_PLATFORM === 'hulu') {
+      if (
+        window.toggleHuluNativeSubtitles
+        && window.options
+        && window.options.showDoubleSubtitles === false
+      ) {
+        window.toggleHuluNativeSubtitles(true);
       }
     }
     return;

@@ -38,6 +38,14 @@ function addLineToSubtitles({ text, translation }) {
     toggleTwitchNativeSubtitles(isDoubleSubtitlesHidden);
   }
 
+  if (window.STREAMING_PLATFORM === 'hbo') {
+    toggleHboNativeSubtitles(isDoubleSubtitlesHidden);
+  }
+
+  if (window.STREAMING_PLATFORM === 'hulu') {
+    toggleHuluNativeSubtitles(isDoubleSubtitlesHidden);
+  }
+
   const buttonGroup = document.createElement('div');
   buttonGroup.classList.add('subtitle-button-group');
   buttonGroup.appendChild(createMenuButton({ text, translation }));
@@ -192,6 +200,28 @@ function toggleTwitchNativeSubtitles(showNative) {
   captionContainer.classList.toggle('double-subtitles-hide-native', !showNative);
 }
 
+function toggleHboNativeSubtitles(showNative) {
+  // TODO: replace with the real HBO Max captions container selector.
+  const captionContainer = document.querySelector('.hbo-captions-container');
+
+  if (!captionContainer) {
+    return;
+  }
+
+  captionContainer.classList.toggle('double-subtitles-hide-native', !showNative);
+}
+
+function toggleHuluNativeSubtitles(showNative) {
+  // TODO: confirm Hulu captions container selector.
+  const captionContainer = document.querySelector('.captions-layer');
+
+  if (!captionContainer) {
+    return;
+  }
+
+  captionContainer.classList.toggle('double-subtitles-hide-native', !showNative);
+}
+
 function createMenuButton({ text, translation }) {
   const menuButton = document.createElement('button');
 
@@ -292,6 +322,14 @@ function hideDoubleSubtitles() {
 
   if (window.STREAMING_PLATFORM === 'twitch') {
     toggleTwitchNativeSubtitles(true);
+  }
+
+  if (window.STREAMING_PLATFORM === 'hbo') {
+    toggleHboNativeSubtitles(true);
+  }
+
+  if (window.STREAMING_PLATFORM === 'hulu') {
+    toggleHuluNativeSubtitles(true);
   }
 }
 
@@ -556,6 +594,8 @@ window.hideDoubleSubtitles = hideDoubleSubtitles;
 window.toggleDoubleSubtitles = toggleDoubleSubtitles;
 window.toggleYoutubeNativeSubtitles = toggleYoutubeNativeSubtitles;
 window.toggleTwitchNativeSubtitles = toggleTwitchNativeSubtitles;
+window.toggleHboNativeSubtitles = toggleHboNativeSubtitles;
+window.toggleHuluNativeSubtitles = toggleHuluNativeSubtitles;
 window.setupVideoPauseListeners = setupVideoPauseListeners;
 window.applyPauseOnlyVisibility = applyPauseOnlyVisibility;
 window.resetSubtitlePosition = resetSubtitlePosition;
