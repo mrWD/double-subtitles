@@ -256,7 +256,7 @@ function updateHistoryElement(historyElem, { text, translation }) {
   const ts = historyElem.dataset.timestamp;
   const formattedTime = ts ? formatTimestamp(parseFloat(ts)) : '';
 
-  historyElem.innerHTML = '';
+  historyElem.textContent = '';
 
   if (formattedTime) {
     const topRow = document.createElement('div');
@@ -292,11 +292,11 @@ function updateHistoryElement(historyElem, { text, translation }) {
   }
 
   const textSpan = document.createElement('span');
-  textSpan.innerHTML = text;
+  textSpan.textContent = text;
   historyElem.appendChild(textSpan);
 
   const translationSpan = document.createElement('span');
-  translationSpan.innerHTML = translation;
+  translationSpan.textContent = translation;
   historyElem.appendChild(translationSpan);
 
   if (window.options && window.options.sidebarFontSize) {
@@ -719,10 +719,16 @@ function seekFromSidebar(timestamp, sourceUrl) {
       }
     }
 
+    // History entries can be shaped by the page, so never ask the service worker
+    // to open something outside the streaming hosts we support.
+    if (!window.isSafeSourceUrl?.(targetUrl)) {
+      return;
+    }
+
     chrome.runtime.sendMessage({
       message: 'seekOnSourcePage',
       payload: { sourceUrl: targetUrl, timestamp },
-    });
+    }, () => chrome.runtime.lastError);
   }
 }
 

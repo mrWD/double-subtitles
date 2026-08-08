@@ -6,7 +6,7 @@
       "message": "Double Subtitles"
    },
    "popupText": {
-      "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
+      "message": "Double Subtitles"
    },
    "onOffLabel": {
       "message": "Turn extension on"
@@ -88,5 +88,8 @@
    },
    "translationColorLabel": {
       "message": "Translation color"
+   },
+   "saveFailed": {
+      "message": "Could not save — storage is full"
    }
 }

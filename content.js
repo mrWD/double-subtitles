@@ -9,6 +9,9 @@ let isWatchPageActive = false;
 let lastKnownLocation = window.location.href;
 let isRuntimeUnavailable = false;
 
+const MAX_STORED_TEXT_LENGTH = 1000;
+const MAX_RESTORED_HISTORY_ITEMS = 200;
+
 async function initContent() {
   await initI18n();
   options = await loadOptionsOrSetDefaults();
@@ -38,7 +41,12 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
   syncPageUiState();
 });
 
-chrome.runtime.onMessage.addListener((req) => {
+chrome.runtime.onMessage.addListener((req, sender) => {
+  // Only our own service worker and extension pages may drive the in-page UI.
+  if (sender?.id !== chrome.runtime.id) {
+    return;
+  }
+
   if (req.message === 'translated') {
     if (!isWatchPageActive) {
       return;
@@ -204,21 +212,78 @@ function applyExtensionUiState() {
     window.setupVideoPauseListeners();
   }
 
-  const savedHistory = sessionStorage.getItem('double-subtitles-history');
-  if (savedHistory) {
-    try {
-      const items = JSON.parse(savedHistory);
-      items.forEach((item) => addLineToHistory(item));
-    } catch {}
+  readStoredHistory().forEach((item) => addLineToHistory(item));
+
+  const lastSubtitle = readStoredLastSubtitle();
+  if (lastSubtitle) {
+    addLineToSubtitles(lastSubtitle);
+  }
+}
+
+// sessionStorage is ordinary same-origin storage: the page can read it and write
+// anything into it. Everything restored from it is untrusted input, so it gets
+// shape-checked, length-capped, and stripped of source URLs we would not open.
+function readStoredEntry(key) {
+  try {
+    const raw = sessionStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function sanitizeStoredText(value) {
+  return typeof value === 'string' ? value.slice(0, MAX_STORED_TEXT_LENGTH) : '';
+}
+
+function sanitizeHistoryItem(item) {
+  if (!item || typeof item !== 'object') {
+    return null;
   }
 
-  const lastSubtitle = sessionStorage.getItem('double-subtitles-last');
-  if (lastSubtitle) {
-    try {
-      const { text, translation } = JSON.parse(lastSubtitle);
-      addLineToSubtitles({ text, translation });
-    } catch {}
+  const text = sanitizeStoredText(item.text);
+
+  if (!text.trim()) {
+    return null;
   }
+
+  const timestamp = Number(item.timestamp);
+
+  return {
+    text,
+    translation: sanitizeStoredText(item.translation),
+    timestamp: Number.isFinite(timestamp) && timestamp >= 0 ? timestamp : null,
+    sourceUrl: window.isSafeSourceUrl?.(item.sourceUrl) ? item.sourceUrl : null,
+  };
+}
+
+function readStoredHistory() {
+  const items = readStoredEntry('double-subtitles-history');
+
+  if (!Array.isArray(items)) {
+    return [];
+  }
+
+  return items
+    .slice(-MAX_RESTORED_HISTORY_ITEMS)
+    .map(sanitizeHistoryItem)
+    .filter(Boolean);
+}
+
+function readStoredLastSubtitle() {
+  const entry = readStoredEntry('double-subtitles-last');
+
+  if (!entry || typeof entry !== 'object') {
+    return null;
+  }
+
+  const text = sanitizeStoredText(entry.text);
+
+  if (!text.trim()) {
+    return null;
+  }
+
+  return { text, translation: sanitizeStoredText(entry.translation) };
 }
 
 function forceHideExtensionUi() {
@@ -237,6 +302,18 @@ function forceHideExtensionUi() {
 
   if (window.toggleYoutubeNativeSubtitles) {
     window.toggleYoutubeNativeSubtitles(true);
+  }
+
+  if (window.toggleTwitchNativeSubtitles) {
+    window.toggleTwitchNativeSubtitles(true);
+  }
+
+  if (window.toggleHboNativeSubtitles) {
+    window.toggleHboNativeSubtitles(true);
+  }
+
+  if (window.toggleHuluNativeSubtitles) {
+    window.toggleHuluNativeSubtitles(true);
   }
 }
 

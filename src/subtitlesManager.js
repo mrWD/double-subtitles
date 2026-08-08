@@ -241,10 +241,37 @@ function monitorSuptitleUpdates() {
   }
 }
 
+// The observer watches the whole body subtree, so on a busy page it can fire
+// hundreds of times per second. Leading-edge throttle keeps subtitle updates
+// immediate while capping the work done per second.
+const SUBTITLE_CHECK_INTERVAL = 100;
+let lastSubtitleCheckAt = 0;
+let subtitleCheckTimer = null;
+
+function scheduleSubtitleCheck() {
+  if (subtitleCheckTimer !== null) {
+    return;
+  }
+
+  const elapsed = Date.now() - lastSubtitleCheckAt;
+
+  if (elapsed >= SUBTITLE_CHECK_INTERVAL) {
+    lastSubtitleCheckAt = Date.now();
+    monitorSuptitleUpdates();
+    return;
+  }
+
+  subtitleCheckTimer = setTimeout(() => {
+    subtitleCheckTimer = null;
+    lastSubtitleCheckAt = Date.now();
+    monitorSuptitleUpdates();
+  }, SUBTITLE_CHECK_INTERVAL - elapsed);
+}
+
 function startMonitoringForElements(numTries) {
   numTries++;
   const MAX_TRIES_MONITOR_SKIP = 10;
-  const monitor = new MutationObserver(monitorSuptitleUpdates);
+  const monitor = new MutationObserver(scheduleSubtitleCheck);
 
   if (!isMonitorActive) {
     monitor.observe(document.querySelector('body'), {

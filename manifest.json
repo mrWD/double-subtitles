@@ -6,28 +6,30 @@
   "author": "Viktor Lavrov",
   "homepage_url": "https://github.com/mrwd/double-subtitles",
   "permissions": [
-    "activeTab",
     "storage",
     "tts"
   ],
   "default_locale": "en",
   "host_permissions": [
-    "*://*.primevideo.com/*",
-    "*://*.amazon.com/*",
-    "*://*.amazon.co.uk/*",
-    "*://*.amazon.de/*",
-    "*://*.amazon.co.jp/*",
-    "*://*.disneyplus.com/*",
-    "*://*.netflix.com/*",
-    "*://*.youtube.com/*",
-    "*://*.twitch.tv/*",
-    "*://*.max.com/*",
-    "*://*.hbomax.com/*",
-    "*://*.hulu.com/*",
-    "*://ankiuser.net/*",
-    "*://quizlet.com/*",
+    "https://*.primevideo.com/*",
+    "https://*.amazon.com/gp/video/*",
+    "https://*.amazon.co.uk/gp/video/*",
+    "https://*.amazon.de/gp/video/*",
+    "https://*.amazon.co.jp/gp/video/*",
+    "https://*.disneyplus.com/*",
+    "https://*.netflix.com/*",
+    "https://*.youtube.com/*",
+    "https://*.twitch.tv/*",
+    "https://*.max.com/*",
+    "https://*.hbomax.com/*",
+    "https://*.hulu.com/*",
+    "https://ankiuser.net/*",
+    "https://quizlet.com/*",
     "https://translate.googleapis.com/*"
   ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://translate.googleapis.com; base-uri 'none'; form-action 'none'"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -50,7 +52,7 @@
         "src/netflixBridge.js"
       ],
       "matches": [
-        "*://*.netflix.com/*"
+        "https://*.netflix.com/*"
       ]
     }
   ],
@@ -62,7 +64,6 @@
         "src/settings.js",
         "src/utils.js",
         "src/autofill.js",
-        "src/savedCards.js",
         "src/serviceIntegrations.js",
         "src/cardMenu.js",
         "src/translationModal.js",
@@ -72,20 +73,20 @@
         "content.js"
       ],
       "matches": [
-        "*://*.primevideo.com/*",
-        "*://*.amazon.com/*",
-        "*://*.amazon.co.uk/*",
-        "*://*.amazon.de/*",
-        "*://*.amazon.co.jp/*",
-        "*://*.disneyplus.com/*",
-        "*://*.netflix.com/*",
-        "*://*.youtube.com/*",
-        "*://*.twitch.tv/*",
-        "*://*.max.com/*",
-        "*://*.hbomax.com/*",
-        "*://*.hulu.com/*",
-        "*://ankiuser.net/*",
-        "*://quizlet.com/*"
+        "https://*.primevideo.com/*",
+        "https://*.amazon.com/gp/video/*",
+        "https://*.amazon.co.uk/gp/video/*",
+        "https://*.amazon.de/gp/video/*",
+        "https://*.amazon.co.jp/gp/video/*",
+        "https://*.disneyplus.com/*",
+        "https://*.netflix.com/*",
+        "https://*.youtube.com/*",
+        "https://*.twitch.tv/*",
+        "https://*.max.com/*",
+        "https://*.hbomax.com/*",
+        "https://*.hulu.com/*",
+        "https://ankiuser.net/*",
+        "https://quizlet.com/*"
       ]
     }
   ]

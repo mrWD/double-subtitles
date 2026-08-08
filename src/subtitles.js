@@ -13,9 +13,11 @@ function addLineToSubtitles({ text, translation }) {
   const translatedText = createSubtitleElement({ text, translation });
   const isDoubleSubtitlesHidden = window.options && window.options.showDoubleSubtitles === false;
 
-  mainText.innerHTML = text;
-  translatedText.innerHTML = translation;
-  subtitleWrapper.innerHTML = '';
+  // Subtitle text comes from the page DOM and the translation API — never trusted,
+  // so it must be inserted as text, never parsed as HTML.
+  mainText.textContent = text;
+  translatedText.textContent = translation;
+  subtitleWrapper.textContent = '';
 
   subtitleWrapper.appendChild(mainText);
   subtitleWrapper.appendChild(translatedText);
@@ -249,7 +251,7 @@ function speakText(text, { slow = false } = {}) {
   chrome.runtime.sendMessage({
     message: 'speakText',
     payload: { text: plainText, lang, rate: slow ? 0.5 : 1.0 },
-  });
+  }, () => chrome.runtime.lastError);
 }
 
 function createSpeakerButton(text, { inline = false } = {}) {

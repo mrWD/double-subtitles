@@ -1,10 +1,55 @@
 window.STREAMING_PLATFORM = getStreamingPlatform();
 window.LEARNING_PLATFORM = getLearningPlatform();
-const NETFLIX_SEEK_EVENT = 'double-subtitles-netflix-seek';
-const NETFLIX_SEEK_STATUS_ATTR = 'data-double-subtitles-netflix-seek-status';
-const NETFLIX_SEEK_BRIDGE_ATTR = 'data-double-subtitles-netflix-seek-bridge';
-const NETFLIX_GET_TIME_EVENT = 'double-subtitles-netflix-get-time';
-const NETFLIX_CURRENT_TIME_ATTR = 'data-double-subtitles-netflix-current-time-ms';
+
+// The bridge lives in the page's main world, so its event names and status
+// attributes are salted per page load. Fixed names would let any script on the
+// page drive the player through us.
+const NETFLIX_BRIDGE_NONCE = crypto.randomUUID();
+const NETFLIX_SEEK_EVENT = `double-subtitles-netflix-seek-${NETFLIX_BRIDGE_NONCE}`;
+const NETFLIX_GET_TIME_EVENT = `double-subtitles-netflix-get-time-${NETFLIX_BRIDGE_NONCE}`;
+const NETFLIX_SEEK_STATUS_ATTR = `data-ds-netflix-seek-status-${NETFLIX_BRIDGE_NONCE}`;
+const NETFLIX_SEEK_BRIDGE_ATTR = `data-ds-netflix-seek-bridge-${NETFLIX_BRIDGE_NONCE}`;
+const NETFLIX_CURRENT_TIME_ATTR = `data-ds-netflix-current-time-ms-${NETFLIX_BRIDGE_NONCE}`;
+
+// Hosts this extension is allowed to link back to. Card and history entries can
+// be shaped by the page (sessionStorage is same-origin and writable there), so
+// every URL is re-checked before it reaches chrome.tabs.* in the service worker.
+const ALLOWED_SOURCE_HOSTS = [
+  'primevideo.com',
+  'amazon.com',
+  'amazon.co.uk',
+  'amazon.de',
+  'amazon.co.jp',
+  'disneyplus.com',
+  'netflix.com',
+  'youtube.com',
+  'twitch.tv',
+  'max.com',
+  'hbomax.com',
+  'hulu.com',
+];
+
+function isSafeSourceUrl(url) {
+  if (typeof url !== 'string' || url.length > 2000) {
+    return false;
+  }
+
+  try {
+    const parsed = new URL(url);
+
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+      return false;
+    }
+
+    const host = parsed.hostname.toLowerCase();
+
+    return ALLOWED_SOURCE_HOSTS.some(
+      (domain) => host === domain || host.endsWith(`.${domain}`)
+    );
+  } catch {
+    return false;
+  }
+}
 
 setupNetflixSeekBridge();
 
@@ -725,7 +770,7 @@ function setupNetflixSeekBridge() {
   }
 
   const bridgeScript = document.createElement('script');
-  bridgeScript.src = chrome.runtime.getURL('src/netflixBridge.js');
+  bridgeScript.src = `${chrome.runtime.getURL('src/netflixBridge.js')}#${NETFLIX_BRIDGE_NONCE}`;
   bridgeScript.async = false;
   (document.head || root).appendChild(bridgeScript);
   bridgeScript.remove();
@@ -747,3 +792,4 @@ window.getVideoCurrentTime = getVideoCurrentTime;
 window.seekVideoToTime = seekVideoToTime;
 window.formatTimestamp = formatTimestamp;
 window.isStreamingWatchPage = isStreamingWatchPage;
+window.isSafeSourceUrl = isSafeSourceUrl;

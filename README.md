@@ -25,12 +25,21 @@ Double Subtitles is a browser extension that enhances your video-watching experi
 
 ## Supported Streaming Services
 * Netflix
-* Amazon Prime Video
+* Amazon Prime Video (on `primevideo.com`, and on `amazon.*` under `/gp/video/`)
 * Disney+
+* YouTube
+* Twitch
+* HBO Max (work in progress — caption selectors not finalized)
+* Hulu (work in progress — caption selectors not finalized)
 
 ## Supported Learning Platforms
 * Anki
 * Quizlet
+
+## Privacy
+Subtitle text is sent to Google's translation endpoint to produce the second
+line; everything else stays on your device. See [PRIVACY.md](PRIVACY.md) for the
+full data flow.
 
 ## Planned Improvements
 
@@ -76,6 +85,18 @@ Double Subtitles is a browser extension that enhances your video-watching experi
 * manifest.json: Configuration file for the extension.
 * popup.html: HTML for the extension's popup interface.
 * popup.js: JavaScript for the popup interface.
+* PRIVACY.md: What data the extension handles and where it goes.
+
+## Security notes for contributors
+* Never assign page or API text to `innerHTML` — subtitle text, translations and
+  anything read back from `sessionStorage` are attacker-controllable. Use
+  `textContent`.
+* Keep `_locales/*/messages.json` free of markup; those strings are rendered in
+  the extension's own popup.
+* Any URL that reaches `chrome.tabs.create`/`update` must pass the host allowlist
+  in `background.js`.
+* Do not add remote resources (fonts, scripts, stylesheets) — bundle them, as
+  done for Barlow in `assets/fonts/`.
 
 ## Contributing
 1. Fork the repository.

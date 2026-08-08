@@ -320,7 +320,7 @@ function populateUiLanguageDropdown() {
 }
 
 function populateHtmlWithText() {
-  document.querySelector('.text1').innerHTML = t('popupText');
+  document.querySelector('.text1').textContent = t('popupText');
   document.querySelector('#onOffLabel').textContent = t('onOffLabel');
   document.querySelector('#showHideSidebarLabel').textContent = t('showHideSidebarLabel');
   document.querySelector('#sidebarFontSizeLabel').textContent = t('sidebarFontSizeLabel');

@@ -6,7 +6,7 @@
       "message": "Double Subtitles"
    },
    "popupText": {
-      "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
+      "message": "Double Subtitles"
    },
    "onOffLabel": {
       "message": "확장 프로그램 켜기"
@@ -88,5 +88,8 @@
    },
    "translationColorLabel": {
       "message": "번역 색상"
+   },
+   "saveFailed": {
+      "message": "저장할 수 없습니다 — 저장 공간이 가득 찼습니다"
    }
 }
