@@ -1,0 +1,236 @@
+name: Deploy Extension
+
+# Releases are driven by the version in manifest.json: a push to main only
+# deploys when that version is higher than it was on the previous commit. Bump it
+# in the pull request that should ship. Merges that do not touch the version
+# (docs, refactors, CI) run the check and stop there.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Deploy target"
+        required: true
+        default: "both"
+        type: choice
+        options:
+          - "both"
+          - "chrome"
+          - "firefox"
+      publish:
+        description: "Publish after upload (set to false to upload without publishing)"
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: read
+
+# Never let two releases upload to the stores at the same time.
+concurrency:
+  group: deploy-extension
+  cancel-in-progress: false
+
+jobs:
+  # ───────────────────────────────────────────────────────────────────────
+  #  Decide whether this commit is a release
+  # ───────────────────────────────────────────────────────────────────────
+  check-release:
+    name: Check for a version bump
+    runs-on: ubuntu-latest
+    outputs:
+      should-release: ${{ steps.check.outputs.should-release }}
+      version: ${{ steps.check.outputs.version }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          # Need the previous commit to compare manifest versions.
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Compare manifest version with the previous commit
+        id: check
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+
+          version=$(jq -r '.version' manifest.json)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+          if [ -z "$version" ] || [ "$version" = "null" ]; then
+            echo "::error::manifest.json has no version field."
+            exit 1
+          fi
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "::notice::Manual run — releasing $version."
+            echo "should-release=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if ! previous=$(git show HEAD^:manifest.json 2>/dev/null | jq -r '.version'); then
+            echo "::notice::No previous commit to compare against — releasing $version."
+            echo "should-release=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ "$version" = "$previous" ]; then
+            echo "::notice::Version is still $version — nothing to release. Bump manifest.json to ship."
+            echo "should-release=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          highest=$(printf '%s\n%s\n' "$previous" "$version" | sort -V | tail -1)
+
+          if [ "$highest" = "$version" ]; then
+            echo "::notice::Version bumped $previous -> $version — releasing."
+            echo "should-release=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Version went backwards ($previous -> $version) — refusing to release."
+            echo "should-release=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # ───────────────────────────────────────────────────────────────────────
+  #  Chrome Web Store deployment
+  # ───────────────────────────────────────────────────────────────────────
+  deploy-chrome:
+    name: Chrome Web Store
+    needs: check-release
+    if: needs.check-release.outputs.should-release == 'true' && github.event.inputs.target != 'firefox'
+    runs-on: ubuntu-latest
+    environment: chrome-web-store
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      # Secrets must be configured in GitHub → Settings → Secrets and variables → Actions
+      # (or in an Environment named "chrome-web-store").
+      - name: Validate required secrets
+        env:
+          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+        run: |
+          missing=()
+          [ -z "${CHROME_EXTENSION_ID:-}" ]   && missing+=("CHROME_EXTENSION_ID")
+          [ -z "${CHROME_CLIENT_ID:-}" ]      && missing+=("CHROME_CLIENT_ID")
+          [ -z "${CHROME_CLIENT_SECRET:-}" ]  && missing+=("CHROME_CLIENT_SECRET")
+          [ -z "${CHROME_REFRESH_TOKEN:-}" ]  && missing+=("CHROME_REFRESH_TOKEN")
+
+          if [ ${#missing[@]} -ne 0 ]; then
+            echo "::error::Missing required secrets: ${missing[*]}"
+            echo "Configure them in GitHub → Settings → Secrets. See docs/chrome-web-store-deploy.md"
+            exit 1
+          fi
+          echo "All Chrome secrets present."
+
+      - name: Create extension zip
+        env:
+          VERSION: ${{ needs.check-release.outputs.version }}
+        run: |
+          echo "Packaging version $VERSION"
+
+          zip -r extension.zip \
+            manifest.json \
+            background.js \
+            content.js \
+            popup.html \
+            popup.js \
+            assets/ \
+            src/ \
+            _locales/ \
+            -x "*.DS_Store"
+
+          echo "Created extension.zip ($(du -h extension.zip | cut -f1))"
+
+          ZIP_LISTING=$(unzip -l extension.zip)
+          if ! echo "$ZIP_LISTING" | grep -q "manifest\.json"; then
+            echo "::error::manifest.json is not at the root of the zip archive."
+            exit 1
+          fi
+
+      - name: Upload zip as workflow artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: extension-chrome-zip
+          path: extension.zip
+          retention-days: 30
+
+      - name: Deploy to Chrome Web Store
+        env:
+          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          PUBLISH: ${{ github.event.inputs.publish || 'true' }}
+        run: bash scripts/deploy-to-chrome-web-store.sh extension.zip
+
+  # ───────────────────────────────────────────────────────────────────────
+  #  Firefox Add-ons (AMO) deployment
+  # ───────────────────────────────────────────────────────────────────────
+  deploy-firefox:
+    name: Firefox Add-ons (AMO)
+    needs: check-release
+    if: needs.check-release.outputs.should-release == 'true' && github.event.inputs.target != 'chrome'
+    runs-on: ubuntu-latest
+    environment: firefox-addons
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      # Secrets must be configured in GitHub → Settings → Secrets and variables → Actions
+      # (or in an Environment named "firefox-addons").
+      - name: Validate required secrets
+        env:
+          FIREFOX_EXTENSION_ID: ${{ secrets.FIREFOX_EXTENSION_ID }}
+          AMO_API_KEY: ${{ secrets.AMO_API_KEY }}
+          AMO_API_SECRET: ${{ secrets.AMO_API_SECRET }}
+        run: |
+          missing=()
+          [ -z "${FIREFOX_EXTENSION_ID:-}" ] && missing+=("FIREFOX_EXTENSION_ID")
+          [ -z "${AMO_API_KEY:-}" ]          && missing+=("AMO_API_KEY")
+          [ -z "${AMO_API_SECRET:-}" ]       && missing+=("AMO_API_SECRET")
+
+          if [ ${#missing[@]} -ne 0 ]; then
+            echo "::error::Missing required secrets: ${missing[*]}"
+            echo "Configure them in GitHub → Settings → Secrets. See docs/firefox-addons-deploy.md"
+            exit 1
+          fi
+          echo "All Firefox secrets present."
+
+      - name: Build Firefox extension
+        env:
+          FIREFOX_EXTENSION_ID: ${{ secrets.FIREFOX_EXTENSION_ID }}
+          VERSION: ${{ needs.check-release.outputs.version }}
+        run: |
+          echo "Packaging version $VERSION"
+          bash scripts/build-firefox-extension.sh extension-firefox.zip
+
+      - name: Upload zip as workflow artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: extension-firefox-zip
+          path: extension-firefox.zip
+          retention-days: 30
+
+      - name: Deploy to Firefox Add-ons
+        env:
+          FIREFOX_EXTENSION_ID: ${{ secrets.FIREFOX_EXTENSION_ID }}
+          AMO_API_KEY: ${{ secrets.AMO_API_KEY }}
+          AMO_API_SECRET: ${{ secrets.AMO_API_SECRET }}
+        run: bash scripts/deploy-to-firefox-addons.sh extension-firefox.zip

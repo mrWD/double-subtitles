@@ -77,6 +77,42 @@ Double Subtitles is a browser extension that enhances your video-watching experi
 * popup.html: HTML for the extension's popup interface.
 * popup.js: JavaScript for the popup interface.
 
+## Deployment
+
+Pushing to `main` releases to the Chrome Web Store and Firefox Add-ons — but only
+when the `version` in `manifest.json` is higher than on the previous commit.
+
+**To ship a release:** bump `version` in `manifest.json` in the pull request, then
+merge it. Merges that leave the version untouched (docs, refactors, CI changes)
+run the version check and stop — nothing is uploaded. The stores reject a re-upload
+of an already published version, so the version bump is what makes a merge a release.
+
+Both store deployments run in parallel and are independent. Uploads are published
+automatically, which submits them to store review.
+
+**Required GitHub Secrets:**
+
+| Secret | Store | Description |
+|--------|-------|-------------|
+| `CHROME_EXTENSION_ID` | Chrome | 32-character extension ID from the Developer Dashboard |
+| `CHROME_CLIENT_ID` | Chrome | Google OAuth 2.0 client ID |
+| `CHROME_CLIENT_SECRET` | Chrome | Google OAuth 2.0 client secret |
+| `CHROME_REFRESH_TOKEN` | Chrome | OAuth refresh token for the Chrome Web Store API |
+| `FIREFOX_EXTENSION_ID` | Firefox | Gecko add-on ID (e.g. `addon@author` or `{uuid}`) |
+| `AMO_API_KEY` | Firefox | JWT issuer from AMO Developer Hub |
+| `AMO_API_SECRET` | Firefox | JWT secret from AMO Developer Hub |
+
+The Chrome job reads its secrets from a GitHub Environment named `chrome-web-store`
+and the Firefox job from `firefox-addons`; repository-level secrets work too.
+
+**Manual deployment:** Actions tab → "Deploy Extension" → Run workflow. You can
+target `chrome`, `firefox`, or `both`, and choose whether to publish. A manual run
+deploys whatever version is in `manifest.json`, without the bump check.
+
+Setup guides:
+- Chrome: [docs/chrome-web-store-deploy.md](docs/chrome-web-store-deploy.md)
+- Firefox: [docs/firefox-addons-deploy.md](docs/firefox-addons-deploy.md)
+
 ## Contributing
 1. Fork the repository.
 2. Create a new branch (git checkout -b feature-branch).
