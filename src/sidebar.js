@@ -256,7 +256,7 @@ function updateHistoryElement(historyElem, { text, translation }) {
   const ts = historyElem.dataset.timestamp;
   const formattedTime = ts ? formatTimestamp(parseFloat(ts)) : '';
 
-  historyElem.innerHTML = '';
+  historyElem.textContent = '';
 
   if (formattedTime) {
     const topRow = document.createElement('div');
@@ -292,11 +292,11 @@ function updateHistoryElement(historyElem, { text, translation }) {
   }
 
   const textSpan = document.createElement('span');
-  textSpan.innerHTML = text;
+  textSpan.textContent = text;
   historyElem.appendChild(textSpan);
 
   const translationSpan = document.createElement('span');
-  translationSpan.innerHTML = translation;
+  translationSpan.textContent = translation;
   historyElem.appendChild(translationSpan);
 
   if (window.options && window.options.sidebarFontSize) {
@@ -343,6 +343,16 @@ function preparePageForSidebar() {
     return document.body;
   }
 
+  if (window.STREAMING_PLATFORM === 'hbo') {
+    // TODO: find the actual HBO Max app/player container if a tighter mount point is needed.
+    return document.body;
+  }
+
+  if (window.STREAMING_PLATFORM === 'hulu') {
+    // TODO: find the actual Hulu app/player container if a tighter mount point is needed.
+    return document.body;
+  }
+
   const videoContainer = document.querySelector('.watch-video');
 
   if (videoContainer) {
@@ -373,6 +383,20 @@ function createSidebar() {
     sidebar.style.position = 'relative';
     sidebar.style.height = '100vh';
     sidebar.style.flexShrink = '0';
+  }
+
+  if (window.STREAMING_PLATFORM === 'hbo') {
+    sidebar.style.position = 'fixed';
+    sidebar.style.top = 0;
+    sidebar.style.right = 0;
+    sidebar.style.height = '100vh';
+  }
+
+  if (window.STREAMING_PLATFORM === 'hulu') {
+    sidebar.style.position = 'fixed';
+    sidebar.style.top = 0;
+    sidebar.style.right = 0;
+    sidebar.style.height = '100vh';
   }
 
   // Set initial width from options
@@ -695,10 +719,16 @@ function seekFromSidebar(timestamp, sourceUrl) {
       }
     }
 
+    // History entries can be shaped by the page, so never ask the service worker
+    // to open something outside the streaming hosts we support.
+    if (!window.isSafeSourceUrl?.(targetUrl)) {
+      return;
+    }
+
     chrome.runtime.sendMessage({
       message: 'seekOnSourcePage',
       payload: { sourceUrl: targetUrl, timestamp },
-    });
+    }, () => chrome.runtime.lastError);
   }
 }
 

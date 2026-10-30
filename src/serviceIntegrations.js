@@ -1,94 +1,55 @@
-const API = 'http://127.0.0.1:5000';
+// chrome.storage.sync limits a single item to QUOTA_BYTES_PER_ITEM (8 KB), and the
+// whole card list is stored under one key. Without a cap, writes start failing
+// silently once the list grows past that, so the list is trimmed here instead.
+const MAX_CARDS = 200;
+const MAX_FIELD_LENGTH = 500;
+const SYNC_ITEM_BUDGET = 7800;
 
-const temp = {
-  deckName: 'Movies',
-  spreadsheetId: '1SJXSHIWHrwXwn3HHsYIwmFRdTjIkyGLLIJfa1xyHu_w',
-  rangeName: 'Sheet1',
+function truncateField(value) {
+  const text = typeof value === 'string' ? value : String(value ?? '');
+  return text.length > MAX_FIELD_LENGTH ? text.slice(0, MAX_FIELD_LENGTH) : text;
 }
 
-function saveToSyncStorage({ text, translation, timestamp, sourceUrl }) {
+function fitCardsToQuota(cards) {
+  let fitted = cards.slice(-MAX_CARDS);
+
+  // Drop the oldest cards until the serialized item fits the per-item quota.
+  while (fitted.length > 1 && new Blob([JSON.stringify(fitted)]).size > SYNC_ITEM_BUDGET) {
+    fitted = fitted.slice(1);
+  }
+
+  return fitted;
+}
+
+function saveToSyncStorage({ text, translation, timestamp, sourceUrl }, onDone) {
   chrome.storage.sync.get(['cards'], result => {
-    const cards = result.cards ?? [];
+    if (chrome.runtime.lastError) {
+      console.warn('Double Subtitles: could not read saved cards.');
+      onDone?.(false);
+      return;
+    }
 
-    const card = { text, translation };
-    if (timestamp != null) card.timestamp = timestamp;
-    if (sourceUrl) card.sourceUrl = sourceUrl;
+    const cards = Array.isArray(result.cards) ? result.cards : [];
 
-    chrome.storage.sync.set({
-      cards: [...cards, card],
+    const card = {
+      text: truncateField(text),
+      translation: truncateField(translation),
+    };
+    if (typeof timestamp === 'number' && Number.isFinite(timestamp)) {
+      card.timestamp = timestamp;
+    }
+    if (sourceUrl && isSafeSourceUrl(sourceUrl)) {
+      card.sourceUrl = sourceUrl;
+    }
+
+    chrome.storage.sync.set({ cards: fitCardsToQuota([...cards, card]) }, () => {
+      if (chrome.runtime.lastError) {
+        console.warn('Double Subtitles: could not save the card.');
+        onDone?.(false);
+        return;
+      }
+
+      onDone?.(true);
     });
-  });
-}
-
-function saveToAnki({ deckName, text, translation }) {
-  if (!deckName || !text || !translation) {
-    return;
-  }
-
-  fetch(`${API}/anki-card`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    },
-    body: JSON.stringify({
-      deckName,
-      note: {
-        front: text,
-        back: translation,
-      },
-    }),
-  })
-  .then(res => res.json())
-  .catch(rejected => {
-    console.log(rejected);
-  });
-}
-
-function saveToQuizlet({ deckName, text, translation }) {
-  if (!deckName || !text || !translation) {
-    return;
-  }
-
-  fetch(`${API}/quizlet-card`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    },
-    body: JSON.stringify({
-      deckName,
-      note: {
-        front: text,
-        back: translation,
-      },
-    }),
-  })
-  .then(res => res.json())
-  .catch(rejected => {
-    console.log(rejected);
-  });
-}
-
-function saveToGSheet({ spreadsheetId, rangeName, text, translation }) {
-  if (!spreadsheetId || !rangeName || !text || !translation) {
-    return;
-  }
-
-  fetch(`${API}/gsheet-card`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    },
-    body: JSON.stringify({
-      spreadsheetId,
-      rangeName,
-      values: [text, translation],
-    }),
-  })
-  .then(res => res.json())
-  .catch(rejected => {
-    console.log(rejected);
   });
 }

@@ -6,7 +6,7 @@
       "message": "Double Subtitles"
    },
    "popupText": {
-      "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
+      "message": "Double Subtitles"
    },
    "onOffLabel": {
       "message": "Uzantıyı aç"
@@ -88,5 +88,8 @@
    },
    "translationColorLabel": {
       "message": "Çeviri rengi"
+   },
+   "saveFailed": {
+      "message": "Kaydedilemedi — depolama dolu"
    }
 }

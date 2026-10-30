@@ -1,36 +1,76 @@
-# Privacy Policy
+# Privacy Policy — Double Subtitles
 
-Double Subtitles is a Chrome extension that shows a translated subtitle line under the original one on Netflix, Prime Video, Disney+, YouTube and Twitch.
+_Last updated: 2026-10-30_
 
-## What the extension processes
+Double Subtitles is a browser extension that shows subtitles in two languages on
+supported streaming sites. This document describes every piece of data the
+extension handles and everywhere it goes.
 
-- **Subtitle text.** The extension reads the subtitle text that the video player is already showing on the page. To translate it, that text (and the words or phrases you click) is sent to Google's public translation endpoint, `translate.googleapis.com`. No account, identifier or other personal data is sent with it.
-- **Settings and saved phrases.** Your settings and the phrases you choose to save are stored in `chrome.storage.sync`, so they follow your Chrome profile. The author has no access to them.
-- **Session history.** The subtitle history shown in the sidebar is kept in the browser tab's `sessionStorage` and disappears when the tab is closed.
-- **Selector config.** Once a day the extension downloads a public file (`selectors.json`) from this GitHub repository so it can follow changes in the streaming sites' markup. The request carries no data about you.
+## What leaves your device
 
-## What the extension does not do
+**Subtitle text sent for translation.** To produce the second subtitle line, the
+extension sends the text of the currently displayed subtitle to Google's
+translation endpoint (`https://translate.googleapis.com`). The same happens for
+individual words when you hover a subtitle or a history entry to see a word list.
 
-- It does not collect, sell or share personal data.
-- It does not use analytics, advertising or tracking.
-- It does not send your data to any server run by the author.
+- Sent: the subtitle text, the source language code, the target language code.
+- Not sent: any identifier of you, the page URL, the video title, cookies, or
+  browsing history. The request carries no account or extension identifier.
+- Google receives your IP address as part of any network request and processes
+  the text under its own terms.
 
-## Optional integrations
+This is the only case where *your data* is transmitted off your device. There is no
+analytics, telemetry, crash reporting, advertising, or third-party server of ours.
 
-If you tick the Anki, Quizlet or Google Sheets option when saving a card, the card text is sent to a companion server that you run yourself on `http://127.0.0.1:5000`. Without it, those options do nothing.
+**Selector config download.** So the extension can follow changes in the streaming
+sites' markup without a new release, it downloads a public file (`selectors.json`)
+from this project's GitHub repository (`raw.githubusercontent.com`) at browser
+start and once a day. The request contains no data about you or your viewing;
+GitHub sees your IP address as for any download.
 
-## Permissions
+**Text-to-speech.** The speaker buttons pass the subtitle text to the browser's
+`chrome.tts` API. Depending on which voice your browser or operating system
+selects, speech synthesis may happen locally or via the browser vendor's remote
+voice service. That choice is made by the browser, not by this extension.
 
-- Access to the supported streaming sites, to read subtitles and show the translation.
-- `translate.googleapis.com`, to translate text.
-- `storage`, to keep settings and saved phrases.
-- `tts`, to read phrases aloud.
-- `alarms`, to refresh the selector config daily.
-- `raw.githubusercontent.com`, to download that file.
-- `activeTab`, to talk to the page from the settings popup.
+## What stays on your device
+
+**Downloaded selector config** (a few class names) is kept in `chrome.storage.local`.
+
+**Settings** (languages, colours, font sizes, sidebar state) are stored with
+`chrome.storage.sync`.
+
+**Saved cards** (subtitle text, its translation, an optional timestamp and the
+source page URL) are stored with `chrome.storage.sync`. The list is capped at
+200 cards.
+
+Data in `chrome.storage.sync` is synchronised by your browser across devices
+where you are signed in to the same browser profile. This synchronisation is
+performed by the browser, not by this extension, and is subject to your browser
+vendor's privacy policy. If you do not want this, sign out of browser sync or
+disable extension sync in your browser settings.
+
+**Subtitle history** for the current tab is kept in `sessionStorage` and is
+deleted when the tab is closed.
+
+## What the extension can access
+
+The extension runs only on the sites listed in `manifest.json`: the supported
+streaming services plus `quizlet.com` and `ankiuser.net` for the flashcard
+autofill feature. It has no access to any other site, to your browsing history,
+bookmarks, downloads, or the contents of other tabs.
+
+## Sharing
+
+No data is sold, rented, or shared with anyone. The only third party involved is
+Google, solely as the translation provider described above.
+
+## Removal
+
+Uninstalling the extension deletes all locally stored settings and cards. To
+delete saved cards while keeping the extension, remove them from the popup's
+"Saved translations" list.
 
 ## Contact
 
-Questions: lvigtor@gmail.com, or open an issue at https://github.com/mrWD/double-subtitles/issues.
-
-Last updated: 2026-10-30
+Questions or reports: <https://github.com/mrWD/double-subtitles/issues>
