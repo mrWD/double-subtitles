@@ -1,5 +1,7 @@
 const SELECTORS_STORAGE_KEY = 'selectors';
 const CAPTION_STYLE_ID = 'double-subtitles-caption-style';
+const HIDE_NATIVE_CAPTIONS_CLASS = 'double-subtitles-hide-native-captions';
+const CONFIGURED_PLATFORMS = ['amazon', 'disney', 'netflix'];
 
 let remoteSelectors = null;
 
@@ -18,10 +20,11 @@ function getConfiguredCaptionClass(platform) {
   return remoteSelectors?.platforms?.[platform]?.captionClass || null;
 }
 
-// Prime captions need to be clickable and highlight on hover; the class they
-// use comes from the config, so the rule is injected instead of living in CSS.
+// Rules that depend on the configured caption class are injected instead of
+// living in the static stylesheet: hiding the native captions once ours are
+// shown, and (Prime only) making them clickable with a hover highlight.
 function applyCaptionStyle() {
-  if (window.STREAMING_PLATFORM !== 'amazon') {
+  if (!CONFIGURED_PLATFORMS.includes(window.STREAMING_PLATFORM)) {
     return;
   }
 
@@ -34,7 +37,13 @@ function applyCaptionStyle() {
     (document.head || document.documentElement).appendChild(style);
   }
 
-  style.textContent = `
+  const hideNative = `
+html.${HIDE_NATIVE_CAPTIONS_CLASS} .${captionClass},
+html.${HIDE_NATIVE_CAPTIONS_CLASS} :has(> .${captionClass}) {
+  opacity: 0 !important;
+}
+`;
+  const amazonClickable = window.STREAMING_PLATFORM === 'amazon' ? `
 .${captionClass} {
   pointer-events: all;
   cursor: pointer;
@@ -43,7 +52,9 @@ function applyCaptionStyle() {
 .${captionClass}:hover {
   background-color: red !important;
 }
-`;
+` : '';
+
+  style.textContent = hideNative + amazonClickable;
 }
 
 chrome.storage.onChanged.addListener((changes, areaName) => {

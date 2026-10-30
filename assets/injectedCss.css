@@ -342,10 +342,6 @@
   cursor: pointer;
 }
 
-.translated {
-  opacity: 0 !important;
-}
-
 .btnGroup {
   display: flex;
 }
