@@ -7,7 +7,6 @@ Double Subtitles is a Chrome extension that shows a translated subtitle line und
 - **Subtitle text.** The extension reads the subtitle text that the video player is already showing on the page. To translate it, that text (and the words or phrases you click) is sent to Google's public translation endpoint, `translate.googleapis.com`. No account, identifier or other personal data is sent with it.
 - **Settings and saved phrases.** Your settings and the phrases you choose to save are stored in `chrome.storage.sync`, so they follow your Chrome profile. The author has no access to them.
 - **Session history.** The subtitle history shown in the sidebar is kept in the browser tab's `sessionStorage` and disappears when the tab is closed.
-
 - **Selector config.** Once a day the extension downloads a public file (`selectors.json`) from this GitHub repository so it can follow changes in the streaming sites' markup. The request carries no data about you.
 
 ## What the extension does not do
