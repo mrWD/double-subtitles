@@ -626,6 +626,17 @@ function isStreamingWatchPage() {
   }
 
   if (window.STREAMING_PLATFORM === 'amazon') {
+    // The player opens on the same /detail/ URL as the title page, and the page
+    // always contains a <video> (trailer), so neither says whether playback is
+    // on. #dv-web-player is mounted but 0x0 until the player is actually open.
+    const player = document.querySelector('#dv-web-player');
+
+    if (player) {
+      const { width, height } = player.getBoundingClientRect();
+
+      return width > 0 && height > 0;
+    }
+
     return pathname.includes('/detail/') || pathname.includes('/gp/video') || hasVideo;
   }
 

@@ -36,9 +36,9 @@ function fillSubtitles({ data, originText, timestamp }) {
     return;
   }
 
-  originalSubtitleLines.classList.add('translated');
-
-  originalSubtitleLines.parentElement.classList.add('translated');
+  // Hide every native caption line by CSS rule, not per element: the player
+  // re-renders caption nodes between cues, so a class set on one node leaks.
+  document.documentElement.classList.add(HIDE_NATIVE_CAPTIONS_CLASS);
 }
 
 function getSubtitlesFromDom() {

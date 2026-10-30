@@ -36,6 +36,10 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
   options = changes.options.newValue;
   window.options = options;
 
+  if (options.extensionOn === false) {
+    document.documentElement.classList.remove(HIDE_NATIVE_CAPTIONS_CLASS);
+  }
+
   secondLanguage = options.secondLanguage;
   originalLanguage = decodeLang(options.currentForeignLanguage);
 
@@ -300,6 +304,8 @@ function forceHideExtensionUi() {
   if (visibleSubtitles) {
     visibleSubtitles.remove();
   }
+
+  document.documentElement.classList.remove(HIDE_NATIVE_CAPTIONS_CLASS);
 
   if (window.toggleYoutubeNativeSubtitles) {
     window.toggleYoutubeNativeSubtitles(true);
