@@ -1,3 +1,9 @@
+importScripts('src/selectorsValidator.js');
+
+const SELECTORS_URL = 'https://raw.githubusercontent.com/mrWD/double-subtitles/main/selectors.json';
+const SELECTORS_ALARM = 'refreshSelectors';
+const SELECTORS_REFRESH_MINUTES = 24 * 60;
+
 const urls = [
   '*://*.primevideo.com/*',
   '*://*.amazon.com/*',
@@ -13,7 +19,41 @@ let recentTabId = null;
 
 chrome.runtime.onInstalled.addListener((reason) => {
   reloadTabs();
+  scheduleSelectorsRefresh();
 });
+
+chrome.runtime.onStartup.addListener(scheduleSelectorsRefresh);
+
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === SELECTORS_ALARM) {
+    refreshSelectors();
+  }
+});
+
+function scheduleSelectorsRefresh() {
+  chrome.alarms.create(SELECTORS_ALARM, { periodInMinutes: SELECTORS_REFRESH_MINUTES });
+  refreshSelectors();
+}
+
+// Keeps the last good config on any failure; the content script falls back to
+// its built-in defaults when nothing valid is stored.
+async function refreshSelectors() {
+  try {
+    const res = await fetch(SELECTORS_URL, { cache: 'no-cache' });
+
+    if (!res.ok) {
+      return;
+    }
+
+    const selectors = validateSelectors(await res.json());
+
+    if (selectors) {
+      await chrome.storage.local.set({ selectors });
+    }
+  } catch (e) {
+    console.warn('Could not refresh selectors', e.message);
+  }
+}
 
 function reloadTabs() {
   urls.forEach((url) => {

@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "platforms": {
+    "amazon": { "captionClass": "atvwebplayersdk-captions-text" },
+    "disney": { "captionClass": "hive-subtitle-renderer-line" },
+    "netflix": { "captionClass": "player-timedtext-text-container" }
+  }
+}

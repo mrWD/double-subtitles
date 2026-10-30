@@ -88,5 +88,8 @@
    },
    "translationColorLabel": {
       "message": "Translation color"
+   },
+   "subtitlesNotFound": {
+      "message": "Subtitles not found. Turn on subtitles in the player. If they are on and this stays, the site may have changed; try again later or report an issue."
    }
 }

@@ -11,6 +11,7 @@ let isRuntimeUnavailable = false;
 
 async function initContent() {
   await initI18n();
+  await loadSelectors();
   options = await loadOptionsOrSetDefaults();
   window.options = options;
 
@@ -259,8 +260,37 @@ function syncPageUiState() {
   }
 }
 
+const NO_SUBTITLES_HINT_TICKS = 30;
+let noSubtitlesTicks = 0;
+
+// A playing video with no caption element for ~15s means subtitles are off or
+// the platform changed its markup; either way the user should be told.
+function updateNoSubtitlesHint() {
+  const video = typeof getPrimaryVideoElement === 'function'
+    ? getPrimaryVideoElement()
+    : document.querySelector('video');
+  const isPlaying = Boolean(video && !video.paused);
+  const missing = isWatchPageActive && isPlaying && !getSubtitlesFromDom();
+
+  noSubtitlesTicks = missing ? noSubtitlesTicks + 1 : 0;
+
+  const history = document.querySelector('.history');
+  const hint = document.querySelector('.double-subtitles-hint');
+
+  if (noSubtitlesTicks >= NO_SUBTITLES_HINT_TICKS && history && !hint) {
+    const el = document.createElement('div');
+    el.classList.add('double-subtitles-hint');
+    el.textContent = t('subtitlesNotFound');
+    history.querySelector('.historyTitle')?.after(el);
+  } else if (noSubtitlesTicks === 0 && hint) {
+    hint.remove();
+  }
+}
+
 function startPageContextWatcher() {
   setInterval(() => {
+    updateNoSubtitlesHint();
+
     const hasLocationChanged = window.location.href !== lastKnownLocation;
     if (hasLocationChanged) {
       lastKnownLocation = window.location.href;

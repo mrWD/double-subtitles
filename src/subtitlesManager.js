@@ -1,6 +1,10 @@
-const SUBTITLES_CLASS = getSubtitleMainClass();
-const MAIN_SUBTITLES_CLASS = `.${SUBTITLES_CLASS}:not(.secondSubtitles)`;
-const SECOND_SUBTITLES_CLASS = `.${SUBTITLES_CLASS}.secondSubtitles`;
+function getMainSubtitlesSelector() {
+  return `.${getSubtitleMainClass()}:not(.secondSubtitles)`;
+}
+
+function getSecondSubtitlesSelector() {
+  return `.${getSubtitleMainClass()}.secondSubtitles`;
+}
 
 function fillSubtitles({ data, originText, timestamp }) {
   const originalSubtitleLines = getSubtitlesFromDom();
@@ -35,7 +39,7 @@ function fillSubtitles({ data, originText, timestamp }) {
 function getSubtitlesFromDom() {
   if (window.STREAMING_PLATFORM === 'disney') {
     return document.querySelector('disney-web-player')
-      ?.querySelector(MAIN_SUBTITLES_CLASS);
+      ?.querySelector(getMainSubtitlesSelector());
   }
 
   if (window.STREAMING_PLATFORM === 'youtube') {
@@ -47,17 +51,17 @@ function getSubtitlesFromDom() {
   }
 
   // Amazon and Netflix
-  return document.querySelector(MAIN_SUBTITLES_CLASS);
+  return document.querySelector(getMainSubtitlesSelector());
 }
 
 function getTranslatedSubtitlesFromDom() {
   if (window.STREAMING_PLATFORM === 'disney') {
     return document.querySelector('disney-web-player')
-      ?.querySelector(SECOND_SUBTITLES_CLASS);
+      ?.querySelector(getSecondSubtitlesSelector());
   }
 
   // Amazon and Netflix
-  return document.querySelector(SECOND_SUBTITLES_CLASS);
+  return document.querySelector(getSecondSubtitlesSelector());
 }
 
 function getSubtitleMainClass() {
@@ -69,7 +73,8 @@ function getSubtitleMainClass() {
     twitch: 'player-captions-container__caption-line',
   };
 
-  return mapPlatformToClass[window.STREAMING_PLATFORM];
+  return getConfiguredCaptionClass(window.STREAMING_PLATFORM)
+    || mapPlatformToClass[window.STREAMING_PLATFORM];
 }
 
 function normalizeSubtitleText(text) {

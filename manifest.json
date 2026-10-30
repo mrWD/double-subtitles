@@ -1,13 +1,14 @@
 {
   "manifest_version": 3,
   "name": "Double Subtitles",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A second, translated subtitle line for Netflix, Prime Video, Disney+, YouTube and Twitch. Click words to translate and save phrases.",
   "author": "Viktor Lavrov",
   "homepage_url": "https://github.com/mrwd/double-subtitles",
   "permissions": [
     "activeTab",
     "storage",
+    "alarms",
     "tts"
   ],
   "default_locale": "en",
@@ -23,7 +24,8 @@
     "*://*.twitch.tv/*",
     "*://ankiuser.net/*",
     "*://quizlet.com/*",
-    "https://translate.googleapis.com/*"
+    "https://translate.googleapis.com/*",
+    "https://raw.githubusercontent.com/mrWD/double-subtitles/*"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -76,6 +78,8 @@
         "src/i18n.js",
         "src/settings.js",
         "src/utils.js",
+        "src/selectorsValidator.js",
+        "src/selectors.js",
         "src/autofill.js",
         "src/savedCards.js",
         "src/serviceIntegrations.js",
