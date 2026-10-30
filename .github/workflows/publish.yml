@@ -1,0 +1,33 @@
+name: Publish to Chrome Web Store
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check tag matches manifest version
+        run: |
+          MANIFEST_VERSION=$(jq -r .version manifest.json)
+          if [ "v$MANIFEST_VERSION" != "${GITHUB_REF_NAME}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match manifest version $MANIFEST_VERSION"
+            exit 1
+          fi
+
+      - name: Build zip
+        run: |
+          zip -r extension.zip manifest.json background.js content.js popup.html popup.js \
+            _locales assets src
+
+      - name: Upload and publish
+        run: npx --yes chrome-webstore-upload-cli@3 upload --source extension.zip --auto-publish
+        env:
+          EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+          CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
