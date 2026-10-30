@@ -29,6 +29,7 @@ function applyCaptionStyle() {
   }
 
   const captionClass = getSubtitleMainClass();
+  applyDisneyShadowStyle();
   let style = document.getElementById(CAPTION_STYLE_ID);
 
   if (!style) {
@@ -55,6 +56,34 @@ html.${HIDE_NATIVE_CAPTIONS_CLASS} :has(> .${captionClass}) {
 ` : '';
 
   style.textContent = hideNative + amazonClickable;
+}
+
+// The page stylesheet does not reach into a shadow root, so Disney+ needs the
+// same hiding rule inside it. :host-context keys it to the <html> class.
+function applyDisneyShadowStyle() {
+  if (window.STREAMING_PLATFORM !== 'disney') {
+    return;
+  }
+
+  const root = getDisneyCaptionRoot();
+
+  if (!root) {
+    return;
+  }
+
+  let style = root.getElementById(CAPTION_STYLE_ID);
+
+  if (!style) {
+    style = document.createElement('style');
+    style.id = CAPTION_STYLE_ID;
+    root.appendChild(style);
+  }
+
+  style.textContent = `
+:host-context(html.${HIDE_NATIVE_CAPTIONS_CLASS}) .${getSubtitleMainClass()} {
+  opacity: 0 !important;
+}
+`;
 }
 
 chrome.storage.onChanged.addListener((changes, areaName) => {

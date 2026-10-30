@@ -126,6 +126,10 @@
   transition: opacity 0.2s ease;
 }
 
+.sidebar-toggle-btn--left {
+  transform: translateY(-50%) scaleX(-1);
+}
+
 .sidebar-toggle-btn:hover {
   opacity: 1;
 }

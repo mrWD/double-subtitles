@@ -27,23 +27,13 @@ function createSidebarWithHistory() {
     }
   });
 
-  if (sidebar.classList.contains('hidden')) {
-    toggleBtn.textContent = '‹';
-    toggleBtn.style.right = '0';
-  } else {
-    toggleBtn.textContent = '›';
-  }
+  toggleBtn.textContent = sidebar.classList.contains('hidden') ? '‹' : '›';
 
   wrapper.appendChild(toggleBtn);
   wrapper.appendChild(sidebar);
 
   // Position toggle button after sidebar is in DOM
-  if (!sidebar.classList.contains('hidden')) {
-    requestAnimationFrame(() => {
-      const sidebarWidth = parseInt(getComputedStyle(sidebar).width, 10);
-      toggleBtn.style.right = `${sidebarWidth}px`;
-    });
-  }
+  requestAnimationFrame(() => positionToggleButton());
 
   const history = document.createElement('div');
   history.classList.add('history');
@@ -454,7 +444,7 @@ function makeSidebarResizable(sidebar, resizeHandle) {
     // Update toggle button position
     const toggleBtn = document.querySelector('.sidebar-toggle-btn');
     if (toggleBtn) {
-      toggleBtn.style.right = `${constrainedWidth}px`;
+      positionToggleButton();
     }
 
     // Adjust content width for Netflix
@@ -519,6 +509,38 @@ function makeSidebarResizable(sidebar, resizeHandle) {
   resizeHandle.addEventListener('selectstart', (e) => e.preventDefault());
 }
 
+// The toggle sits on the sidebar's inner edge. Streaming sites lay the sidebar
+// out differently (right edge on most, left on Disney+), so read the real side
+// instead of assuming the right. Mirrored for the left side in CSS.
+function positionToggleButton() {
+  const sidebar = document.querySelector('.double-subtitles-sidebar');
+  const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+
+  if (!sidebar || !toggleBtn) {
+    return;
+  }
+
+  const rect = sidebar.getBoundingClientRect();
+  const viewportWidth = document.documentElement.clientWidth;
+  const isHidden = sidebar.classList.contains('hidden') || rect.width === 0;
+
+  if (!isHidden) {
+    toggleBtn.dataset.side = rect.left + rect.width / 2 < viewportWidth / 2 ? 'left' : 'right';
+  }
+
+  const onLeft = toggleBtn.dataset.side === 'left';
+
+  toggleBtn.classList.toggle('sidebar-toggle-btn--left', onLeft);
+
+  if (onLeft) {
+    toggleBtn.style.right = 'auto';
+    toggleBtn.style.left = isHidden ? '0' : `${rect.right}px`;
+  } else {
+    toggleBtn.style.left = 'auto';
+    toggleBtn.style.right = isHidden ? '0' : `${viewportWidth - rect.left}px`;
+  }
+}
+
 function showSidebar() {
   const sidebar = document.querySelector('.double-subtitles-sidebar');
   const toggleBtn = document.querySelector('.sidebar-toggle-btn');
@@ -528,8 +550,7 @@ function showSidebar() {
     adjustContentWidth(true);
   }
   if (toggleBtn) {
-    const sidebarWidth = sidebar ? parseInt(getComputedStyle(sidebar).width, 10) : 0;
-    toggleBtn.style.right = `${sidebarWidth}px`;
+    positionToggleButton();
     toggleBtn.textContent = '›';
   }
 }
@@ -543,7 +564,7 @@ function hideSidebar() {
     adjustContentWidth(false);
   }
   if (toggleBtn) {
-    toggleBtn.style.right = '0';
+    positionToggleButton();
     toggleBtn.textContent = '‹';
   }
 }
