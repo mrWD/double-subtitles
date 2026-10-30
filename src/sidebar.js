@@ -657,9 +657,14 @@ function adjustPlayerAppWidth(sidebarVisible, sidebarWidth = 0) {
     return;
   }
 
-  root.style.width = sidebarVisible && sidebarWidth > 0
-    ? `calc(100% - ${sidebarWidth}px)`
-    : '';
+  const narrow = sidebarVisible && sidebarWidth > 0;
+
+  root.style.width = narrow ? `calc(100% - ${sidebarWidth}px)` : '';
+
+  // A transform makes the root the containing block for position:fixed
+  // descendants, so the player's fixed controls and overlays shrink with it
+  // instead of staying full-viewport underneath the sidebar.
+  root.style.transform = narrow ? 'translateZ(0)' : '';
 }
 
 window.addEventListener('resize', () => {
