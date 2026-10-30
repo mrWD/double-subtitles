@@ -650,14 +650,25 @@ function getPlayerAppRoot() {
   return anchor?.closest('body > *') ?? null;
 }
 
+// Remember the element we narrowed: after SPA navigation the player (and the
+// anchor used to find the root) may already be gone when the sidebar is removed,
+// which would leave the page stuck at the narrowed width.
+let narrowedPlayerRoot = null;
+
 function adjustPlayerAppWidth(sidebarVisible, sidebarWidth = 0) {
-  const root = getPlayerAppRoot();
+  const narrow = sidebarVisible && sidebarWidth > 0;
+  const root = narrow
+    ? getPlayerAppRoot()
+    : (narrowedPlayerRoot ?? getPlayerAppRoot());
 
   if (!root) {
     return;
   }
 
-  const narrow = sidebarVisible && sidebarWidth > 0;
+  if (narrowedPlayerRoot && narrowedPlayerRoot !== root) {
+    narrowedPlayerRoot.style.width = '';
+    narrowedPlayerRoot.style.transform = '';
+  }
 
   root.style.width = narrow ? `calc(100% - ${sidebarWidth}px)` : '';
 
@@ -665,6 +676,8 @@ function adjustPlayerAppWidth(sidebarVisible, sidebarWidth = 0) {
   // descendants, so the player's fixed controls and overlays shrink with it
   // instead of staying full-viewport underneath the sidebar.
   root.style.transform = narrow ? 'translateZ(0)' : '';
+
+  narrowedPlayerRoot = narrow ? root : null;
 }
 
 window.addEventListener('resize', () => {
