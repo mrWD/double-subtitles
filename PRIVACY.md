@@ -8,6 +8,8 @@ Double Subtitles is a Chrome extension that shows a translated subtitle line und
 - **Settings and saved phrases.** Your settings and the phrases you choose to save are stored in `chrome.storage.sync`, so they follow your Chrome profile. The author has no access to them.
 - **Session history.** The subtitle history shown in the sidebar is kept in the browser tab's `sessionStorage` and disappears when the tab is closed.
 
+- **Selector config.** Once a day the extension downloads a public file (`selectors.json`) from this GitHub repository so it can follow changes in the streaming sites' markup. The request carries no data about you.
+
 ## What the extension does not do
 
 - It does not collect, sell or share personal data.
@@ -24,6 +26,8 @@ If you tick the Anki, Quizlet or Google Sheets option when saving a card, the ca
 - `translate.googleapis.com`, to translate text.
 - `storage`, to keep settings and saved phrases.
 - `tts`, to read phrases aloud.
+- `alarms`, to refresh the selector config daily.
+- `raw.githubusercontent.com`, to download that file.
 - `activeTab`, to talk to the page from the settings popup.
 
 ## Contact

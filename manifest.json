@@ -8,6 +8,7 @@
   "permissions": [
     "activeTab",
     "storage",
+    "alarms",
     "tts"
   ],
   "default_locale": "en",
@@ -23,7 +24,8 @@
     "*://*.twitch.tv/*",
     "*://ankiuser.net/*",
     "*://quizlet.com/*",
-    "https://translate.googleapis.com/*"
+    "https://translate.googleapis.com/*",
+    "https://raw.githubusercontent.com/mrWD/double-subtitles/*"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -58,6 +60,8 @@
         "src/i18n.js",
         "src/settings.js",
         "src/utils.js",
+        "src/selectorsValidator.js",
+        "src/selectors.js",
         "src/autofill.js",
         "src/savedCards.js",
         "src/serviceIntegrations.js",

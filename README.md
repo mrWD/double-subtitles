@@ -78,6 +78,10 @@ Rough order, no dates:
 - Export the whole history, split by title.
 - Keyboard navigation and screen reader support.
 
+## Fixing a site layout change without a release
+
+Each site's caption element class lives in [selectors.json](selectors.json). The extension downloads that file from `main` at browser start and once a day, validates it (a single plain CSS class name per platform, nothing else) and keeps the last good copy. If a platform renames its caption class, edit `selectors.json` through a PR; users get it within a day, no store release needed. If a site changes its markup structure rather than a class name, or YouTube/Twitch (handled in code), a release is still required. Tests: `node test/selectors.test.js`.
+
 ## Releasing
 
 Pushing a tag like `v1.0.4` publishes the extension to the Chrome Web Store via `.github/workflows/publish.yml`. Bump `version` in `manifest.json` first; the workflow fails if the tag and the manifest version differ. It needs these repository secrets: `CWS_EXTENSION_ID`, `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET`, `CWS_REFRESH_TOKEN`.
