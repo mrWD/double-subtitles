@@ -667,15 +667,16 @@ function adjustPlayerAppWidth(sidebarVisible, sidebarWidth = 0) {
 
   if (narrowedPlayerRoot && narrowedPlayerRoot !== root) {
     narrowedPlayerRoot.style.width = '';
-    narrowedPlayerRoot.style.transform = '';
+    narrowedPlayerRoot.style.contain = '';
   }
 
   root.style.width = narrow ? `calc(100% - ${sidebarWidth}px)` : '';
 
-  // A transform makes the root the containing block for position:fixed
+  // Layout containment makes the root the containing block for position:fixed
   // descendants, so the player's fixed controls and overlays shrink with it
-  // instead of staying full-viewport underneath the sidebar.
-  root.style.transform = narrow ? 'translateZ(0)' : '';
+  // instead of staying full-viewport underneath the sidebar. Unlike a transform
+  // it creates no compositor layer, which can blank DRM video.
+  root.style.contain = narrow ? 'layout' : '';
 
   narrowedPlayerRoot = narrow ? root : null;
 }
