@@ -667,6 +667,7 @@ function adjustPlayerAppWidth(sidebarVisible, sidebarWidth = 0) {
 
   if (narrowedPlayerRoot && narrowedPlayerRoot !== root) {
     narrowedPlayerRoot.style.width = '';
+    narrowedPlayerRoot.style.height = '';
     narrowedPlayerRoot.style.contain = '';
   }
 
@@ -677,6 +678,11 @@ function adjustPlayerAppWidth(sidebarVisible, sidebarWidth = 0) {
   // instead of staying full-viewport underneath the sidebar. Unlike a transform
   // it creates no compositor layer, which can blank DRM video.
   root.style.contain = narrow ? 'layout' : '';
+
+  // The player's fixed layers (video, controls) are sized against this box.
+  // With only fixed children the root would have no height of its own, which
+  // collapses them to nothing (black video), so give it the full viewport height.
+  root.style.height = narrow ? '100vh' : '';
 
   narrowedPlayerRoot = narrow ? root : null;
 }
