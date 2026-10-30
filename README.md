@@ -19,7 +19,7 @@ Install: [Chrome Web Store](https://chromewebstore.google.com/detail/cpnlpffdpcp
 ## Supported streaming services
 
 - Netflix
-- Amazon Prime Video
+- Amazon Prime Video (primevideo.com and amazon domains)
 - Disney+
 - YouTube
 - Twitch
@@ -77,6 +77,14 @@ Rough order, no dates:
 - Show base forms of verbs and nouns next to the translation.
 - Export the whole history, split by title.
 - Keyboard navigation and screen reader support.
+
+## Releasing
+
+Pushing a tag like `v1.0.4` publishes the extension to the Chrome Web Store via `.github/workflows/publish.yml`. Bump `version` in `manifest.json` first; the workflow fails if the tag and the manifest version differ. It needs these repository secrets: `CWS_EXTENSION_ID`, `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET`, `CWS_REFRESH_TOKEN`.
+
+## Privacy
+
+See [PRIVACY.md](PRIVACY.md).
 
 ## Contributing
 
