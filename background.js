@@ -79,6 +79,30 @@ chrome.runtime.onMessage.addListener(async (req, sender, sendResponse) => {
     sendTranslatedMessage(messageText, originText, requestId, timestamp);
   }
 
+  if (req.message === 'getLocale') {
+    const tabId = sender.tab?.id;
+    const lang = req.payload?.lang;
+
+    if (tabId == null || !/^[a-z]{2}$/.test(lang)) {
+      return;
+    }
+
+    let messages = {};
+    try {
+      const res = await fetch(chrome.runtime.getURL(`_locales/${lang}/messages.json`));
+      messages = await res.json();
+    } catch {}
+
+    try {
+      await chrome.tabs.sendMessage(tabId, {
+        message: 'localeMessages',
+        payload: { lang, messages },
+      });
+    } catch (e) {
+      console.warn('Could not send locale to tab', tabId, e.message);
+    }
+  }
+
   if (req.message === 'toTranslateClicked') {
     const targetTabId = sender.tab?.id ?? recentTabId;
 

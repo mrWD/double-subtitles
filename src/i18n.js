@@ -18,28 +18,50 @@ let i18nMessages = {};
 let i18nFallbackMessages = {};
 let i18nReady = false;
 
+const LOCALE_REQUEST_TIMEOUT_MS = 3000;
+
+// Content scripts cannot fetch the extension's own files from host pages
+// ("Unsafe attempt to load URL"), so they ask the background script instead.
+async function loadLocaleMessages(lang) {
+  try {
+    if (window.location.protocol === 'chrome-extension:') {
+      const res = await fetch(chrome.runtime.getURL(`_locales/${lang}/messages.json`));
+      return await res.json();
+    }
+
+    return await requestLocaleFromBackground(lang);
+  } catch {
+    return {};
+  }
+}
+
+function requestLocaleFromBackground(lang) {
+  return new Promise((resolve) => {
+    const finish = (messages) => {
+      clearTimeout(timer);
+      chrome.runtime.onMessage.removeListener(onReply);
+      resolve(messages || {});
+    };
+    const onReply = (req) => {
+      if (req.message === 'localeMessages' && req.payload?.lang === lang) {
+        finish(req.payload.messages);
+      }
+    };
+    const timer = setTimeout(() => finish({}), LOCALE_REQUEST_TIMEOUT_MS);
+
+    chrome.runtime.onMessage.addListener(onReply);
+    // The reply arrives as a separate message; the port closing without a
+    // direct response is expected, so errors are left to the timeout.
+    chrome.runtime.sendMessage({ message: 'getLocale', payload: { lang } })
+      .catch(() => {});
+  });
+}
+
 async function initI18n(forceLang) {
   const lang = forceLang || await getSelectedUiLanguage();
 
-  try {
-    const url = chrome.runtime.getURL(`_locales/${lang}/messages.json`);
-    const res = await fetch(url);
-    i18nMessages = await res.json();
-  } catch {
-    i18nMessages = {};
-  }
-
-  if (lang !== 'en') {
-    try {
-      const url = chrome.runtime.getURL('_locales/en/messages.json');
-      const res = await fetch(url);
-      i18nFallbackMessages = await res.json();
-    } catch {
-      i18nFallbackMessages = {};
-    }
-  } else {
-    i18nFallbackMessages = {};
-  }
+  i18nMessages = await loadLocaleMessages(lang);
+  i18nFallbackMessages = lang !== 'en' ? await loadLocaleMessages('en') : {};
 
   i18nReady = true;
 }
