@@ -1,9 +1,20 @@
+// HBO Max uses styled-components class names with a build hash suffix
+// (CaptionWindow-Fuse-Web-Play__sc-1wvp621-5), so match the stable prefix.
+const CUSTOM_CAPTION_SELECTORS = {
+  hbo: '[class*="CaptionWindow-Fuse-Web-Play"]',
+};
+
+function getCaptionSelector() {
+  return CUSTOM_CAPTION_SELECTORS[window.STREAMING_PLATFORM]
+    ?? `.${getSubtitleMainClass()}`;
+}
+
 function getMainSubtitlesSelector() {
-  return `.${getSubtitleMainClass()}:not(.secondSubtitles)`;
+  return `${getCaptionSelector()}:not(.secondSubtitles)`;
 }
 
 function getSecondSubtitlesSelector() {
-  return `.${getSubtitleMainClass()}.secondSubtitles`;
+  return `${getCaptionSelector()}.secondSubtitles`;
 }
 
 function fillSubtitles({ data, originText, timestamp }) {

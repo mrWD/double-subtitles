@@ -375,6 +375,13 @@ function createSidebar() {
     sidebar.style.flexShrink = '0';
   }
 
+  if (window.STREAMING_PLATFORM === 'disney' && !document.querySelector('.video_view--theater')) {
+    sidebar.style.position = 'fixed';
+    sidebar.style.top = 0;
+    sidebar.style.right = 0;
+    sidebar.style.height = '100vh';
+  }
+
   if (window.STREAMING_PLATFORM === 'hbo') {
     sidebar.style.position = 'fixed';
     sidebar.style.top = 0;
@@ -462,6 +469,10 @@ function makeSidebarResizable(sidebar, resizeHandle) {
 
     if (window.STREAMING_PLATFORM === 'twitch') {
       adjustTwitchAppWidth(true, constrainedWidth);
+    }
+
+    if (['disney', 'hbo', 'hulu'].includes(window.STREAMING_PLATFORM)) {
+      adjustPlayerAppWidth(true, constrainedWidth);
     }
   }
 
@@ -601,8 +612,13 @@ function adjustContentWidth(sidebarVisible) {
     // No additional width adjustment needed
   }
 
-  if (window.STREAMING_PLATFORM === 'disney') {
-    // Disney uses flexbox, so the sidebar visibility is handled by display property
+  if (['disney', 'hbo', 'hulu'].includes(window.STREAMING_PLATFORM)) {
+    const sidebar = document.querySelector('.double-subtitles-sidebar');
+    const sidebarWidth = sidebarVisible && sidebar
+      ? parseInt(getComputedStyle(sidebar).width, 10)
+      : 0;
+
+    adjustPlayerAppWidth(sidebarVisible, sidebarWidth);
   }
 
   if (window.STREAMING_PLATFORM === 'youtube') {
@@ -623,6 +639,41 @@ function adjustContentWidth(sidebarVisible) {
     adjustTwitchAppWidth(sidebarVisible, sidebarWidth);
   }
 }
+
+// These players are taken out of the document flow, so the fixed sidebar would
+// cover them. Narrow the app root (the body child holding the player) instead.
+function getPlayerAppRoot() {
+  const anchor = window.STREAMING_PLATFORM === 'disney'
+    ? document.querySelector('disney-web-player')
+    : document.querySelector('video');
+
+  return anchor?.closest('body > *') ?? null;
+}
+
+function adjustPlayerAppWidth(sidebarVisible, sidebarWidth = 0) {
+  const root = getPlayerAppRoot();
+
+  if (!root) {
+    return;
+  }
+
+  root.style.width = sidebarVisible && sidebarWidth > 0
+    ? `calc(100% - ${sidebarWidth}px)`
+    : '';
+}
+
+window.addEventListener('resize', () => {
+  const sidebar = document.querySelector('.double-subtitles-sidebar');
+
+  if (
+    ['disney', 'hbo', 'hulu'].includes(window.STREAMING_PLATFORM)
+    && sidebar
+    && !sidebar.classList.contains('hidden')
+  ) {
+    adjustPlayerAppWidth(true, parseInt(getComputedStyle(sidebar).width, 10));
+    positionToggleButton();
+  }
+});
 
 function adjustYoutubeAppWidth(sidebarVisible, sidebarWidth = 0) {
   const ytdApp = document.querySelector('ytd-app');
