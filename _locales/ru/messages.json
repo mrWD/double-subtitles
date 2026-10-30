@@ -6,7 +6,7 @@
       "message": "Double Subtitles"
    },
    "popupText": {
-      "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
+      "message": "Double Subtitles"
    },
    "onOffLabel": {
       "message": "Включить расширение"
@@ -88,6 +88,9 @@
    },
    "translationColorLabel": {
       "message": "Цвет перевода"
+   },
+   "saveFailed": {
+      "message": "Не удалось сохранить — хранилище заполнено"
    },
    "subtitlesNotFound": {
       "message": "Субтитры не найдены. Включите субтитры в плеере. Если они включены, а сообщение остаётся, возможно, сайт изменился: попробуйте позже или сообщите о проблеме."

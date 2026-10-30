@@ -19,16 +19,17 @@ Install: [Chrome Web Store](https://chromewebstore.google.com/detail/cpnlpffdpcp
 ## Supported streaming services
 
 - Netflix
-- Amazon Prime Video (primevideo.com and amazon domains)
+- Amazon Prime Video (`primevideo.com`, and `amazon.*` under `/gp/video/`)
 - Disney+
 - YouTube
 - Twitch
+- HBO Max and Hulu (work in progress, caption selectors not finalized)
 
 ## Learning platform helpers
 
 When you open the "add card" form on AnkiWeb (ankiuser.net) or Quizlet, the extension shows a tip with your saved phrases so you can fill the card with one click.
 
-The save menu also has checkboxes for sending a card straight to Anki, Quizlet or a Google Sheet. Those go through a small local companion server on `http://127.0.0.1:5000` that lives in a separate, private repo. Without it running, those checkboxes do nothing; saving to the browser works on its own.
+Cards are saved in the browser. The earlier direct hooks to Anki, Quizlet and Google Sheets (via a local companion server) were removed for security reasons.
 
 ## Installation
 
@@ -59,8 +60,8 @@ There is no build step. It is plain JavaScript, HTML and CSS.
 - `src/utils.js`: per-platform adapters. Each site exposes its subtitles in a different part of the DOM, so this is where Netflix, Prime, Disney+, YouTube and Twitch are handled.
 - `src/netflixBridge.js`: a small script injected into the page world on Netflix. Seeking the Netflix player and reading its current time only works through the page's own player API, which a content script cannot reach.
 - `src/subtitles.js`, `src/subtitlesManager.js`: render the second line and keep it in sync with the original. Translations are requested asynchronously and tagged with a request id; `content.js` drops a response whose id is older than the last one applied, so a slow reply for an old caption never overwrites a newer one (this matters on YouTube, where captions change fast).
-- `src/sidebar.js`, `src/savedCards.js`, `src/cardMenu.js`, `src/translationModal.js`: the sidebar, saved cards, the save menu and the click-to-translate modal.
-- `src/serviceIntegrations.js`: saving to browser storage, and the optional Anki / Quizlet / Google Sheets hooks.
+- `src/sidebar.js`, `src/cardMenu.js`, `src/translationModal.js`: the sidebar, the save menu and the click-to-translate modal. `src/savedCards.js` runs in the popup only, not on host pages.
+- `src/serviceIntegrations.js`: saving cards to browser storage.
 - `src/autofill.js`: the saved-phrase tip on AnkiWeb and Quizlet card forms.
 - `src/i18n.js`, `_locales/`: UI translations.
 - `background.js`: service worker. Handles text-to-speech via the Chrome TTS API.
@@ -89,6 +90,14 @@ Pushing a tag like `v1.0.4` publishes the extension to the Chrome Web Store via 
 ## Privacy
 
 See [PRIVACY.md](PRIVACY.md).
+
+## Security notes for contributors
+
+- Never assign page or API text to `innerHTML`: subtitle text, translations and anything read back from `sessionStorage` are attacker-controllable. Use `textContent`.
+- Keep `_locales/*/messages.json` free of markup; those strings are rendered in the extension's own popup.
+- Any URL that reaches `chrome.tabs.create`/`update` must pass the host allowlist in `background.js`.
+- Do not add remote resources (fonts, scripts, stylesheets): bundle them, as done for Barlow in `assets/fonts/`. The only remote fetch is the data-only `selectors.json`.
+- The extension-page CSP in `manifest.json` pins network access to `translate.googleapis.com` and `raw.githubusercontent.com`.
 
 ## Contributing
 

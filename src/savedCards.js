@@ -158,10 +158,12 @@ function formatSourceLabel(sourceUrl, timestamp) {
 }
 
 function navigateToSource(sourceUrl, timestamp) {
+  // The service worker re-checks the URL against the allowed streaming hosts
+  // before opening or focusing any tab.
   chrome.runtime.sendMessage({
     message: 'navigateToSource',
     payload: { sourceUrl, timestamp },
-  });
+  }, () => chrome.runtime.lastError);
 }
 
 function createTextElement(text) {

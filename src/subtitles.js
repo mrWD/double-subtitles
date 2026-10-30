@@ -13,9 +13,11 @@ function addLineToSubtitles({ text, translation }) {
   const translatedText = createSubtitleElement({ text, translation });
   const isDoubleSubtitlesHidden = window.options && window.options.showDoubleSubtitles === false;
 
-  mainText.innerHTML = text;
-  translatedText.innerHTML = translation;
-  subtitleWrapper.innerHTML = '';
+  // Subtitle text comes from the page DOM and the translation API — never trusted,
+  // so it must be inserted as text, never parsed as HTML.
+  mainText.textContent = text;
+  translatedText.textContent = translation;
+  subtitleWrapper.textContent = '';
 
   subtitleWrapper.appendChild(mainText);
   subtitleWrapper.appendChild(translatedText);
@@ -36,6 +38,14 @@ function addLineToSubtitles({ text, translation }) {
 
   if (window.STREAMING_PLATFORM === 'twitch') {
     toggleTwitchNativeSubtitles(isDoubleSubtitlesHidden);
+  }
+
+  if (window.STREAMING_PLATFORM === 'hbo') {
+    toggleHboNativeSubtitles(isDoubleSubtitlesHidden);
+  }
+
+  if (window.STREAMING_PLATFORM === 'hulu') {
+    toggleHuluNativeSubtitles(isDoubleSubtitlesHidden);
   }
 
   const buttonGroup = document.createElement('div');
@@ -192,6 +202,28 @@ function toggleTwitchNativeSubtitles(showNative) {
   captionContainer.classList.toggle('double-subtitles-hide-native', !showNative);
 }
 
+function toggleHboNativeSubtitles(showNative) {
+  // TODO: replace with the real HBO Max captions container selector.
+  const captionContainer = document.querySelector('.hbo-captions-container');
+
+  if (!captionContainer) {
+    return;
+  }
+
+  captionContainer.classList.toggle('double-subtitles-hide-native', !showNative);
+}
+
+function toggleHuluNativeSubtitles(showNative) {
+  // TODO: confirm Hulu captions container selector.
+  const captionContainer = document.querySelector('.captions-layer');
+
+  if (!captionContainer) {
+    return;
+  }
+
+  captionContainer.classList.toggle('double-subtitles-hide-native', !showNative);
+}
+
 function createMenuButton({ text, translation }) {
   const menuButton = document.createElement('button');
 
@@ -219,7 +251,7 @@ function speakText(text, { slow = false } = {}) {
   chrome.runtime.sendMessage({
     message: 'speakText',
     payload: { text: plainText, lang, rate: slow ? 0.5 : 1.0 },
-  });
+  }, () => chrome.runtime.lastError);
 }
 
 function createSpeakerButton(text, { inline = false } = {}) {
@@ -292,6 +324,14 @@ function hideDoubleSubtitles() {
 
   if (window.STREAMING_PLATFORM === 'twitch') {
     toggleTwitchNativeSubtitles(true);
+  }
+
+  if (window.STREAMING_PLATFORM === 'hbo') {
+    toggleHboNativeSubtitles(true);
+  }
+
+  if (window.STREAMING_PLATFORM === 'hulu') {
+    toggleHuluNativeSubtitles(true);
   }
 }
 
@@ -556,6 +596,8 @@ window.hideDoubleSubtitles = hideDoubleSubtitles;
 window.toggleDoubleSubtitles = toggleDoubleSubtitles;
 window.toggleYoutubeNativeSubtitles = toggleYoutubeNativeSubtitles;
 window.toggleTwitchNativeSubtitles = toggleTwitchNativeSubtitles;
+window.toggleHboNativeSubtitles = toggleHboNativeSubtitles;
+window.toggleHuluNativeSubtitles = toggleHuluNativeSubtitles;
 window.setupVideoPauseListeners = setupVideoPauseListeners;
 window.applyPauseOnlyVisibility = applyPauseOnlyVisibility;
 window.resetSubtitlePosition = resetSubtitlePosition;

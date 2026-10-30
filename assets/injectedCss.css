@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&display=swap');
+/* No webfont here: this stylesheet is injected into third-party pages and a
+   remote @import would leak the user's IP and browsing to a font CDN. */
 
 :root {
   --primary-color: #161819;
@@ -675,6 +676,20 @@
   pointer-events: none !important;
 }
 
+/* TODO: refine selectors once the real HBO Max captions DOM is known. */
+.hbo-captions-container.double-subtitles-hide-native,
+.hbo-captions-container.double-subtitles-hide-native .hbo-captions-container__caption-line {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* TODO: confirm/refine Hulu captions hide rule. */
+.captions-layer.double-subtitles-hide-native,
+.captions-layer.double-subtitles-hide-native .captions-layer__caption-line {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 .visibleSubtitles.youtube-subtitles {
   position: fixed;
   z-index: 2;
@@ -739,6 +754,11 @@
 .save-toast--visible {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+.save-toast--error {
+  background-color: #E5484D;
+  color: #ffffff;
 }
 
 .subtitle-drag-handle {

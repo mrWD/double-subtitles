@@ -129,12 +129,12 @@ function hideTip() {
 }
 
 function addValueToInput(input, value) {
-  if (window.LEARNING_PLATFORM === 'anki') {
-    input.innerHTML = value;
-  }
-
-  if (window.LEARNING_PLATFORM === 'quizlet') {
-    input.innerHTML = value;
+  // Card text originates from scraped subtitles, so it is inserted as plain text
+  // to avoid injecting markup into the learning platform's page.
+  if (window.LEARNING_PLATFORM === 'anki'
+    || window.LEARNING_PLATFORM === 'quizlet'
+  ) {
+    input.textContent = value;
   }
 
   hideTip();

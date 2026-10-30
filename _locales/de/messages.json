@@ -6,7 +6,7 @@
       "message": "Double Subtitles"
    },
    "popupText": {
-      "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
+      "message": "Double Subtitles"
    },
    "onOffLabel": {
       "message": "Erweiterung aktivieren"
@@ -88,5 +88,8 @@
    },
    "translationColorLabel": {
       "message": "Farbe der Übersetzung"
+   },
+   "saveFailed": {
+      "message": "Speichern fehlgeschlagen — Speicher voll"
    }
 }
