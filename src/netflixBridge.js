@@ -1,9 +1,18 @@
 (() => {
-  const EVENT_NAME = 'double-subtitles-netflix-seek';
-  const GET_TIME_EVENT = 'double-subtitles-netflix-get-time';
-  const STATUS_ATTR = 'data-double-subtitles-netflix-seek-status';
-  const BRIDGE_ATTR = 'data-double-subtitles-netflix-seek-bridge';
-  const CURRENT_TIME_ATTR = 'data-double-subtitles-netflix-current-time-ms';
+  // The content script passes a per-page-load nonce in the script URL fragment and
+  // listens on nonce-salted names, so unrelated page scripts cannot guess the
+  // channel and drive the player through this bridge.
+  const nonce = document.currentScript?.src.split('#')[1];
+
+  if (!nonce) {
+    return;
+  }
+
+  const EVENT_NAME = `double-subtitles-netflix-seek-${nonce}`;
+  const GET_TIME_EVENT = `double-subtitles-netflix-get-time-${nonce}`;
+  const STATUS_ATTR = `data-ds-netflix-seek-status-${nonce}`;
+  const BRIDGE_ATTR = `data-ds-netflix-seek-bridge-${nonce}`;
+  const CURRENT_TIME_ATTR = `data-ds-netflix-current-time-ms-${nonce}`;
   const root = document.documentElement;
 
   if (!root || root.getAttribute(BRIDGE_ATTR) === 'ready') {

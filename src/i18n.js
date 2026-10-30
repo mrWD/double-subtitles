@@ -42,7 +42,11 @@ function requestLocaleFromBackground(lang) {
       chrome.runtime.onMessage.removeListener(onReply);
       resolve(messages || {});
     };
-    const onReply = (req) => {
+    const onReply = (req, sender) => {
+      if (sender?.id !== chrome.runtime.id || sender.tab) {
+        return;
+      }
+
       if (req.message === 'localeMessages' && req.payload?.lang === lang) {
         finish(req.payload.messages);
       }

@@ -6,7 +6,7 @@
       "message": "Double Subtitles"
    },
    "popupText": {
-      "message": "<strong style='font-weight: 500;'>Double Subtitles</strong>"
+      "message": "Double Subtitles"
    },
    "onOffLabel": {
       "message": "拡張機能をオンにする"
@@ -88,5 +88,8 @@
    },
    "translationColorLabel": {
       "message": "翻訳の色"
+   },
+   "saveFailed": {
+      "message": "保存できません — 保存容量がいっぱいです"
    }
 }

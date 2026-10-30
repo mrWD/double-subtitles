@@ -1,10 +1,55 @@
 window.STREAMING_PLATFORM = getStreamingPlatform();
 window.LEARNING_PLATFORM = getLearningPlatform();
-const NETFLIX_SEEK_EVENT = 'double-subtitles-netflix-seek';
-const NETFLIX_SEEK_STATUS_ATTR = 'data-double-subtitles-netflix-seek-status';
-const NETFLIX_SEEK_BRIDGE_ATTR = 'data-double-subtitles-netflix-seek-bridge';
-const NETFLIX_GET_TIME_EVENT = 'double-subtitles-netflix-get-time';
-const NETFLIX_CURRENT_TIME_ATTR = 'data-double-subtitles-netflix-current-time-ms';
+
+// The bridge lives in the page's main world, so its event names and status
+// attributes are salted per page load. Fixed names would let any script on the
+// page drive the player through us.
+const NETFLIX_BRIDGE_NONCE = crypto.randomUUID();
+const NETFLIX_SEEK_EVENT = `double-subtitles-netflix-seek-${NETFLIX_BRIDGE_NONCE}`;
+const NETFLIX_GET_TIME_EVENT = `double-subtitles-netflix-get-time-${NETFLIX_BRIDGE_NONCE}`;
+const NETFLIX_SEEK_STATUS_ATTR = `data-ds-netflix-seek-status-${NETFLIX_BRIDGE_NONCE}`;
+const NETFLIX_SEEK_BRIDGE_ATTR = `data-ds-netflix-seek-bridge-${NETFLIX_BRIDGE_NONCE}`;
+const NETFLIX_CURRENT_TIME_ATTR = `data-ds-netflix-current-time-ms-${NETFLIX_BRIDGE_NONCE}`;
+
+// Hosts this extension is allowed to link back to. Card and history entries can
+// be shaped by the page (sessionStorage is same-origin and writable there), so
+// every URL is re-checked before it reaches chrome.tabs.* in the service worker.
+const ALLOWED_SOURCE_HOSTS = [
+  'primevideo.com',
+  'amazon.com',
+  'amazon.co.uk',
+  'amazon.de',
+  'amazon.co.jp',
+  'disneyplus.com',
+  'netflix.com',
+  'youtube.com',
+  'twitch.tv',
+  'max.com',
+  'hbomax.com',
+  'hulu.com',
+];
+
+function isSafeSourceUrl(url) {
+  if (typeof url !== 'string' || url.length > 2000) {
+    return false;
+  }
+
+  try {
+    const parsed = new URL(url);
+
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+      return false;
+    }
+
+    const host = parsed.hostname.toLowerCase();
+
+    return ALLOWED_SOURCE_HOSTS.some(
+      (domain) => host === domain || host.endsWith(`.${domain}`)
+    );
+  } catch {
+    return false;
+  }
+}
 
 setupNetflixSeekBridge();
 
@@ -271,6 +316,110 @@ function encodeLang(lang) {
       '中文（简体）': 'zh',
       '中文（繁體）': 'zh',
     },
+    hbo: {
+      'العربية (العالم)': 'ar',
+      'العربية (مصر)': 'ar',
+      العربية: 'ar',
+      Català: 'ca',
+      Dansk: 'da',
+      Deutsch: 'de',
+      EnglishCC: 'en',
+      English: 'en',
+      Español: 'es',
+      'Español (España)': 'es',
+      'Español (Latinoamérica)': 'es',
+      'Español (Latinoamérica)CC': 'es',
+      Euskara: 'eu',
+      Filipino: 'fil',
+      Français: 'fr',
+      'Français (Canada)': 'fr',
+      'Français (France)': 'fr',
+      Galego: 'gl',
+      עברית: 'he',
+      हिन्दी: 'hi',
+      Indonesia: 'id',
+      Italiano: 'it',
+      ಕನ್ನಡ: 'kn',
+      മലയാളം: 'ml',
+      'Bahasa Melayu': 'ms',
+      Magyar: 'hu',
+      Nederlands: 'nl',
+      'Norsk Bokmål': 'nb',
+      Polski: 'pl',
+      Português: 'pt',
+      'Português (Brasil)': 'pt',
+      'Português (Portugal)': 'pt',
+      'Português (Brasil)CC': 'pt',
+      Română: 'ro',
+      Русский: 'ru',
+      Slovenčina: 'sk',
+      Suomi: 'fi',
+      Svenska: 'sv',
+      தமிழ்: 'ta',
+      తెలుగు: 'te',
+      ไทย: 'th',
+      Türkçe: 'tr',
+      Čeština: 'cs',
+      Ελληνικά: 'el',
+      日本語: 'ja',
+      한국어: 'ko',
+      Українська: 'uk',
+      'Tiếng Việt': 'vi',
+      '中文（简体）': 'zh',
+      '中文（繁體）': 'zh',
+    },
+    hulu: {
+      'العربية (العالم)': 'ar',
+      'العربية (مصر)': 'ar',
+      العربية: 'ar',
+      Català: 'ca',
+      Dansk: 'da',
+      Deutsch: 'de',
+      EnglishCC: 'en',
+      English: 'en',
+      Español: 'es',
+      'Español (España)': 'es',
+      'Español (Latinoamérica)': 'es',
+      'Español (Latinoamérica)CC': 'es',
+      Euskara: 'eu',
+      Filipino: 'fil',
+      Français: 'fr',
+      'Français (Canada)': 'fr',
+      'Français (France)': 'fr',
+      Galego: 'gl',
+      עברית: 'he',
+      हिन्दी: 'hi',
+      Indonesia: 'id',
+      Italiano: 'it',
+      ಕನ್ನಡ: 'kn',
+      മലയാളം: 'ml',
+      'Bahasa Melayu': 'ms',
+      Magyar: 'hu',
+      Nederlands: 'nl',
+      'Norsk Bokmål': 'nb',
+      Polski: 'pl',
+      Português: 'pt',
+      'Português (Brasil)': 'pt',
+      'Português (Portugal)': 'pt',
+      'Português (Brasil)CC': 'pt',
+      Română: 'ro',
+      Русский: 'ru',
+      Slovenčina: 'sk',
+      Suomi: 'fi',
+      Svenska: 'sv',
+      தமிழ்: 'ta',
+      తెలుగు: 'te',
+      ไทย: 'th',
+      Türkçe: 'tr',
+      Čeština: 'cs',
+      Ελληνικά: 'el',
+      日本語: 'ja',
+      한국어: 'ko',
+      Українська: 'uk',
+      'Tiếng Việt': 'vi',
+      '中文（简体）': 'zh',
+      '中文（繁體）': 'zh',
+    },
   };
   return mapLangToCode[window.STREAMING_PLATFORM]?.[lang];
 }
@@ -377,6 +526,46 @@ function decodeLang(lang) {
       uk: 'Ukrainian',
       zh: 'Chinese',
     },
+    hbo: {
+      ar: 'العربية',
+      ca: 'Català',
+      da: 'Dansk',
+      de: 'Deutsch',
+      en: 'English',
+      es: 'Español',
+      eu: 'Euskara',
+      fr: 'Français',
+      it: 'Italiano',
+      ja: '日本語',
+      ko: '한국어',
+      nl: 'Nederlands',
+      pl: 'Polish',
+      pt: 'Português',
+      ru: 'Русский',
+      tr: 'Türkçe',
+      uk: 'Ukrainian',
+      zh: 'Chinese',
+    },
+    hulu: {
+      ar: 'العربية',
+      ca: 'Català',
+      da: 'Dansk',
+      de: 'Deutsch',
+      en: 'English',
+      es: 'Español',
+      eu: 'Euskara',
+      fr: 'Français',
+      it: 'Italiano',
+      ja: '日本語',
+      ko: '한국어',
+      nl: 'Nederlands',
+      pl: 'Polish',
+      pt: 'Português',
+      ru: 'Русский',
+      tr: 'Türkçe',
+      uk: 'Ukrainian',
+      zh: 'Chinese',
+    },
   };
   return mapCodeToLang[window.STREAMING_PLATFORM]?.[lang];
 }
@@ -403,6 +592,14 @@ function getStreamingPlatform() {
 
   if (window.location.hostname.includes('twitch')) {
     return 'twitch';
+  }
+
+  if (window.location.hostname.includes('hbomax') || window.location.hostname.includes('max.com')) {
+    return 'hbo';
+  }
+
+  if (window.location.hostname.includes('hulu')) {
+    return 'hulu';
   }
 
   return null;
@@ -434,6 +631,14 @@ function isStreamingWatchPage() {
 
   if (window.STREAMING_PLATFORM === 'twitch') {
     return hasVideo;
+  }
+
+  if (window.STREAMING_PLATFORM === 'hbo') {
+    return hasVideo;
+  }
+
+  if (window.STREAMING_PLATFORM === 'hulu') {
+    return pathname.startsWith('/watch') || hasVideo;
   }
 
   return hasVideo;
@@ -568,7 +773,7 @@ function setupNetflixSeekBridge() {
   }
 
   const bridgeScript = document.createElement('script');
-  bridgeScript.src = chrome.runtime.getURL('src/netflixBridge.js');
+  bridgeScript.src = `${chrome.runtime.getURL('src/netflixBridge.js')}#${NETFLIX_BRIDGE_NONCE}`;
   bridgeScript.async = false;
   (document.head || root).appendChild(bridgeScript);
   bridgeScript.remove();
@@ -590,3 +795,4 @@ window.getVideoCurrentTime = getVideoCurrentTime;
 window.seekVideoToTime = seekVideoToTime;
 window.formatTimestamp = formatTimestamp;
 window.isStreamingWatchPage = isStreamingWatchPage;
+window.isSafeSourceUrl = isSafeSourceUrl;
