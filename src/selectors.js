@@ -1,7 +1,7 @@
 const SELECTORS_STORAGE_KEY = 'selectors';
 const CAPTION_STYLE_ID = 'double-subtitles-caption-style';
 const HIDE_NATIVE_CAPTIONS_CLASS = 'double-subtitles-hide-native-captions';
-const CONFIGURED_PLATFORMS = ['amazon', 'disney', 'netflix'];
+const STYLED_PLATFORMS = ['amazon', 'disney', 'netflix', 'hbo'];
 
 let remoteSelectors = null;
 
@@ -24,11 +24,13 @@ function getConfiguredCaptionClass(platform) {
 // living in the static stylesheet: hiding the native captions once ours are
 // shown, and (Prime only) making them clickable with a hover highlight.
 function applyCaptionStyle() {
-  if (!CONFIGURED_PLATFORMS.includes(window.STREAMING_PLATFORM)) {
+  if (!STYLED_PLATFORMS.includes(window.STREAMING_PLATFORM)) {
     return;
   }
 
   const captionClass = getSubtitleMainClass();
+  const captionSelector = getCaptionSelector();
+  applyDisneyShadowStyle();
   let style = document.getElementById(CAPTION_STYLE_ID);
 
   if (!style) {
@@ -38,8 +40,8 @@ function applyCaptionStyle() {
   }
 
   const hideNative = `
-html.${HIDE_NATIVE_CAPTIONS_CLASS} .${captionClass},
-html.${HIDE_NATIVE_CAPTIONS_CLASS} :has(> .${captionClass}) {
+html.${HIDE_NATIVE_CAPTIONS_CLASS} ${captionSelector},
+html.${HIDE_NATIVE_CAPTIONS_CLASS} :has(> ${captionSelector}) {
   opacity: 0 !important;
 }
 `;
@@ -55,6 +57,34 @@ html.${HIDE_NATIVE_CAPTIONS_CLASS} :has(> .${captionClass}) {
 ` : '';
 
   style.textContent = hideNative + amazonClickable;
+}
+
+// The page stylesheet does not reach into a shadow root, so Disney+ needs the
+// same hiding rule inside it. :host-context keys it to the <html> class.
+function applyDisneyShadowStyle() {
+  if (window.STREAMING_PLATFORM !== 'disney') {
+    return;
+  }
+
+  const root = getDisneyCaptionRoot();
+
+  if (!root) {
+    return;
+  }
+
+  let style = root.getElementById(CAPTION_STYLE_ID);
+
+  if (!style) {
+    style = document.createElement('style');
+    style.id = CAPTION_STYLE_ID;
+    root.appendChild(style);
+  }
+
+  style.textContent = `
+:host-context(html.${HIDE_NATIVE_CAPTIONS_CLASS}) .${getSubtitleMainClass()} {
+  opacity: 0 !important;
+}
+`;
 }
 
 chrome.storage.onChanged.addListener((changes, areaName) => {

@@ -27,23 +27,13 @@ function createSidebarWithHistory() {
     }
   });
 
-  if (sidebar.classList.contains('hidden')) {
-    toggleBtn.textContent = '‹';
-    toggleBtn.style.right = '0';
-  } else {
-    toggleBtn.textContent = '›';
-  }
+  toggleBtn.textContent = sidebar.classList.contains('hidden') ? '‹' : '›';
 
   wrapper.appendChild(toggleBtn);
   wrapper.appendChild(sidebar);
 
   // Position toggle button after sidebar is in DOM
-  if (!sidebar.classList.contains('hidden')) {
-    requestAnimationFrame(() => {
-      const sidebarWidth = parseInt(getComputedStyle(sidebar).width, 10);
-      toggleBtn.style.right = `${sidebarWidth}px`;
-    });
-  }
+  requestAnimationFrame(() => positionToggleButton());
 
   const history = document.createElement('div');
   history.classList.add('history');
@@ -385,6 +375,13 @@ function createSidebar() {
     sidebar.style.flexShrink = '0';
   }
 
+  if (window.STREAMING_PLATFORM === 'disney' && !document.querySelector('.video_view--theater')) {
+    sidebar.style.position = 'fixed';
+    sidebar.style.top = 0;
+    sidebar.style.right = 0;
+    sidebar.style.height = '100vh';
+  }
+
   if (window.STREAMING_PLATFORM === 'hbo') {
     sidebar.style.position = 'fixed';
     sidebar.style.top = 0;
@@ -454,7 +451,7 @@ function makeSidebarResizable(sidebar, resizeHandle) {
     // Update toggle button position
     const toggleBtn = document.querySelector('.sidebar-toggle-btn');
     if (toggleBtn) {
-      toggleBtn.style.right = `${constrainedWidth}px`;
+      positionToggleButton();
     }
 
     // Adjust content width for Netflix
@@ -472,6 +469,10 @@ function makeSidebarResizable(sidebar, resizeHandle) {
 
     if (window.STREAMING_PLATFORM === 'twitch') {
       adjustTwitchAppWidth(true, constrainedWidth);
+    }
+
+    if (['disney', 'hbo', 'hulu'].includes(window.STREAMING_PLATFORM)) {
+      adjustPlayerAppWidth(true, constrainedWidth);
     }
   }
 
@@ -519,6 +520,38 @@ function makeSidebarResizable(sidebar, resizeHandle) {
   resizeHandle.addEventListener('selectstart', (e) => e.preventDefault());
 }
 
+// The toggle sits on the sidebar's inner edge. Streaming sites lay the sidebar
+// out differently (right edge on most, left on Disney+), so read the real side
+// instead of assuming the right. Mirrored for the left side in CSS.
+function positionToggleButton() {
+  const sidebar = document.querySelector('.double-subtitles-sidebar');
+  const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+
+  if (!sidebar || !toggleBtn) {
+    return;
+  }
+
+  const rect = sidebar.getBoundingClientRect();
+  const viewportWidth = document.documentElement.clientWidth;
+  const isHidden = sidebar.classList.contains('hidden') || rect.width === 0;
+
+  if (!isHidden) {
+    toggleBtn.dataset.side = rect.left + rect.width / 2 < viewportWidth / 2 ? 'left' : 'right';
+  }
+
+  const onLeft = toggleBtn.dataset.side === 'left';
+
+  toggleBtn.classList.toggle('sidebar-toggle-btn--left', onLeft);
+
+  if (onLeft) {
+    toggleBtn.style.right = 'auto';
+    toggleBtn.style.left = isHidden ? '0' : `${rect.right}px`;
+  } else {
+    toggleBtn.style.left = 'auto';
+    toggleBtn.style.right = isHidden ? '0' : `${viewportWidth - rect.left}px`;
+  }
+}
+
 function showSidebar() {
   const sidebar = document.querySelector('.double-subtitles-sidebar');
   const toggleBtn = document.querySelector('.sidebar-toggle-btn');
@@ -528,8 +561,7 @@ function showSidebar() {
     adjustContentWidth(true);
   }
   if (toggleBtn) {
-    const sidebarWidth = sidebar ? parseInt(getComputedStyle(sidebar).width, 10) : 0;
-    toggleBtn.style.right = `${sidebarWidth}px`;
+    positionToggleButton();
     toggleBtn.textContent = '›';
   }
 }
@@ -543,7 +575,7 @@ function hideSidebar() {
     adjustContentWidth(false);
   }
   if (toggleBtn) {
-    toggleBtn.style.right = '0';
+    positionToggleButton();
     toggleBtn.textContent = '‹';
   }
 }
@@ -580,8 +612,13 @@ function adjustContentWidth(sidebarVisible) {
     // No additional width adjustment needed
   }
 
-  if (window.STREAMING_PLATFORM === 'disney') {
-    // Disney uses flexbox, so the sidebar visibility is handled by display property
+  if (['disney', 'hbo', 'hulu'].includes(window.STREAMING_PLATFORM)) {
+    const sidebar = document.querySelector('.double-subtitles-sidebar');
+    const sidebarWidth = sidebarVisible && sidebar
+      ? parseInt(getComputedStyle(sidebar).width, 10)
+      : 0;
+
+    adjustPlayerAppWidth(sidebarVisible, sidebarWidth);
   }
 
   if (window.STREAMING_PLATFORM === 'youtube') {
@@ -602,6 +639,66 @@ function adjustContentWidth(sidebarVisible) {
     adjustTwitchAppWidth(sidebarVisible, sidebarWidth);
   }
 }
+
+// These players are taken out of the document flow, so the fixed sidebar would
+// cover them. Narrow the app root (the body child holding the player) instead.
+function getPlayerAppRoot() {
+  const anchor = window.STREAMING_PLATFORM === 'disney'
+    ? document.querySelector('disney-web-player')
+    : document.querySelector('video');
+
+  return anchor?.closest('body > *') ?? null;
+}
+
+// Remember the element we narrowed: after SPA navigation the player (and the
+// anchor used to find the root) may already be gone when the sidebar is removed,
+// which would leave the page stuck at the narrowed width.
+let narrowedPlayerRoot = null;
+
+function adjustPlayerAppWidth(sidebarVisible, sidebarWidth = 0) {
+  const narrow = sidebarVisible && sidebarWidth > 0;
+  const root = narrow
+    ? getPlayerAppRoot()
+    : (narrowedPlayerRoot ?? getPlayerAppRoot());
+
+  if (!root) {
+    return;
+  }
+
+  if (narrowedPlayerRoot && narrowedPlayerRoot !== root) {
+    narrowedPlayerRoot.style.width = '';
+    narrowedPlayerRoot.style.height = '';
+    narrowedPlayerRoot.style.contain = '';
+  }
+
+  root.style.width = narrow ? `calc(100% - ${sidebarWidth}px)` : '';
+
+  // Layout containment makes the root the containing block for position:fixed
+  // descendants, so the player's fixed controls and overlays shrink with it
+  // instead of staying full-viewport underneath the sidebar. Unlike a transform
+  // it creates no compositor layer, which can blank DRM video.
+  root.style.contain = narrow ? 'layout' : '';
+
+  // The player's fixed layers (video, controls) are sized against this box.
+  // With only fixed children the root would have no height of its own, which
+  // collapses them to nothing (black video), so give it the full viewport height.
+  root.style.height = narrow ? '100vh' : '';
+
+  narrowedPlayerRoot = narrow ? root : null;
+}
+
+window.addEventListener('resize', () => {
+  const sidebar = document.querySelector('.double-subtitles-sidebar');
+
+  if (
+    ['disney', 'hbo', 'hulu'].includes(window.STREAMING_PLATFORM)
+    && sidebar
+    && !sidebar.classList.contains('hidden')
+  ) {
+    adjustPlayerAppWidth(true, parseInt(getComputedStyle(sidebar).width, 10));
+    positionToggleButton();
+  }
+});
 
 function adjustYoutubeAppWidth(sidebarVisible, sidebarWidth = 0) {
   const ytdApp = document.querySelector('ytd-app');

@@ -1,9 +1,20 @@
+// HBO Max uses styled-components class names with a build hash suffix
+// (CaptionWindow-Fuse-Web-Play__sc-1wvp621-5), so match the stable prefix.
+const CUSTOM_CAPTION_SELECTORS = {
+  hbo: '[class*="CaptionWindow-Fuse-Web-Play"]',
+};
+
+function getCaptionSelector() {
+  return CUSTOM_CAPTION_SELECTORS[window.STREAMING_PLATFORM]
+    ?? `.${getSubtitleMainClass()}`;
+}
+
 function getMainSubtitlesSelector() {
-  return `.${getSubtitleMainClass()}:not(.secondSubtitles)`;
+  return `${getCaptionSelector()}:not(.secondSubtitles)`;
 }
 
 function getSecondSubtitlesSelector() {
-  return `.${getSubtitleMainClass()}.secondSubtitles`;
+  return `${getCaptionSelector()}.secondSubtitles`;
 }
 
 function fillSubtitles({ data, originText, timestamp }) {
@@ -39,12 +50,24 @@ function fillSubtitles({ data, originText, timestamp }) {
   // Hide every native caption line by CSS rule, not per element: the player
   // re-renders caption nodes between cues, so a class set on one node leaks.
   document.documentElement.classList.add(HIDE_NATIVE_CAPTIONS_CLASS);
+  applyDisneyShadowStyle();
+}
+
+// Disney+ renders captions inside the open shadow root of
+// <timed-text-override-region>, which a plain querySelector cannot reach.
+function getDisneyCaptionRoot() {
+  return document.querySelector('timed-text-override-region')?.shadowRoot ?? null;
+}
+
+function queryDisneyCaptions(selector) {
+  return getDisneyCaptionRoot()?.querySelector(selector)
+    ?? document.querySelector('disney-web-player')?.querySelector(selector)
+    ?? null;
 }
 
 function getSubtitlesFromDom() {
   if (window.STREAMING_PLATFORM === 'disney') {
-    return document.querySelector('disney-web-player')
-      ?.querySelector(getMainSubtitlesSelector());
+    return queryDisneyCaptions(getMainSubtitlesSelector());
   }
 
   if (window.STREAMING_PLATFORM === 'youtube') {
@@ -71,8 +94,7 @@ function getSubtitlesFromDom() {
 
 function getTranslatedSubtitlesFromDom() {
   if (window.STREAMING_PLATFORM === 'disney') {
-    return document.querySelector('disney-web-player')
-      ?.querySelector(getSecondSubtitlesSelector());
+    return queryDisneyCaptions(getSecondSubtitlesSelector());
   }
 
   // Amazon and Netflix
@@ -83,7 +105,7 @@ function getSubtitleMainClass() {
   // TODO: replace `hbo` and `hulu` placeholder classes with real ones from the actual DOM.
   const mapPlatformToClass = {
     amazon: 'atvwebplayersdk-captions-text',
-    disney: 'hive-subtitle-renderer-line',
+    disney: 'hive-subtitle-renderer-cue-window',
     netflix: 'player-timedtext-text-container',
     youtube: 'caption-window',
     twitch: 'player-captions-container__caption-line',

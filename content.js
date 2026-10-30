@@ -307,6 +307,11 @@ function forceHideExtensionUi() {
 
   document.documentElement.classList.remove(HIDE_NATIVE_CAPTIONS_CLASS);
 
+  // The sidebar may already be gone (SPA navigation); still give the player its width back.
+  if (typeof adjustPlayerAppWidth === 'function') {
+    adjustPlayerAppWidth(false);
+  }
+
   if (window.toggleYoutubeNativeSubtitles) {
     window.toggleYoutubeNativeSubtitles(true);
   }
