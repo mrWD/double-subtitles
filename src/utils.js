@@ -390,7 +390,10 @@ function getStreamingPlatform() {
     return 'netflix';
   }
 
-  if (window.location.hostname.includes('amazon')) {
+  if (
+    window.location.hostname.includes('amazon')
+    || window.location.hostname.includes('primevideo')
+  ) {
     return 'amazon';
   }
 
