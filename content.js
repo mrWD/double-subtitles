@@ -189,6 +189,12 @@ function isWatchPage() {
     return false;
   }
 
+  // Switched off in the popup: treat the page like a non-watch page so the
+  // sidebar and overlay are removed and the native captions come back.
+  if (options?.extensionOn === false) {
+    return false;
+  }
+
   return window.isStreamingWatchPage();
 }
 
