@@ -41,7 +41,6 @@ function fillSubtitles({ data, originText, timestamp }) {
   if (
     window.STREAMING_PLATFORM === 'youtube'
     || window.STREAMING_PLATFORM === 'twitch'
-    || window.STREAMING_PLATFORM === 'hbo'
     || window.STREAMING_PLATFORM === 'hulu'
   ) {
     return;
@@ -76,11 +75,6 @@ function getSubtitlesFromDom() {
 
   if (window.STREAMING_PLATFORM === 'twitch') {
     return document.querySelector('.player-captions-container');
-  }
-
-  if (window.STREAMING_PLATFORM === 'hbo') {
-    // TODO: replace with the actual HBO Max captions container selector.
-    return document.querySelector('.hbo-captions-container');
   }
 
   if (window.STREAMING_PLATFORM === 'hulu') {
@@ -159,21 +153,6 @@ function getTwitchSubtitleText() {
   return uniqueLines.join('\n');
 }
 
-function getHboSubtitleText() {
-  // TODO: refine selectors once the real HBO Max DOM is known.
-  const captionLines = Array.from(document.querySelectorAll(
-    '.hbo-captions-container .hbo-captions-container__caption-line'
-  ));
-
-  const lines = captionLines.map((line) => {
-    return normalizeSubtitleText(line.textContent || '');
-  }).filter(Boolean);
-
-  const uniqueLines = lines.filter((line, index) => lines.indexOf(line) === index);
-
-  return uniqueLines.join('\n');
-}
-
 function getHuluSubtitleText() {
   // TODO: refine selectors once the real Hulu DOM is known.
   // Hulu may render captions to a canvas; in that case DOM scraping won't work
@@ -202,11 +181,9 @@ function monitorSuptitleUpdates() {
     ? getYoutubeSubtitleText()
     : window.STREAMING_PLATFORM === 'twitch'
       ? getTwitchSubtitleText()
-      : window.STREAMING_PLATFORM === 'hbo'
-        ? getHboSubtitleText()
-        : window.STREAMING_PLATFORM === 'hulu'
-          ? getHuluSubtitleText()
-          : normalizeSubtitleText(subtitleWrapper?.innerText);
+      : window.STREAMING_PLATFORM === 'hulu'
+        ? getHuluSubtitleText()
+        : normalizeSubtitleText(subtitleWrapper?.innerText);
 
   if (!currentSubtitleText) {
     savedSubtitle = currentSubtitleText;
