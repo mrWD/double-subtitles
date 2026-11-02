@@ -9,10 +9,35 @@ let isWatchPageActive = false;
 let lastKnownLocation = window.location.href;
 let isRuntimeUnavailable = false;
 
+const ACTIVE_PAGE_CLASS = 'double-subtitles-active';
 const MAX_STORED_TEXT_LENGTH = 1000;
 const MAX_RESTORED_HISTORY_ITEMS = 200;
 
+// Reloading the extension leaves the previous instance's UI in already-open
+// tabs; its buttons are dead (the old script lost its connection) and the new
+// instance would draw a second set next to it. Start from a clean page.
+function removeStaleExtensionUi() {
+  document.querySelectorAll(
+    '.double-subtitles-sidebar, .sidebar-toggle-btn, .visibleSubtitles, .translatedList'
+  ).forEach((el) => el.remove());
+
+  document.getElementById('double-subtitles-caption-style')?.remove();
+  document.documentElement.classList.remove(HIDE_NATIVE_CAPTIONS_CLASS);
+
+  if (['disney', 'hbo', 'hulu'].includes(window.STREAMING_PLATFORM)) {
+    const staleRoot = getPlayerAppRoot();
+
+    if (staleRoot) {
+      resetPlayerRootStyles(staleRoot);
+    }
+  }
+
+  document.documentElement.classList.remove(ACTIVE_PAGE_CLASS);
+}
+
 async function initContent() {
+  removeStaleExtensionUi();
+
   await initI18n();
   await loadSelectors();
   options = await loadOptionsOrSetDefaults();
@@ -57,19 +82,11 @@ chrome.runtime.onMessage.addListener((req, sender) => {
       return;
     }
 
-    if (
-      window.STREAMING_PLATFORM === 'youtube'
-      && req.payload.requestId
-      && req.payload.requestId < latestAppliedTranslationRequestId
-    ) {
-      return;
-    }
+    const requestId = req.payload.requestId ?? 0;
+    const isStale = requestId > 0 && requestId < latestAppliedTranslationRequestId;
 
-    latestAppliedTranslationRequestId = Math.max(
-      latestAppliedTranslationRequestId,
-      req.payload.requestId ?? 0
-    );
-    fillSubtitles(req.payload);
+    latestAppliedTranslationRequestId = Math.max(latestAppliedTranslationRequestId, requestId);
+    fillSubtitles(req.payload, { isStale });
   }
 
   if (req.message === 'translatedList') {
@@ -189,10 +206,20 @@ function isWatchPage() {
     return false;
   }
 
+  // Switched off in the popup: treat the page like a non-watch page so the
+  // sidebar and overlay are removed and the native captions come back.
+  if (options?.extensionOn === false) {
+    return false;
+  }
+
   return window.isStreamingWatchPage();
 }
 
 function applyExtensionUiState() {
+  // Page-global CSS of the extension is scoped to this class, so nothing of it
+  // applies to the site while the extension is off or not on a watch page.
+  document.documentElement.classList.add(ACTIVE_PAGE_CLASS);
+
   if (!document.querySelector('.double-subtitles-sidebar')) {
     createSidebarWithHistory();
   }
@@ -306,6 +333,15 @@ function forceHideExtensionUi() {
   }
 
   document.documentElement.classList.remove(HIDE_NATIVE_CAPTIONS_CLASS);
+  document.documentElement.classList.remove(ACTIVE_PAGE_CLASS);
+
+  // Everything else we put into the page: toggle, popups, injected styles, hint.
+  document.querySelectorAll(
+    '.sidebar-toggle-btn, .translatedList, .double-subtitles-menu, .double-subtitles-hint, .cardsTip'
+  ).forEach((el) => el.remove());
+
+  document.getElementById('double-subtitles-caption-style')?.remove();
+  getDisneyCaptionRoot()?.getElementById('double-subtitles-caption-style')?.remove();
 
   // The sidebar may already be gone (SPA navigation); still give the player its width back.
   if (typeof adjustPlayerAppWidth === 'function') {
@@ -329,7 +365,22 @@ function forceHideExtensionUi() {
   }
 }
 
+// AnkiWeb / Quizlet are not watch pages, but the card-form tip uses the same
+// scoped styles, so they count as "active" whenever the extension is on.
 function syncPageUiState() {
+  syncStreamingPageUi();
+
+  if (window.LEARNING_PLATFORM) {
+    if (options?.extensionOn === false) {
+      document.documentElement.classList.remove(ACTIVE_PAGE_CLASS);
+      document.querySelectorAll('.cardsTip').forEach((el) => el.remove());
+    } else {
+      document.documentElement.classList.add(ACTIVE_PAGE_CLASS);
+    }
+  }
+}
+
+function syncStreamingPageUi() {
   const shouldBeActive = isWatchPage();
 
   if (shouldBeActive === isWatchPageActive) {

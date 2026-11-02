@@ -65,6 +65,10 @@ function handleLearningPlatformPage() {
 }
 
 function showTip(e) {
+  if (window.options?.extensionOn === false) {
+    return;
+  }
+
   const input = e.target;
   const { height, top, left } = input.getBoundingClientRect();
 

@@ -302,6 +302,32 @@ chrome.runtime.onMessage.addListener(async (req, sender) => {
   }
 });
 
+// The public endpoint rate-limits bursts (fast dialogue); one short retry turns
+// most of those into a normal translation instead of an empty line.
+async function fetchTranslationWithRetry(url) {
+  let lastError;
+
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const res = await fetch(url, { method: 'GET', headers: { Accept: '*/*' } });
+
+      if (res.ok) {
+        return res;
+      }
+
+      lastError = new Error(`Translation request failed with status ${res.status}`);
+    } catch (error) {
+      lastError = error;
+    }
+
+    if (attempt === 0) {
+      await new Promise((resolve) => setTimeout(resolve, 400));
+    }
+  }
+
+  throw lastError;
+}
+
 async function translateRow(obj) {
   const text = typeof obj.text === 'string' ? obj.text.slice(0, MAX_TRANSLATION_LENGTH) : '';
   const empty = {
@@ -322,11 +348,7 @@ async function translateRow(obj) {
     + `&q=${encodeURIComponent(text)}`;
 
   try {
-    const res = await fetch(url, { method: 'GET', headers: { Accept: '*/*' } });
-
-    if (!res.ok) {
-      throw new Error(`Translation request failed with status ${res.status}`);
-    }
+    const res = await fetchTranslationWithRetry(url);
 
     const data = await res.json();
 

@@ -13,6 +13,9 @@ function createSidebarWithHistory() {
 
   const sidebar = createSidebar();
 
+  // Never leave a second toggle behind if the UI is built again.
+  document.querySelectorAll('.sidebar-toggle-btn').forEach((btn) => btn.remove());
+
   // Add toggle button (lives outside sidebar so it's visible when sidebar is hidden)
   const toggleBtn = document.createElement('button');
   toggleBtn.classList.add('sidebar-toggle-btn');
@@ -655,36 +658,44 @@ function getPlayerAppRoot() {
 // which would leave the page stuck at the narrowed width.
 let narrowedPlayerRoot = null;
 
+function resetPlayerRootStyles(root) {
+  root.style.width = '';
+  root.style.height = '';
+  root.style.contain = '';
+}
+
 function adjustPlayerAppWidth(sidebarVisible, sidebarWidth = 0) {
   const narrow = sidebarVisible && sidebarWidth > 0;
-  const root = narrow
-    ? getPlayerAppRoot()
-    : (narrowedPlayerRoot ?? getPlayerAppRoot());
+  const root = narrow ? getPlayerAppRoot() : narrowedPlayerRoot;
 
   if (!root) {
     return;
   }
 
   if (narrowedPlayerRoot && narrowedPlayerRoot !== root) {
-    narrowedPlayerRoot.style.width = '';
-    narrowedPlayerRoot.style.height = '';
-    narrowedPlayerRoot.style.contain = '';
+    resetPlayerRootStyles(narrowedPlayerRoot);
   }
 
-  root.style.width = narrow ? `calc(100% - ${sidebarWidth}px)` : '';
+  if (!narrow) {
+    resetPlayerRootStyles(root);
+    narrowedPlayerRoot = null;
+    return;
+  }
+
+  root.style.width = `calc(100% - ${sidebarWidth}px)`;
 
   // Layout containment makes the root the containing block for position:fixed
   // descendants, so the player's fixed controls and overlays shrink with it
   // instead of staying full-viewport underneath the sidebar. Unlike a transform
   // it creates no compositor layer, which can blank DRM video.
-  root.style.contain = narrow ? 'layout' : '';
+  root.style.contain = 'layout';
 
   // The player's fixed layers (video, controls) are sized against this box.
   // With only fixed children the root would have no height of its own, which
   // collapses them to nothing (black video), so give it the full viewport height.
-  root.style.height = narrow ? '100vh' : '';
+  root.style.height = '100vh';
 
-  narrowedPlayerRoot = narrow ? root : null;
+  narrowedPlayerRoot = root;
 }
 
 window.addEventListener('resize', () => {

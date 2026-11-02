@@ -24,7 +24,10 @@ function getConfiguredCaptionClass(platform) {
 // living in the static stylesheet: hiding the native captions once ours are
 // shown, and (Prime only) making them clickable with a hover highlight.
 function applyCaptionStyle() {
-  if (!STYLED_PLATFORMS.includes(window.STREAMING_PLATFORM)) {
+  if (
+    !STYLED_PLATFORMS.includes(window.STREAMING_PLATFORM)
+    || window.options?.extensionOn === false
+  ) {
     return;
   }
 
