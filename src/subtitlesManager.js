@@ -17,18 +17,27 @@ function getSecondSubtitlesSelector() {
   return `${getCaptionSelector()}.secondSubtitles`;
 }
 
-function fillSubtitles({ data, originText, timestamp }) {
+function fillSubtitles({ data, originText, timestamp }, { isStale = false } = {}) {
   const originalSubtitleLines = getSubtitlesFromDom();
   const previousTranslatedElem = getTranslatedSubtitlesFromDom();
 
-  sessionStorage.setItem('double-subtitles-last', JSON.stringify({ text: originText, translation: data }));
-  addLineToSubtitles({ text: originText, translation: data });
+  // A reply that arrives after a newer one is still a line the user saw, so it
+  // belongs in the history, but it must not replace the newer line on screen.
+  if (!isStale) {
+    sessionStorage.setItem('double-subtitles-last', JSON.stringify({ text: originText, translation: data }));
+    addLineToSubtitles({ text: originText, translation: data });
+  }
+
   addLineToHistory({
     text: originText,
     translation: data,
     timestamp,
     sourceUrl: window.location.href,
   });
+
+  if (isStale) {
+    return;
+  }
 
   if (!originalSubtitleLines) {
     return;
@@ -62,6 +71,29 @@ function queryDisneyCaptions(selector) {
   return getDisneyCaptionRoot()?.querySelector(selector)
     ?? document.querySelector('disney-web-player')?.querySelector(selector)
     ?? null;
+}
+
+// All caption elements currently on screen: a cue with two speakers, or one at
+// the top and one at the bottom, is several elements and the first one alone
+// would silently drop the rest.
+function getAllCaptionElements() {
+  const selector = getMainSubtitlesSelector();
+
+  if (window.STREAMING_PLATFORM === 'disney') {
+    const root = getDisneyCaptionRoot();
+
+    return Array.from(root ? root.querySelectorAll(selector) : document.querySelectorAll(selector));
+  }
+
+  return Array.from(document.querySelectorAll(selector));
+}
+
+function getGenericCaptionText() {
+  const lines = getAllCaptionElements()
+    .map((el) => normalizeSubtitleText(el.innerText))
+    .filter(Boolean);
+
+  return lines.filter((line, index) => lines.indexOf(line) === index).join(' ');
 }
 
 function getSubtitlesFromDom() {
@@ -183,7 +215,7 @@ function monitorSuptitleUpdates() {
       ? getTwitchSubtitleText()
       : window.STREAMING_PLATFORM === 'hulu'
         ? getHuluSubtitleText()
-        : normalizeSubtitleText(subtitleWrapper?.innerText);
+        : getGenericCaptionText();
 
   if (!currentSubtitleText) {
     savedSubtitle = currentSubtitleText;
@@ -281,9 +313,16 @@ function startMonitoringForElements(numTries) {
     monitor.observe(document.querySelector('body'), {
       attributes: true,
       childList: true,
+      // Some players change a caption by rewriting its text node in place,
+      // which fires neither childList nor attributes.
+      characterData: true,
       subtree: true,
     });
     isMonitorActive = true;
+
+    // Safety net: a change the observer never reported (captions inside a
+    // shadow root, a replaced container) is picked up within half a second.
+    setInterval(scheduleSubtitleCheck, 500);
 
     return;
   }
