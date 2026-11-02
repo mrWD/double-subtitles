@@ -12,7 +12,25 @@ let isRuntimeUnavailable = false;
 const MAX_STORED_TEXT_LENGTH = 1000;
 const MAX_RESTORED_HISTORY_ITEMS = 200;
 
+// Reloading the extension leaves the previous instance's UI in already-open
+// tabs; its buttons are dead (the old script lost its connection) and the new
+// instance would draw a second set next to it. Start from a clean page.
+function removeStaleExtensionUi() {
+  document.querySelectorAll(
+    '.double-subtitles-sidebar, .sidebar-toggle-btn, .visibleSubtitles, .translatedList'
+  ).forEach((el) => el.remove());
+
+  document.getElementById('double-subtitles-caption-style')?.remove();
+  document.documentElement.classList.remove(HIDE_NATIVE_CAPTIONS_CLASS);
+
+  if (['disney', 'hbo', 'hulu'].includes(window.STREAMING_PLATFORM)) {
+    adjustPlayerAppWidth(false);
+  }
+}
+
 async function initContent() {
+  removeStaleExtensionUi();
+
   await initI18n();
   await loadSelectors();
   options = await loadOptionsOrSetDefaults();
