@@ -82,19 +82,11 @@ chrome.runtime.onMessage.addListener((req, sender) => {
       return;
     }
 
-    if (
-      window.STREAMING_PLATFORM === 'youtube'
-      && req.payload.requestId
-      && req.payload.requestId < latestAppliedTranslationRequestId
-    ) {
-      return;
-    }
+    const requestId = req.payload.requestId ?? 0;
+    const isStale = requestId > 0 && requestId < latestAppliedTranslationRequestId;
 
-    latestAppliedTranslationRequestId = Math.max(
-      latestAppliedTranslationRequestId,
-      req.payload.requestId ?? 0
-    );
-    fillSubtitles(req.payload);
+    latestAppliedTranslationRequestId = Math.max(latestAppliedTranslationRequestId, requestId);
+    fillSubtitles(req.payload, { isStale });
   }
 
   if (req.message === 'translatedList') {
