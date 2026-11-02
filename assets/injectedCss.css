@@ -1,7 +1,7 @@
 /* No webfont here: this stylesheet is injected into third-party pages and a
    remote @import would leak the user's IP and browsing to a font CDN. */
 
-:root {
+html.double-subtitles-active {
   --primary-color: #161819;
   --secondary-color: #222527;
   --border-primary-color: #333333;
@@ -63,7 +63,7 @@
   background: var(--secondary-color);
 }
 
-#dv-web-player.dv-player-fullscreen {
+html.double-subtitles-active #dv-web-player.dv-player-fullscreen {
   display: flex;
   transition: none;
 }
@@ -210,7 +210,7 @@
   background-color: var(--primary-color);
 }
 
-.search-input {
+html.double-subtitles-active .search-input {
   box-sizing: border-box;
   width: 100%;
   padding: 8px 12px;
@@ -222,12 +222,12 @@
   transition: font-size 0.2s ease;
 }
 
-.search-input:focus {
+html.double-subtitles-active .search-input:focus {
   outline: none;
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-.search-input::placeholder {
+html.double-subtitles-active .search-input::placeholder {
   color: rgba(255, 255, 255, 0.5);
 }
 
@@ -623,7 +623,7 @@
   outline: none;
 }
 
-.show {
+html.double-subtitles-active .show {
   position: fixed !important;
   z-index: 100000;
 }
@@ -682,11 +682,11 @@
   cursor: pointer;
 }
 
-.watch-video {
+html.double-subtitles-active .watch-video {
   transition: width 0s ease-in-out;
 }
 
-.caption-window {
+html.double-subtitles-active .caption-window {
   pointer-events: all;
   cursor: pointer;
 }
