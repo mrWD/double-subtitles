@@ -13,6 +13,9 @@ function createSidebarWithHistory() {
 
   const sidebar = createSidebar();
 
+  // Never leave a second toggle behind if the UI is built again.
+  document.querySelectorAll('.sidebar-toggle-btn').forEach((btn) => btn.remove());
+
   // Add toggle button (lives outside sidebar so it's visible when sidebar is hidden)
   const toggleBtn = document.createElement('button');
   toggleBtn.classList.add('sidebar-toggle-btn');
