@@ -80,11 +80,28 @@ async function refreshSelectors() {
   }
 }
 
+// Auto-reloading a tab on install/update trips the bot protection on these
+// sites (repeated reloads end in "Access Denied"), so those tabs are left alone;
+// the user refreshes them by hand to pick up the extension.
+const NO_AUTO_RELOAD_HOSTS = ['max.com', 'hbomax.com', 'hulu.com'];
+
+function shouldAutoReload(tab) {
+  try {
+    const { hostname } = new URL(tab.url);
+
+    return !NO_AUTO_RELOAD_HOSTS.some(
+      (host) => hostname === host || hostname.endsWith(`.${host}`)
+    );
+  } catch {
+    return false;
+  }
+}
+
 function reloadTabs() {
   urls.forEach((url) => {
     chrome.tabs.query({ url }, function (tabs) {
       if (tabs.length > 0) {
-        tabs.forEach((tab) => {
+        tabs.filter(shouldAutoReload).forEach((tab) => {
           chrome.tabs.reload(tab.id);
         });
       }
